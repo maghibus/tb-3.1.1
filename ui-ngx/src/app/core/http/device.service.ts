@@ -85,7 +85,7 @@ export class DeviceService {
       request.setRequestHeader('Accept', 'application/json, text/plain, */*');
       const jwtToken = AuthService.getJwtToken();
       if (jwtToken) {
-        request.setRequestHeader('X-Authorization', 'Bearer ' + jwtToken);
+        request.setRequestHeader('Authorization', 'Bearer ' + jwtToken);
       }
       request.send(null);
       if (request.status === 200) {

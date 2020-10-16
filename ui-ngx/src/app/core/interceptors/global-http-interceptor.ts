@@ -43,7 +43,7 @@ let tmpHeaders = {};
 export class GlobalHttpInterceptor implements HttpInterceptor {
 
   private AUTH_SCHEME = 'Bearer ';
-  private AUTH_HEADER_NAME = 'X-Authorization';
+  private AUTH_HEADER_NAME = 'Authorization';
 
   private internalUrlPrefixes = [
     '/api/auth/token',

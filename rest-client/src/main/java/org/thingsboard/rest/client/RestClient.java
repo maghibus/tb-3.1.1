@@ -108,7 +108,7 @@ import static org.springframework.util.StringUtils.isEmpty;
  * @author Andrew Shvayka
  */
 public class RestClient implements ClientHttpRequestInterceptor, Closeable {
-    private static final String JWT_TOKEN_HEADER_PARAM = "X-Authorization";
+    private static final String JWT_TOKEN_HEADER_PARAM = "Authorization";
     protected final RestTemplate restTemplate;
     protected final String baseURL;
     private String token;
