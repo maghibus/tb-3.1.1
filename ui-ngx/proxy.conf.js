@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-// const forwardUrl = "http://demo.thingsboard.io";
-// const wsForwardUrl = "ws://demo.thingsboard.io";
-const forwardUrl = "http://localhost:8080";
+const forwardUrl = "http://demo.thingsboard.io";
 const wsForwardUrl = "ws://demo.thingsboard.io";
 const ruleNodeUiforwardUrl = forwardUrl;
 
