@@ -1,0 +1,75 @@
+pipeline {
+    agent {
+        node {
+            label 'slaves'
+        }
+    }
+    stages {
+        stage('build netty-mqtt') {
+            steps {
+                dir('netty-mqtt/') {
+                    withMaven(
+                        maven: 'maven_3.5.4',
+                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        sh 'mvn clean install -DskipTests'
+                    }
+                }
+            }
+        }
+        stage('build common') {
+            steps {
+                dir('common/') {
+                    withMaven(
+                        maven: 'maven_3.5.4',
+                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        sh 'mvn clean install -DskipTests'
+                    }
+                }
+            }
+        }
+        stage('build dao') {
+            steps {
+                dir('dao/') {
+                    withMaven(
+                        maven: 'maven_3.5.4',
+                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        sh 'mvn clean install -DskipTests'
+                    }
+                }
+            }
+        }
+        stage('build rule-engine') {
+            steps {
+                dir('rule-engine/') {
+                    withMaven(
+                        maven: 'maven_3.5.4',
+                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        sh 'mvn clean install -DskipTests'
+                    }
+                }
+            }
+        }
+        stage('build tools') {
+            steps {
+                dir('tools/') {
+                    withMaven(
+                        maven: 'maven_3.5.4',
+                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        sh 'mvn clean install -DskipTests'
+                    }
+                }
+            }
+        }
+        stage('build rest-client') {
+            steps {
+                dir('rest-client/') {
+                    withMaven(
+                        maven: 'maven_3.5.4',
+                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        sh 'mvn clean install -DskipTests'
+                    }
+                }
+            }
+        }
+    }
+}
