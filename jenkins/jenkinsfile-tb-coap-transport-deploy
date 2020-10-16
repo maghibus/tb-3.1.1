@@ -1,0 +1,36 @@
+envParams = []
+
+pipeline {
+    agent {
+        node {
+            label 'slaves'
+        }
+    }
+    environment {
+        DOCKER_IMAGE_NAME = 'tb-coap-transport'
+        DOCKER_REGISTRY_URL = 'jfrog.almaviva.it:8081'
+        DOCKER_REGISTRY_NAME = 'docker-local'
+    }
+
+    stages {
+	    stage('Deploy') {
+            steps {
+                script {
+				    echo "Deployment environment params: ${ENVIRONMENT}"
+				    envParams = "${ENVIRONMENT}".split(" ");
+
+                    responseCode = sh (script: "curl -i -X PATCH https://${envParams[0]}/k8s/clusters/${envParams[1]}/apis/apps/v1beta2/namespaces/${envParams[3]}/deployments/${DOCKER_IMAGE_NAME} \
+                         --user ${envParams[2]} \
+                         -H Content-Type:application/json-patch+json \
+                         -d '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"${DOCKER_REGISTRY_URL}/${DOCKER_REGISTRY_NAME}/${DOCKER_IMAGE_NAME}:${IMAGE_VERSION}\" }]' \
+                         -s -o /dev/null -w '%{http_code}' -k", returnStdout: true)
+                    echo "PATCH image response code ${responseCode}"
+                    if (responseCode != "200") {
+                        currentBuild.result = "FAILURE"
+                    }
+                }
+            }
+        }
+    }
+
+}

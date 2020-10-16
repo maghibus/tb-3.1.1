@@ -1,0 +1,79 @@
+branchName = ''
+splittedBranchName = []
+dockerImageTag = ''
+projectVersion = ''
+
+pipeline {
+    agent {
+        node {
+            label 'slaves'
+        }
+    }
+    environment {
+        DOCKER_IMAGE_NAME = 'tb-coap-transport'
+        DOCKER_REGISTRY_URL = 'jfrog.almaviva.it:8081'
+        DOCKER_REGISTRY_NAME = 'docker-local'
+		GIT_COMMIT_SHORT = sh(
+						script: "printf \$(git rev-parse --short ${GIT_COMMIT})",
+						returnStdout: true
+						)
+    }
+    stages {
+        stage('Initialize') {
+            steps {
+                script {
+                    projectVersion = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
+                }
+            }
+        }
+        stage('Maven build') {
+            steps {
+                dir('transport/coap') {
+                    withMaven(
+                        maven: 'maven_3.5.4',
+                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        sh 'mvn clean install -DskipTests'
+                    }
+                }
+            }
+        }
+        stage('Build Docker image') {
+            steps {
+                dir('msa/transport/coap') {
+                    withMaven(
+                        maven: 'maven_3.5.4',
+                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        sh 'mvn clean install -Ddockerfile.skip=false -DskipTests'
+                    }
+                }
+            }
+        }
+        stage('Tag Docker image') {
+            steps {
+                script {
+                    splittedBranchName = "${env.BRANCH_NAME}".split("/");
+                    branchName = splittedBranchName[splittedBranchName.length-1];
+                    if (branchName == "develop") {
+                        dockerImageTag = "${projectVersion}.${BUILD_NUMBER}";
+                    }
+                    else {
+                        dockerImageTag = "${branchName}.${GIT_COMMIT_SHORT}";
+                    }
+                    sh "docker tag thingsboard/${env.DOCKER_IMAGE_NAME}:${projectVersion} ${env.DOCKER_REGISTRY_URL}/${env.DOCKER_REGISTRY_NAME}/${env.DOCKER_IMAGE_NAME}:${dockerImageTag}"
+                }
+            }
+        }
+        stage('Push Docker image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-jfrog-credentials',
+                                        usernameVariable: 'DOCKER_USERNAME',
+                                        passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} http://${DOCKER_REGISTRY_URL}"
+                        sh "docker push ${env.DOCKER_REGISTRY_URL}/${env.DOCKER_REGISTRY_NAME}/${env.DOCKER_IMAGE_NAME}:${dockerImageTag}"
+                    }
+                }
+            }
+        }
+    }
+}
