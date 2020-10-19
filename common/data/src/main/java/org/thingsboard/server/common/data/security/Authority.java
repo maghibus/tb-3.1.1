@@ -15,6 +15,8 @@
  */
 package org.thingsboard.server.common.data.security;
 
+import java.util.List;
+
 public enum Authority {
     
     SYS_ADMIN(0),
@@ -42,6 +44,18 @@ public enum Authority {
                 }
             }
         }
+        return authority;
+    }
+
+    public static Authority parseAll(List<String> values) {
+        Authority authority = null;
+
+        for (String value : values) {
+            authority = parse(value);
+            if (null != authority)
+                break;
+        }
+
         return authority;
     }
 }
