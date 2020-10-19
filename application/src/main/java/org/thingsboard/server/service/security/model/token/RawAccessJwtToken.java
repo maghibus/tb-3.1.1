@@ -17,7 +17,9 @@ package org.thingsboard.server.service.security.model.token;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -56,6 +58,23 @@ public class RawAccessJwtToken implements JwtToken, Serializable {
             throw new BadCredentialsException("Invalid JWT token: ", ex);
         } catch (ExpiredJwtException expiredEx) {
             log.debug("JWT Token is expired", expiredEx);
+            throw new JwtExpiredTokenException(this, "JWT Token expired", expiredEx);
+        }
+    }
+
+
+
+    public Claims parseClaims() {
+        try {
+            int i = this.token.lastIndexOf('.');
+            String untrustedJwtString = this.token.substring(0, i+1);
+            Jwt<Header,Claims> untrusted = Jwts.parser().parseClaimsJwt(untrustedJwtString);
+            return untrusted.getBody();
+        } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException | SignatureException ex) {
+            log.error("Invalid JWT Token", ex);
+            throw new BadCredentialsException("Invalid JWT token: ", ex);
+        } catch (ExpiredJwtException expiredEx) {
+            log.info("JWT Token is expired", expiredEx);
             throw new JwtExpiredTokenException(this, "JWT Token expired", expiredEx);
         }
     }

@@ -77,23 +77,24 @@ export class AuthService {
   }
 
   private static isTokenValid(prefix) {
-    const clientExpiration = AuthService._storeGet(prefix + '_expiration');
+    debugger;
+    const clientExpiration = AuthService._storeGet(prefix);
     return clientExpiration && Number(clientExpiration) > (new Date().valueOf() + 2000);
   }
 
   public static isJwtTokenValid() {
-    return AuthService.isTokenValid('jwt_token');
+    return AuthService.isTokenValid('expires_at');
   }
 
   private static clearTokenData() {
-    localStorage.removeItem('jwt_token');
-    localStorage.removeItem('jwt_token_expiration');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('expires_at');
     localStorage.removeItem('refresh_token');
-    localStorage.removeItem('refresh_token_expiration');
+    localStorage.removeItem('refresh_token_expires_at');
   }
 
   public static getJwtToken() {
-    return AuthService._storeGet('jwt_token');
+    return AuthService._storeGet('access_token');
   }
 
   public reloadUser() {
@@ -280,7 +281,7 @@ export class AuthService {
       if (publicId) {
         return this.publicLogin(publicId).pipe(
           mergeMap((response) => {
-            this.updateAndValidateToken(response.token, 'jwt_token', false);
+            this.updateAndValidateToken(response.token, 'access_token', false);
             this.updateAndValidateToken(response.refreshToken, 'refresh_token', false);
             return this.procceedJwtTokenValidate();
           }),
@@ -295,7 +296,7 @@ export class AuthService {
           this.utils.updateQueryParam('refreshToken', null);
         }
         try {
-          this.updateAndValidateToken(accessToken, 'jwt_token', false);
+          this.updateAndValidateToken(accessToken, 'access_token', false);
           if (refreshToken) {
             this.updateAndValidateToken(refreshToken, 'refresh_token', false);
           } else {
@@ -315,7 +316,7 @@ export class AuthService {
         };
         return this.http.post<LoginResponse>('/api/auth/login', loginRequest, defaultHttpOptions()).pipe(
           mergeMap((loginResponse: LoginResponse) => {
-              this.updateAndValidateToken(loginResponse.token, 'jwt_token', false);
+              this.updateAndValidateToken(loginResponse.token, 'access_token', false);
               this.updateAndValidateToken(loginResponse.refreshToken, 'refresh_token', false);
               return this.procceedJwtTokenValidate();
             }
@@ -353,7 +354,7 @@ export class AuthService {
     this.validateJwtToken(doTokenRefresh).subscribe(
       () => {
         let authPayload = {} as AuthPayload;
-        const jwtToken = AuthService._storeGet('jwt_token');
+        const jwtToken = AuthService._storeGet('access_token');
         authPayload.authUser = this.jwtHelper.decodeToken(jwtToken);
         if (authPayload.authUser && authPayload.authUser.scopes && authPayload.authUser.scopes.length) {
           authPayload.authUser.authority = Authority[authPayload.authUser.scopes[0]];
@@ -443,7 +444,7 @@ export class AuthService {
         this.refreshTokenSubject = new ReplaySubject<LoginResponse>(1);
         response = this.refreshTokenSubject;
         const refreshToken = AuthService._storeGet('refresh_token');
-        const refreshTokenValid = AuthService.isTokenValid('refresh_token');
+        const refreshTokenValid = AuthService.isTokenValid('refresh_token_expires_at');
         this.setUserFromJwtToken(null, null, false);
         if (!refreshTokenValid) {
           this.refreshTokenSubject.error(new Error(this.translate.instant('access.refresh-token-expired')));
@@ -470,7 +471,7 @@ export class AuthService {
 
   private validateJwtToken(doRefresh): Observable<void> {
     const subject = new ReplaySubject<void>();
-    if (!AuthService.isTokenValid('jwt_token')) {
+    if (!AuthService.isTokenValid('expires_at')) {
       if (doRefresh) {
         this.refreshJwtToken().subscribe(
           () => {
@@ -503,7 +504,7 @@ export class AuthService {
         this.notifyUnauthenticated();
       }
     } else {
-      this.updateAndValidateToken(jwtToken, 'jwt_token', true);
+      this.updateAndValidateToken(jwtToken, 'access_token', true);
       this.updateAndValidateToken(refreshToken, 'refresh_token', true);
       if (notify) {
         this.notifyUserLoaded(false);
@@ -547,6 +548,7 @@ export class AuthService {
   }
 
   private updateAndValidateToken(token, prefix, notify) {
+    // debugger;
     let valid = false;
     const tokenData = this.jwtHelper.decodeToken(token);
     const issuedAt = tokenData.iat;
@@ -556,7 +558,13 @@ export class AuthService {
       if (ttl > 0) {
         const clientExpiration = new Date().valueOf() + ttl * 1000;
         localStorage.setItem(prefix, token);
-        localStorage.setItem(prefix + '_expiration', '' + clientExpiration);
+        
+        if (prefix == 'access_token') {
+          localStorage.setItem('expires_at', '' + clientExpiration);
+        } else {
+            localStorage.setItem(prefix + '_expires_at', '' + clientExpiration);
+        }
+
         valid = true;
       }
     }
