@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-@import '~@angular/material/theming';
+@import'~@angular/material/theming';
 
 $mat-xs: "screen and (max-width: 599px)";
 $mat-sm: "screen and (min-width: 600px) and (max-width: 959px)";
@@ -33,27 +32,35 @@ $mat-gt-xl: "screen and (min-width: 1920px)";
 
 $primary-hue-3: rgb(207, 216, 220) !default;
 
-$tb-primary-color: #305680;
-$tb-secondary-color: #527dad;
-$tb-hue3-color: #a7c1de;
-$tb-dark-primary-color: #9fa8da;
-$background-toolbar: $tb-primary-color; //change color header
+//Customization variables
+
+
+$tb-primary-color: #166744 !default;
+$tb-secondary-color: #ededed !default;
+$tb-hue3-color: rgb(207, 216, 220) !default;
+$tb-dark-primary-color: #8bb3a2;
+
+$header-default: #115235 !default;
+$primary-default-gradient: linear-gradient(to right, $tb-primary-color, $header-default) !default;
+$secondary-default-gradient: linear-gradient(to bottom, $tb-primary-color, $header-default) !default;
+$background-toolbar: $primary-default-gradient; //change color header
+
 
 $tb-mat-indigo: (
-  50: #e8eaf6,
-  100: #c5cae9,
-  200: #9fa8da,
-  300: #7986cb,
-  400: #5c6bc0,
+  50: #e3ede9,
+  100: #b9d1c7,
+  200: #8bb3a2,
+  300: #5c957c,
+  400: #397e60,
   500: $tb-primary-color,
   600: $tb-secondary-color,
-  700: #303f9f,
-  800: #283593,
-  900: #1a237e,
-  A100: $tb-hue3-color,
-  A200: #536dfe,
-  A400: #3d5afe,
-  A700: #304ffe,
+  700: #105435,
+  800: #0c4a2d,
+  900: #06391f,
+  A100: #70ffad,
+  A200: #3dff8f,
+  A400: #0aff72,
+  A700: #00f065,
   contrast: (
     50: $dark-primary-text,
     100: $dark-primary-text,
@@ -73,20 +80,20 @@ $tb-mat-indigo: (
 );
 
 $tb-dark-mat-indigo: (
-  50: #e8eaf6,
-  100: #c5cae9,
-  200: #9fa8da,
-  300: #7986cb,
-  400: #5c6bc0,
+  50: #e3ede9,
+  100: #b9d1c7,
+  200: #8bb3a2,
+  300: #5c957c,
+  400: #397e60,
   500: $tb-dark-primary-color,
   600: $tb-secondary-color,
-  700: #303f9f,
+  700: #105435,
   800: $tb-primary-color,
-  900: #1a237e,
+  900: #06391f,
   A100: $tb-hue3-color,
-  A200: #536dfe,
-  A400: #3d5afe,
-  A700: #304ffe,
+  A200: #3dff8f,
+  A400: #0aff72,
+  A700: #00f065,
   contrast: (
     50: $dark-primary-text,
     100: $dark-primary-text,

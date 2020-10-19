@@ -16,6 +16,8 @@
 const CompressionPlugin = require("compression-webpack-plugin");
 const webpack = require("webpack");
 const dirTree = require("directory-tree");
+const FileManagerPlugin = require('filemanager-webpack-plugin');
+const targetCustomer = process.env.TARGET_CUSTOMER || "default";
 
 var langs = [];
 
@@ -25,19 +27,37 @@ dirTree("./src/assets/locale/", {extensions: /\.json$/}, (item) => {
   langs.push(item.name.slice(item.name.lastIndexOf("-") + 1, -5));
 });
 
-module.exports = {
-  plugins: [
-    new webpack.DefinePlugin({
-      TB_VERSION: JSON.stringify(require("./package.json").version),
-      SUPPORTED_LANGS: JSON.stringify(langs),
-    }),
-    new CompressionPlugin({
-      filename: "[path].gz[query]",
-      algorithm: "gzip",
-      test: /\.js$|\.css$|\.html$|\.svg?.+$|\.jpg$|\.ttf?.+$|\.woff?.+$|\.eot?.+$|\.json$/,
-      threshold: 10240,
-      minRatio: 0.8,
-      deleteOriginalAssets: false,
-    }),
-  ],
+module.exports = (env, argv) => {
+  const customPlugins = {
+    plugins: [
+      new webpack.DefinePlugin({
+        TB_VERSION: JSON.stringify(require("./package.json").version),
+        SUPPORTED_LANGS: JSON.stringify(langs)
+      }),
+      new CompressionPlugin({
+        filename: "[path].gz[query]",
+        algorithm: "gzip",
+        test: /\.js$|\.css$|\.html$|\.svg?.+$|\.jpg$|\.ttf?.+$|\.woff?.+$|\.eot?.+$|\.json$/,
+        threshold: 10240,
+        minRatio: 0.8,
+        deleteOriginalAssets: false,
+      })
+    ]
+  };
+  if( env.mode !== "development" && targetCustomer !== "default") {
+    customPlugins.plugins.push(
+      new FileManagerPlugin({
+        onStart: {
+          copy: [
+            { source: `./customer_assets/${targetCustomer}/themes/*.scss`, destination: `./src` },
+            { source: `./customer_assets/${targetCustomer}/images/thingsboard.ico`, destination: `./src` },
+            { source: `./customer_assets/${targetCustomer}/scss/*.scss`, destination: `./src/scss` },
+            { source: `./customer_assets/${targetCustomer}/images/*.svg`, destination: `./src/assets` }
+          ],
+        }
+      })
+    )
+  }
+  env.plugins = env.plugins.concat(customPlugins.plugins); 
+  return env;
 };
