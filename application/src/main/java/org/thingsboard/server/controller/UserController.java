@@ -44,6 +44,8 @@ import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.security.Authority;
 import org.thingsboard.server.common.data.security.UserCredentials;
+import org.thingsboard.server.dao.user.UserDao;
+import org.thingsboard.server.dao.user.UserServiceImpl;
 import org.thingsboard.server.queue.util.TbCoreComponent;
 import org.thingsboard.server.service.security.auth.jwt.RefreshTokenRepository;
 import org.thingsboard.server.service.security.model.SecurityUser;
@@ -77,6 +79,9 @@ public class UserController extends BaseController {
 
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
+    private UserDao userDao;
 
 
     @PreAuthorize("hasAnyAuthority('SYS_ADMIN', 'TENANT_ADMIN', 'CUSTOMER_USER')")
@@ -171,6 +176,95 @@ public class UserController extends BaseController {
             throw handleException(e);
         }
     }
+
+
+    @RequestMapping(value = "/user/edit", method = RequestMethod.PUT)
+    @ResponseBody
+    public User editUser(@RequestBody User newUser) throws ThingsboardException {
+        if (newUser.getTenantId() != null && newUser.getEmail() != null) {
+            User oldUser = userDao.findByEmail(newUser.getTenantId(), newUser.getEmail());
+            if (newUser.getFirstName() != null) {
+                oldUser.setFirstName(newUser.getFirstName());
+            }
+            if (newUser.getLastName() != null) {
+                oldUser.setLastName(newUser.getLastName());
+            }
+            if (newUser.getAuthority().equals(Authority.SYS_ADMIN) || newUser.getAuthority().equals(Authority.TENANT_ADMIN)) {
+                oldUser.setTenantId(newUser.getTenantId());
+                oldUser.setCustomerId(null);
+            } if (newUser.getAuthority().equals(Authority.CUSTOMER_USER)) {
+                oldUser.setTenantId(newUser.getTenantId());
+                oldUser.setCustomerId(newUser.getCustomerId());
+            }
+            oldUser.setAuthority(newUser.getAuthority());
+            if (newUser.getEmail()  != null) {
+                oldUser.setEmail(newUser.getEmail());
+            }
+            try {
+                userService.editUser(oldUser,0);
+            } catch (Exception e) {
+                throw(e);
+            }
+            return oldUser;
+        }
+        return null;
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('SYS_ADMIN', 'TENANT_ADMIN', 'CUSTOMER_USER')")
+    @RequestMapping(value = "/user/saveAndValidate", method = RequestMethod.POST)
+    @ResponseBody
+    public User saveAndValidateUser(@RequestBody User user,
+                                    @RequestParam(required = false, defaultValue = "true") boolean sendActivationMail,
+                                    HttpServletRequest request) throws ThingsboardException {
+        try {
+
+            if (getCurrentUser().getAuthority() == Authority.TENANT_ADMIN) {
+                user.setTenantId(getCurrentUser().getTenantId());
+            }
+
+            Operation operation = user.getId() == null ? Operation.CREATE : Operation.WRITE;
+
+            accessControlService.checkPermission(getCurrentUser(), Resource.USER, operation,
+                    user.getId(), user);
+
+            boolean sendEmail = user.getId() == null && sendActivationMail;
+            User savedUser = checkNotNull(userService.saveUser(user));
+            if (sendEmail) {
+                SecurityUser authUser = getCurrentUser();
+                UserCredentials userCredentials = userService.findUserCredentialsByUserId(authUser.getTenantId(), savedUser.getId());
+                String baseUrl = MiscUtils.constructBaseUrl(request);
+                String activateUrl = String.format(ACTIVATE_URL_PATTERN, baseUrl,
+                        userCredentials.getActivateToken());
+                String email = savedUser.getEmail();
+                try {
+                    mailService.sendActivationEmail(activateUrl, email);
+                } catch (ThingsboardException e) {
+                    userService.deleteUser(authUser.getTenantId(), savedUser.getId());
+                    throw e;
+                }
+
+                try {
+                    userService.activateUserCredentialsById(savedUser.getTenantId(), savedUser.getId());
+                } catch (Exception e) {
+                    userService.deleteUser(authUser.getTenantId(), savedUser.getId());
+                }
+            }
+
+            logEntityAction(savedUser.getId(), savedUser,
+                    savedUser.getCustomerId(),
+                    user.getId() == null ? ActionType.ADDED : ActionType.UPDATED, null);
+
+            return savedUser;
+        } catch (Exception e) {
+
+            logEntityAction(emptyId(EntityType.USER), user,
+                    null, user.getId() == null ? ActionType.ADDED : ActionType.UPDATED, e);
+
+            throw handleException(e);
+        }
+    }
+
 
     @PreAuthorize("hasAnyAuthority('SYS_ADMIN', 'TENANT_ADMIN')")
     @RequestMapping(value = "/user/sendActivationMail", method = RequestMethod.POST)

@@ -128,6 +128,20 @@ public class UserServiceImpl extends AbstractEntityService implements UserServic
     }
 
     @Override
+    public User editUser(User user, int n) {
+        userValidator.validate(user, User::getTenantId);
+        User savedUser = userDao.save(user.getTenantId(), user);
+        if (user.getId() == null) {
+            UserCredentials userCredentials = new UserCredentials();
+            userCredentials.setEnabled(true);
+            userCredentials.setActivateToken(RandomStringUtils.randomAlphanumeric(DEFAULT_TOKEN_LENGTH));
+            userCredentials.setUserId(new UserId(savedUser.getUuidId()));
+            saveUserCredentialsAndPasswordHistory(user.getTenantId(), userCredentials);
+        }
+        return savedUser;
+    }
+
+    @Override
     public UserCredentials findUserCredentialsByUserId(TenantId tenantId, UserId userId) {
         log.trace("Executing findUserCredentialsByUserId [{}]", userId);
         validateId(userId, INCORRECT_USER_ID + userId);
@@ -171,6 +185,21 @@ public class UserServiceImpl extends AbstractEntityService implements UserServic
         userCredentials.setActivateToken(null);
         userCredentials.setPassword(password);
 
+        return saveUserCredentials(tenantId, userCredentials);
+    }
+
+    @Override
+    public UserCredentials activateUserCredentialsById(TenantId tenantId, UserId userId) {
+        UserCredentials userCredentials = userCredentialsDao.findByUserId(tenantId, userId.getId());
+        if (userCredentials == null) {
+            throw new IncorrectParameterException(String.format("Unable to find user credentials by User ID [%s]", userId.getId()));
+        }
+        if (userCredentials.isEnabled()) {
+            throw new IncorrectParameterException("User credentials already activated");
+        }
+        userCredentials.setEnabled(true);
+        userCredentials.setActivateToken(null);
+        userCredentials.setPassword(null);
         return saveUserCredentials(tenantId, userCredentials);
     }
 
