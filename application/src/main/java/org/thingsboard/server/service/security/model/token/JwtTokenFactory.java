@@ -97,8 +97,6 @@ public class JwtTokenFactory {
     }
 
     public SecurityUser parseAccessJwtToken(RawAccessJwtToken rawAccessToken) {
-//        Jws<Claims> jwsClaims = rawAccessToken.parseClaims(settings.getTokenSigningKey());
-//        Claims claims = jwsClaims.getBody();
         Claims claims = rawAccessToken.parseClaims();
         String subject = claims.getSubject();
         List<String> scopes = claims.get(SCOPES, List.class);
@@ -108,7 +106,6 @@ public class JwtTokenFactory {
 
         SecurityUser securityUser = new SecurityUser(new UserId(UUID.fromString(claims.get(USER_ID, String.class))));
         securityUser.setEmail(subject);
-//        securityUser.setAuthority(Authority.parse(scopes.get(0)));
         Authority auth = Authority.parseAll(scopes);
         securityUser.setAuthority(auth);
         securityUser.setFirstName(claims.get(FIRST_NAME, String.class));
@@ -155,8 +152,6 @@ public class JwtTokenFactory {
     }
 
     public SecurityUser parseRefreshToken(RawAccessJwtToken rawAccessToken) {
-//        Jws<Claims> jwsClaims = rawAccessToken.parseClaims(settings.getTokenSigningKey());
-//        Claims claims = jwsClaims.getBody();
         Claims claims = rawAccessToken.parseClaims();
         String subject = claims.getSubject();
         List<String> scopes = claims.get(SCOPES, List.class);

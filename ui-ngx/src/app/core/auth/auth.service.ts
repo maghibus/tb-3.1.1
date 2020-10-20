@@ -77,7 +77,6 @@ export class AuthService {
   }
 
   private static isTokenValid(prefix) {
-    debugger;
     const clientExpiration = AuthService._storeGet(prefix);
     return clientExpiration && Number(clientExpiration) > (new Date().valueOf() + 2000);
   }
@@ -548,7 +547,6 @@ export class AuthService {
   }
 
   private updateAndValidateToken(token, prefix, notify) {
-    // debugger;
     let valid = false;
     const tokenData = this.jwtHelper.decodeToken(token);
     const issuedAt = tokenData.iat;
