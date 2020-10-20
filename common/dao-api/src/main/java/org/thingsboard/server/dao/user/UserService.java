@@ -35,6 +35,8 @@ public interface UserService {
 
 	User saveUser(User user);
 
+	User editUser(User user, int n);
+
 	UserCredentials findUserCredentialsByUserId(TenantId tenantId, UserId userId);
 	
 	UserCredentials findUserCredentialsByActivateToken(TenantId tenantId, String activateToken);
@@ -44,7 +46,9 @@ public interface UserService {
 	UserCredentials saveUserCredentials(TenantId tenantId, UserCredentials userCredentials);
 	
 	UserCredentials activateUserCredentials(TenantId tenantId, String activateToken, String password);
-	
+
+	UserCredentials activateUserCredentialsById(TenantId tenantId, UserId userId);
+
 	UserCredentials requestPasswordReset(TenantId tenantId, String email);
 
     UserCredentials requestExpiredPasswordReset(TenantId tenantId, UserCredentialsId userCredentialsId);
