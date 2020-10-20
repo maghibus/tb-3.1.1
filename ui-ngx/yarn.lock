@@ -1119,6 +1119,11 @@
     "@types/flowjs" "2.13.3"
     tslib "^1.9.0"
 
+"@giotto-jfrog/giotto-platform-header@^1.0.8":
+  version "1.0.8"
+  resolved "http://jfrog.almaviva.it:8081/artifactory/api/npm/giotto-npm/@giotto-jfrog/giotto-platform-header/-/@giotto-jfrog/giotto-platform-header-1.0.8.tgz#1e89b0c8925a5b0d99f7c9c57edd8942d86a6885"
+  integrity sha1-HomwyJJaWw2Z98nFft2JQthqaIU=
+
 "@istanbuljs/schema@^0.1.2":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.2.tgz#26520bf09abe4a5644cd5414e37125a8954241dd"

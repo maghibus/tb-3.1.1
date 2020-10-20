@@ -31,6 +31,11 @@ import { AuthState } from '@core/auth/auth.models';
 import { WINDOW } from '@core/services/window.service';
 import { instanceOfSearchableComponent, ISearchableComponent } from '@home/models/searchable-component.models';
 
+import Header from "@giotto-jfrog/giotto-platform-header/dist/index";
+import platformHeaderConfig from './platform-header.config';
+import { AuthService } from '@app/core/auth/auth.service';
+import { Router } from '@angular/router';
+
 const screenfull = _screenfull as _screenfull.Screenfull;
 
 @Component({
@@ -51,6 +56,7 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
   sidenavOpened = true;
 
   logo = require('../../../assets/logo_title_white.svg').default;
+  platformHeaderLogo = require('../../../assets/platform-header-logo.png').default;
 
   @ViewChild('sidenav')
   sidenav: MatSidenav;
@@ -69,7 +75,9 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
 
   constructor(protected store: Store<AppState>,
               @Inject(WINDOW) private window: Window,
-              public breakpointObserver: BreakpointObserver) {
+              public breakpointObserver: BreakpointObserver,
+              private authService: AuthService,
+              private router: Router) {
     super(store);
   }
 
@@ -97,6 +105,21 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
           }
         }
       );
+
+      const logoutTb = () => {
+        this.authService.logout();
+      }
+      let platformHeader = document.getElementById('platform-header');
+      let instance = new Header(
+        platformHeader, 
+        { 
+          appTitle: platformHeaderConfig.appTitle,
+          logoDir: this.platformHeaderLogo,
+          appContext: "iot",
+          logout: logoutTb,
+          appUrlsConfig: platformHeaderConfig.appUrlsConfig
+        });
+      instance.init();
   }
 
   ngAfterViewInit() {

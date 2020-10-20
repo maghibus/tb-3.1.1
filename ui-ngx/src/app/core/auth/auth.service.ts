@@ -178,9 +178,13 @@ export class AuthService {
     this.http.post('/api/auth/logout', null, defaultHttpOptions(true, true))
       .subscribe(() => {
           this.clearJwtToken();
+          localStorage.clear();
+          location.pathname = "/oneadmin";
         },
         () => {
           this.clearJwtToken();
+          localStorage.clear();
+          location.pathname = "/oneadmin";
         }
       );
   }

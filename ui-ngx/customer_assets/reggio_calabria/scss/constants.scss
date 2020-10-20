@@ -40,6 +40,7 @@
  $tb-dark-primary-color: #90bcea;
 
  $header-default: #eee !default;
+ $header-title: $tb-primary-color !default; 
  $primary-default-gradient: linear-gradient(to right,  $tb-primary-color, $tb-primary-color) !default;
  $secondary-default-gradient: linear-gradient(to bottom, $tb-primary-color, $tb-primary-color) !default;
  $background-toolbar: $primary-default-gradient; //change color header

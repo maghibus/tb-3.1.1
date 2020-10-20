@@ -132,3 +132,45 @@ $tb-dark-theme: get-tb-dark-theme(
 .tb-dark {
   @include angular-material-theme($tb-dark-theme);
 }
+
+// PLATFORM HEADER PLUGIN CUSTOMIZATION
+.gph {
+  background-color: $header-default !important;
+  position: fixed;
+}
+
+.gph__title {
+  color: $header-title !important;
+}
+
+.gph__item__tab .active {
+  color: #fff;
+  background: $tb-primary-color !important;
+  cursor: default;
+}
+
+.gph__item__round-icon .active {
+  background-color: $tb-primary-color !important;
+}
+
+.gph__item__round-icon__content {
+  height: 30px !important;
+}
+
+.gph__app-menu {
+  color: $tb-primary-color !important;
+}
+
+.gph__app-menu__content__item {
+  margin: 5px;
+  padding-top: 5px;
+  border-radius: 5px;
+  fill: $tb-primary-color !important;
+  cursor: pointer;
+}
+
+.gph__profile-card .edit-profile-button {
+  background-color: $tb-primary-color !important;
+}
+
+
