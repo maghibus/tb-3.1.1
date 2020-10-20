@@ -93,7 +93,7 @@ public class SwaggerConfiguration {
     }
 
     private ApiKey jwtTokenKey() {
-        return new ApiKey("X-Authorization", "JWT token", "header");
+        return new ApiKey("Authorization", "JWT token", "header");
     }
 
     private SecurityContext securityContext() {
@@ -120,7 +120,7 @@ public class SwaggerConfiguration {
         authorizationScopes[1] = new AuthorizationScope(Authority.TENANT_ADMIN.name(), "Tenant administrator");
         authorizationScopes[2] = new AuthorizationScope(Authority.CUSTOMER_USER.name(), "Customer");
         return newArrayList(
-                new SecurityReference("X-Authorization", authorizationScopes));
+                new SecurityReference("Authorization", authorizationScopes));
     }
 
     private ApiInfo apiInfo() {

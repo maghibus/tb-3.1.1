@@ -61,7 +61,7 @@ import java.util.List;
 @Order(SecurityProperties.BASIC_AUTH_ORDER)
 public class ThingsboardSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    public static final String JWT_TOKEN_HEADER_PARAM = "X-Authorization";
+    public static final String JWT_TOKEN_HEADER_PARAM = "Authorization";
     public static final String JWT_TOKEN_QUERY_PARAM = "token";
 
     public static final String WEBJARS_ENTRY_POINT = "/webjars/**";
