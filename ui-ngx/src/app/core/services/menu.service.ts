@@ -91,33 +91,50 @@ export class MenuService {
         path: '/widgets-bundles',
         icon: 'now_widgets'
       },
+      { name: 'admin.general',
+        type: 'link',
+        path: '/settings/general',
+        icon: 'settings_applications'
+      },
       {
-        name: 'admin.system-settings',
-        type: 'toggle',
-        path: '/settings',
-        height: '120px',
-        icon: 'settings',
-        pages: [
-          {
-            name: 'admin.general',
-            type: 'link',
-            path: '/settings/general',
-            icon: 'settings_applications'
-          },
-          {
-            name: 'admin.outgoing-mail',
-            type: 'link',
-            path: '/settings/outgoing-mail',
-            icon: 'mail'
-          },
-          {
-            name: 'admin.security-settings',
-            type: 'link',
-            path: '/settings/security-settings',
-            icon: 'security'
-          }
-        ]
+        name: 'admin.outgoing-mail',
+        type: 'link',
+        path: '/settings/outgoing-mail',
+        icon: 'mail'
+      },
+      {
+        name: 'admin.security-settings',
+        type: 'link',
+        path: '/settings/security-settings',
+        icon: 'security'
       }
+      // {
+      //   name: 'admin.system-settings',
+      //   type: 'toggle',
+      //   path: '/settings',
+      //   height: '120px',
+      //   icon: 'settings',
+      //   pages: [
+      //     {
+      //       name: 'admin.general',
+      //       type: 'link',
+      //       path: '/settings/general',
+      //       icon: 'settings_applications'
+      //     },
+      //     {
+      //       name: 'admin.outgoing-mail',
+      //       type: 'link',
+      //       path: '/settings/outgoing-mail',
+      //       icon: 'mail'
+      //     },
+      //     {
+      //       name: 'admin.security-settings',
+      //       type: 'link',
+      //       path: '/settings/security-settings',
+      //       icon: 'security'
+      //     }
+      //   ]
+      // }
     );
     return sections;
   }
@@ -146,18 +163,28 @@ export class MenuService {
         ]
       },
       {
-        name: 'admin.system-settings',
+        name: 'admin.system-general',
         places: [
           {
             name: 'admin.general',
             icon: 'settings_applications',
             path: '/settings/general'
           },
+        ]
+      },
+      {
+        name: 'admin.system-settings',
+        places: [
           {
             name: 'admin.outgoing-mail',
             icon: 'mail',
             path: '/settings/outgoing-mail'
           },
+        ]
+      },
+      {
+        name: 'admin.system-security',
+        places: [
           {
             name: 'admin.security-settings',
             icon: 'security',
@@ -284,13 +311,18 @@ export class MenuService {
         ]
       },
       {
-        name: 'dashboard.management',
+        name: 'dashboard.widgets',
         places: [
           {
             name: 'widget.widget-library',
             icon: 'now_widgets',
             path: '/widgets-bundles'
-          },
+          }
+        ]
+      },
+      {
+        name: 'dashboard.management',
+        places: [
           {
             name: 'dashboard.dashboards',
             icon: 'dashboard',

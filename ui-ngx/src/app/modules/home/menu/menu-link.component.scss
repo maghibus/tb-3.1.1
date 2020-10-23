@@ -16,3 +16,35 @@
 :host {
 
 }
+
+.sidebar-item{
+    box-sizing: border-box;
+}
+
+.sidebar-icons {   
+    transform: scale(2);   
+    display: flex;
+    height: 80px;
+    width: 100%;
+    max-height: 80px;
+    padding: 0vh 1.5vh 0vh 1.5vh;
+    margin: 0;
+    overflow: hidden;
+    line-height: 80px;
+    color: inherit;
+    text-align: left;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    border-radius: 0;
+}
+
+.sidebar-text{
+    white-space: break-spaces;
+    font-size: small;
+    max-width: 85px;
+    text-align: center;
+    display: block;
+    word-break: break-word !important;
+}

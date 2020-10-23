@@ -45,7 +45,9 @@ $header-title: $tb-secondary-color !default;
 $primary-default-gradient: linear-gradient(to right, $tb-primary-color, $header-default) !default;
 $secondary-default-gradient: linear-gradient(to bottom, $tb-primary-color, $header-default) !default;
 $background-toolbar: $primary-default-gradient; //change color header
-
+$background-sidemenu: $secondary-default-gradient; //change color sidemenu
+$gray: #eeeeee !default;
+$white: #fff !default;
 
 $tb-mat-indigo: (
   50: #e3ede9,

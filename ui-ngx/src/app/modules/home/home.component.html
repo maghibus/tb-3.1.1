@@ -33,7 +33,7 @@
     </mat-toolbar>
   </mat-sidenav>
   <mat-sidenav-content>
-    <div fxLayout="column" role="main" style="height: 100%;">
+    <div fxLayout="column" role="main" style="height: 95%;">
       <mat-toolbar fxLayout="row" color="primary" class="mat-elevation-z1 tb-primary-toolbar">
         <button [fxShow]="!forceFullscreen" mat-icon-button id="main"
                 [ngClass]="{'tb-invisible': displaySearchMode()}"
@@ -69,7 +69,6 @@
                 mat-icon-button fxHide.lt-md (click)="toggleFullscreen()">
           <mat-icon class="material-icons">{{ isFullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
         </button>
-        <tb-user-menu [displayUserInfo]="!displaySearchMode()"></tb-user-menu>
       </mat-toolbar>
       <mat-progress-bar color="warn" style="z-index: 10; margin-bottom: -4px; width: 100%;" mode="indeterminate"
                         *ngIf="isLoading$ | async">
@@ -77,6 +76,9 @@
       <div fxFlex fxLayout="column" tb-toast class="tb-main-content">
         <router-outlet (activate)="activeComponentChanged($event)"></router-outlet>
       </div>
+    </div>
+    <div fxLayout="row" style="height: 4%" class="footer">
+      <tb-footer></tb-footer>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

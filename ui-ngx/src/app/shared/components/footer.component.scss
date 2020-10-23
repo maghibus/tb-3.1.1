@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 .footer-text {
-  position: absolute;
+  position: fixed;
   width: 100%;
-  bottom: 20px;
-  margin: 0;
-  left: 0;
-  line-height: 20px;
+  bottom: 0vh;
+  left: 0vh;
+  height: 80px;
   text-align: center;
+  background: transparent;
+  overflow: hidden;
+  display: block;
   small {
-    font-size: 14px;
+    font-size: 4px;
     color: #98a6ad;
+    text-align: center;
+    display: flex;
+    margin-left: 50%;
+    padding-top: 5px;
   }
+}
+
+.footer-img {
+  margin-left: 2vh;
+  height: 70px;
 }

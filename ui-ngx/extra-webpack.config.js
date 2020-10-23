@@ -54,7 +54,7 @@ module.exports = (env, argv) => {
             { source: `./customer_assets/${targetCustomer}/scss/*.scss`, destination: `./src/scss` },
             { source: `./customer_assets/${targetCustomer}/images/*.svg`, destination: `./src/assets` },
             { source: `./customer_assets/${targetCustomer}/images/*.png`, destination: `./src/assets` },
-            { source: `./customer_assets/${targetCustomer}/platform-header.config.ts`, destination: `./src/app/modules/home` },
+            { source: `./customer_assets/${targetCustomer}/platform-header.config.ts`, destination: `./src/app/modules/home` }
           ],
         }
       })
