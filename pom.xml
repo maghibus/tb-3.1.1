@@ -116,6 +116,7 @@
         <module>transport</module>
         <module>ui-ngx</module>
         <module>tools</module>
+        <module>integration</module>
         <module>application</module>
         <module>msa</module>
         <module>rest-client</module>
@@ -845,6 +846,11 @@
             <dependency>
                 <groupId>org.thingsboard.common</groupId>
                 <artifactId>stats</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.thingsboard</groupId>
+                <artifactId>integration</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

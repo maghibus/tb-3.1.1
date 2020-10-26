@@ -39,6 +39,16 @@ public class Device extends SearchTextBasedWithAdditionalInfo<DeviceId> implemen
         super(id);
     }
 
+    public Device(TenantId tenantId, CustomerId customerId, String name, String type, String label) {
+        this.tenantId = tenantId;
+        if (customerId != null) {
+            this.customerId = customerId;
+        }
+        this.name = name;
+        this.type = type;
+        this.label = label;
+    }
+
     public Device(Device device) {
         super(device);
         this.tenantId = device.getTenantId();

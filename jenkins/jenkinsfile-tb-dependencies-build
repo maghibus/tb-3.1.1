@@ -49,6 +49,17 @@ pipeline {
                 }
             }
         }
+        stage('build integration') {
+            steps {
+                dir('integration/') {
+                    withMaven(
+                        maven: 'maven_3.5.4',
+                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        sh 'mvn clean install -DskipTests'
+                    }
+                }
+            }
+        }
         stage('build tools') {
             steps {
                 dir('tools/') {
