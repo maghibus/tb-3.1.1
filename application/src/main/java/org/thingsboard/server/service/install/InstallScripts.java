@@ -121,6 +121,7 @@ public class InstallScripts {
                             ruleChainService.saveRuleChainMetaData(new TenantId(EntityId.NULL_UUID), ruleChainMetaData);
                         } catch (Exception e) {
                             log.error("Unable to load rule chain from json: [{}]", path.toString());
+                            log.error("Exception: \n", e);
                             throw new RuntimeException("Unable to load rule chain from json", e);
                         }
                     }
