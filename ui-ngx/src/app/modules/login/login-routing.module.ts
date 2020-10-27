@@ -24,17 +24,17 @@ import { ResetPasswordComponent } from '@modules/login/pages/login/reset-passwor
 import { CreatePasswordComponent } from '@modules/login/pages/login/create-password.component';
 
 const routes: Routes = [
+  // {
+  //   path: 'login',
+  //   component: LoginComponent,
+  //   data: {
+  //     title: 'login.login',
+  //     module: 'public'
+  //   },
+  //   canActivate: [AuthGuard]
+  // },
   {
-    path: 'login',
-    component: LoginComponent,
-    data: {
-      title: 'login.login',
-      module: 'public'
-    },
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'login/resetPasswordRequest',
+    path: 'resetPasswordRequest',
     component: ResetPasswordRequestComponent,
     data: {
       title: 'login.request-password-reset',
@@ -43,7 +43,7 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'login/resetPassword',
+    path: 'resetPassword',
     component: ResetPasswordComponent,
     data: {
       title: 'login.reset-password',
@@ -52,7 +52,7 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'login/resetExpiredPassword',
+    path: 'resetExpiredPassword',
     component: ResetPasswordComponent,
     data: {
       title: 'login.reset-password',
@@ -62,7 +62,7 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'login/createPassword',
+    path: 'createPassword',
     component: CreatePasswordComponent,
     data: {
       title: 'login.create-password',
