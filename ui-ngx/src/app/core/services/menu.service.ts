@@ -245,7 +245,7 @@ export class MenuService {
         name: 'dashboard.dashboards',
         type: 'link',
         path: '/dashboards',
-        icon: 'dashboards'
+        icon: 'dashboard'
       },
       {
         name: 'audit-log.audit-logs',

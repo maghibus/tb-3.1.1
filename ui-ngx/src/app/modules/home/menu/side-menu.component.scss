@@ -55,7 +55,8 @@
       align-items: center;
       mat-icon {
         margin-right: 8px;
-        margin-left: 0;
+        margin-left: 3px;
+        justify-content: center;
       }
       span {
         overflow: hidden;
