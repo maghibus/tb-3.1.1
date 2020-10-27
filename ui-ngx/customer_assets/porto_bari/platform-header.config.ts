@@ -14,19 +14,11 @@
 /// limitations under the License.
 ///
 
-import { Component } from '@angular/core';
-
-@Component({
-  selector: 'tb-logo',
-  templateUrl: './logo.component.html',
-  styleUrls: ['./logo.component.scss']
-})
-export class LogoComponent {
-
-  logo = require('../../../assets/logo_component.png').default;
-
-  gotoThingsboard(): void {
-    window.open('https://thingsboard.io', '_blank');
-  }
-
+export default {
+    appTitle: ' ',
+    appUrlsConfig: {
+      iot: `https://${window.location.hostname}/home`,
+      admin: `https://${window.location.hostname}/oneadmin`,
+      udm: `https://${window.location.hostname}/udm-fe`,
+    }
 }

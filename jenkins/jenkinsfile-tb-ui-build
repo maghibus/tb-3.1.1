@@ -19,7 +19,7 @@ pipeline {
 						)
     }
     parameters {
-        choice(name: 'TARGET_CUSTOMER', choices: ['default', 'bari', 'messina', 'reggio_calabria', 'regione_toscana'], description: 'Target customer')
+        choice(name: 'TARGET_CUSTOMER', choices: ['default', 'bari', 'messina', 'porto_bari', 'reggio_calabria', 'regione_toscana'], description: 'Target customer')
     }
     stages {
         stage('Initialize') {

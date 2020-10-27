@@ -50,9 +50,8 @@ module.exports = (env, argv) => {
         onStart: {
           copy: [
             { source: `./customer_assets/${targetCustomer}/themes/*.scss`, destination: `./src` },
-            { source: `./customer_assets/${targetCustomer}/images/thingsboard.ico`, destination: `./src` },
+            { source: `./customer_assets/${targetCustomer}/images/favicon.ico`, destination: `./src` },
             { source: `./customer_assets/${targetCustomer}/scss/*.scss`, destination: `./src/scss` },
-            { source: `./customer_assets/${targetCustomer}/images/*.svg`, destination: `./src/assets` },
             { source: `./customer_assets/${targetCustomer}/images/*.png`, destination: `./src/assets` },
             { source: `./customer_assets/${targetCustomer}/platform-header.config.ts`, destination: `./src/app/modules/home` }
           ],

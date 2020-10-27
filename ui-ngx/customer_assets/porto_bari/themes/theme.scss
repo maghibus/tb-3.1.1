@@ -1,0 +1,236 @@
+/**
+ * Copyright © 2016-2020 The Thingsboard Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@import '~@angular/material/theming';
+@import '~@mat-datetimepicker/core/datetimepicker/datetimepicker-theme.scss';
+@import './scss/constants';
+
+@include mat-core();
+
+$tb-primary: mat-palette($tb-mat-indigo);
+$tb-accent: mat-palette($mat-deep-orange);
+
+$background: (background: map_get($mat-grey, 200));
+
+$tb-theme-background: map_merge($mat-light-theme-background, $background);
+
+$tb-mat-theme: mat-light-theme(
+    $tb-primary,
+    $tb-accent
+);
+
+$tb-theme: map_merge($tb-mat-theme, (background: $tb-theme-background));
+
+$primary: mat-color($tb-primary);
+$accent: mat-color($tb-accent);
+
+
+$tb-dark-primary: mat-palette($tb-dark-mat-indigo);
+
+$tb-dark-theme-background: (
+  status-bar: black,
+  app-bar:    map_get($tb-dark-mat-indigo, 900),
+  background: map_get($tb-dark-mat-indigo, 800),
+  hover:      rgba(white, 0.04),
+  card:       map_get($tb-dark-mat-indigo, 800),
+  dialog:     map_get($tb-dark-mat-indigo, 800),
+  disabled-button: rgba(white, 0.12),
+  raised-button: map-get($tb-dark-mat-indigo, 50),
+  focused-button: $light-focused,
+  selected-button: map_get($tb-dark-mat-indigo, 900),
+  selected-disabled-button: map_get($tb-dark-mat-indigo, 800),
+  disabled-button-toggle: black,
+  unselected-chip: map_get($tb-dark-mat-indigo, 700),
+  disabled-list-option: black,
+  tooltip: map_get($mat-grey, 700),
+);
+
+mat-sidenav-content mat-toolbar {
+  background: $background-toolbar !important;
+}
+
+.mat-toolbar.tb-side-menu-toolbar{
+  background: $background-sidemenu !important; 
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.tb-side-menu-toolbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.tb-side-menu-toolbar {
+-ms-overflow-style: none;  /* IE and Edge */
+scrollbar-width: none;  /* Firefox */
+}
+
+mat-card {
+  background-color: none !important;
+  border-radius: 10px !important;
+  color: $primary !important;
+  cursor: pointer;
+  a{
+    background-color: transparent!important;
+    color: $primary !important;
+    box-shadow: none !important;
+  }
+}
+
+mat-card-content{
+  background-color: transparent !important;
+}
+mat-card-content mat-grid-list{
+  background-color: transparent !important;
+}
+mat-card-content mat-grid-list div{
+  background-color: transparent !important;
+}
+
+mat-card-content mat-grid-list div mat-grid-tile{
+  background-color: transparent !important;
+}
+mat-card-content mat-grid-list div mat-grid-tile figure{
+  background-color: transparent !important;
+}
+
+.tb-home-links .tb-card-button{
+  max-width: none !important;
+}
+
+mat-card-content:hover {
+  background-color: $gray !important;
+  border-radius: 10px !important;
+  color: $primary !important;
+  box-shadow: 2px 2px 5px 4px #bbb !important;
+  padding: 16px !important;
+}
+
+.mat-table-toolbar {
+  background: white !important;
+}
+
+@function get-tb-dark-theme($primary, $accent, $warn: mat-palette($mat-red)) {
+  @return (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+    is-dark: true,
+    foreground: $mat-dark-theme-foreground,
+    background: $tb-dark-theme-background,
+  );
+}
+
+$tb-dark-theme: get-tb-dark-theme(
+    $tb-dark-primary,
+    $tb-accent
+);
+
+@mixin mat-fab-toolbar-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  mat-fab-toolbar {
+    .mat-fab-toolbar-background {
+      background: mat-color($background, app-bar);
+      color: mat-color($foreground, text);
+    }
+    &.mat-primary {
+      .mat-fab-toolbar-background {
+        @include _mat-toolbar-color($primary);
+      }
+    }
+    &.mat-accent {
+      .mat-fab-toolbar-background {
+        @include _mat-toolbar-color($accent);
+      }
+    }
+    &.mat-warn {
+      .mat-fab-toolbar-background {
+        @include _mat-toolbar-color($warn);
+      }
+    }
+  }
+}
+
+@mixin tb-components-theme($theme) {
+  $primary: map-get($theme, primary);
+
+  mat-toolbar{
+    &.mat-hue-3 {
+      background-color: mat-color($primary, 'A100');
+    }
+  }
+
+  @include mat-fab-toolbar-theme($tb-theme);
+}
+
+.tb-default {
+  @include angular-material-theme($tb-theme);
+  @include mat-datetimepicker-theme($tb-theme);
+  @include tb-components-theme($tb-theme);
+}
+
+.tb-dark {
+  @include angular-material-theme($tb-dark-theme);
+}
+
+mat-drawer-content {
+  height: 95% !important;
+}
+
+// PLATFORM HEADER PLUGIN CUSTOMIZATION
+.gph {
+  background-color: $header-default !important;
+  position: fixed;
+}
+
+.gph__title {
+  color: $header-title !important;
+}
+
+.gph__item__tab .active {
+  color: #fff;
+  background: $tb-primary-color !important;
+  cursor: default;
+}
+
+.gph__item__round-icon .active {
+  background-color: $header-green !important;
+}
+
+.gph__item__round-icon__content {
+  height: 30px !important;
+}
+
+.gph__app-menu {
+  color: $header-green !important;
+}
+
+.gph__app-menu__content__item {
+  margin: 5px;
+  padding-top: 5px;
+  border-radius: 5px;
+  fill: $header-green !important;
+  cursor: pointer;
+}
+
+.gph__profile-card .edit-profile-button {
+  background-color: $header-green !important;
+}
+
+

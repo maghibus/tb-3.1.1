@@ -24,5 +24,5 @@ import { Component } from '@angular/core';
 export class FooterComponent {
 
   year = new Date().getFullYear();
-  footerImage = require('../../../assets/pon_metro_logo.svg').default;
+  footerImage = require('../../../assets/pon_metro_logo.png').default;
 }
