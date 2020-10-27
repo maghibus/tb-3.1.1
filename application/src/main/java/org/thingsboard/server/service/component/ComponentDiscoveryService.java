@@ -15,6 +15,7 @@
  */
 package org.thingsboard.server.service.component;
 
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.thingsboard.server.common.data.plugin.ComponentDescriptor;
 import org.thingsboard.server.common.data.plugin.ComponentType;
 
@@ -26,6 +27,8 @@ import java.util.Set;
  * @author Andrew Shvayka
  */
 public interface ComponentDiscoveryService {
+
+    Set<BeanDefinition> excludeComponents(Set<BeanDefinition> components);
 
     void discoverComponents();
 

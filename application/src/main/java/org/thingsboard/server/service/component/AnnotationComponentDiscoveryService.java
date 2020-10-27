@@ -68,6 +68,9 @@ public class AnnotationComponentDiscoveryService implements ComponentDiscoverySe
 
     private ObjectMapper mapper = new ObjectMapper();
 
+    @Value("${components.exclude}")
+    private String[] exclude;
+
     private boolean isInstall() {
         return environment.acceptsProfiles("install");
     }
@@ -209,9 +212,17 @@ public class AnnotationComponentDiscoveryService implements ComponentDiscoverySe
         scanner.addIncludeFilter(new AnnotationTypeFilter(componentType));
         Set<BeanDefinition> defs = new HashSet<>();
         for (String scanPackage : scanPackages) {
-            defs.addAll(scanner.findCandidateComponents(scanPackage));
+            Set<BeanDefinition> foundCandidateComponents = scanner.findCandidateComponents(scanPackage);
+            defs.addAll(excludeComponents(foundCandidateComponents));
         }
         return defs;
+    }
+
+    @Override
+    public Set<BeanDefinition> excludeComponents(Set<BeanDefinition> components) {
+        List<String> excludedComponentList = Arrays.asList(exclude);
+        excludedComponentList.forEach(excludeComponent -> components.removeIf(comp -> comp.getBeanClassName().equals(excludeComponent)));
+        return components;
     }
 
     @Override
