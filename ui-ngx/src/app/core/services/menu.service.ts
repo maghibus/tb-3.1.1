@@ -79,12 +79,12 @@ export class MenuService {
         path: '/home',
         icon: 'home'
       },
-      {
-        name: 'tenant.tenants',
-        type: 'link',
-        path: '/tenants',
-        icon: 'supervisor_account'
-      },
+      // {
+      //   name: 'tenant.tenants',
+      //   type: 'link',
+      //   path: '/tenants',
+      //   icon: 'supervisor_account'
+      // },
       {
         name: 'widget.widget-library',
         type: 'link',
@@ -142,16 +142,16 @@ export class MenuService {
   private buildSysAdminHome(authUser: any): Array<HomeSection> {
     const homeSections: Array<HomeSection> = [];
     homeSections.push(
-      {
-        name: 'tenant.management',
-        places: [
-          {
-            name: 'tenant.tenants',
-            icon: 'supervisor_account',
-            path: '/tenants'
-          }
-        ]
-      },
+      // {
+      //   name: 'tenant.management',
+      //   places: [
+      //     {
+      //       name: 'tenant.tenants',
+      //       icon: 'supervisor_account',
+      //       path: '/tenants'
+      //     }
+      //   ]
+      // },
       {
         name: 'widget.management',
         places: [
