@@ -367,7 +367,7 @@ export class DashboardComponent extends PageComponent implements IDashboardCompo
       this.callbacks.onWidgetClicked($event, widget.widget);
     }
   }
-
+  
   editWidget($event: Event, widget: DashboardWidget) {
     if ($event) {
       $event.stopPropagation();
@@ -377,6 +377,14 @@ export class DashboardComponent extends PageComponent implements IDashboardCompo
     }
   }
 
+  exportDataWidget($event: Event, widget: DashboardWidget) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    console.log("Export Data from widget!!");
+    debugger;
+  }
+  
   exportWidget($event: Event, widget: DashboardWidget) {
     if ($event) {
       $event.stopPropagation();

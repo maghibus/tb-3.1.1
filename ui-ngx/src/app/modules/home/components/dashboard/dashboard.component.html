@@ -121,6 +121,13 @@
                 <mat-icon>{{ action.icon }}</mat-icon>
               </button>
               <button mat-button mat-icon-button
+                      [fxShow]="!isEdit"
+                      (click)="exportDataWidget($event, widget)"
+                      matTooltip="{{ 'action.export-data' | translate}}"
+                      matTooltipPosition="above">
+                <mat-icon>cloud_download</mat-icon>
+              </button>
+              <button mat-button mat-icon-button
                       [fxShow]="!isEdit && widget.enableFullscreen"
                       (click)="$event.stopPropagation(); widget.isFullscreen = !widget.isFullscreen"
                       matTooltip="{{(widget.isFullscreen ? 'fullscreen.exit' : 'fullscreen.expand') | translate}}"
