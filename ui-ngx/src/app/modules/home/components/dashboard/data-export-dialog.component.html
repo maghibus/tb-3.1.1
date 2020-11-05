@@ -1,0 +1,19 @@
+<h4 mat-dialog-title>Data Export</h4>
+<div mat-dialog-content>
+    <li *ngFor="let source of dataSource.datasources; let i = index">
+        {{source.entityName}}
+    </li>
+    <br/>
+    Delimiter<input matInput class="input-delimiter" [(ngModel)]="delimiter" placeholder="Ex. ;" />
+    <br />
+    <br />
+    <mat-checkbox 
+    [(ngModel)]="includeHeader">
+        Include Header
+    </mat-checkbox>
+</div>
+<br /><br />
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button (click)="onDownloadClick()" cdkFocusInitial>Download</button>
+</div>

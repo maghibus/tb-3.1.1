@@ -121,8 +121,8 @@
                 <mat-icon>{{ action.icon }}</mat-icon>
               </button>
               <button mat-button mat-icon-button
-                      [fxShow]="!isEdit"
-                      (click)="exportDataWidget($event, widget)"
+                      [fxShow]="!isEdit && isExportable(widget)"
+                      (click)="exportDataWidget(widget)"
                       matTooltip="{{ 'action.export-data' | translate}}"
                       matTooltipPosition="above">
                 <mat-icon>cloud_download</mat-icon>

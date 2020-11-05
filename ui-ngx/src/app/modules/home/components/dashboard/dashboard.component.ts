@@ -55,6 +55,9 @@ import { SafeStyle } from '@angular/platform-browser';
 import { distinct } from 'rxjs/operators';
 import { ResizeObserver } from '@juggle/resize-observer';
 
+import { MatDialog } from '@angular/material/dialog';
+import { DataExportDialog } from './data-export-dialog.component'
+
 @Component({
   selector: 'tb-dashboard',
   templateUrl: './dashboard.component.html',
@@ -173,7 +176,8 @@ export class DashboardComponent extends PageComponent implements IDashboardCompo
               private breakpointObserver: BreakpointObserver,
               private differs: IterableDiffers,
               private kvDiffers: KeyValueDiffers,
-              private ngZone: NgZone) {
+              private ngZone: NgZone,
+              public dialog: MatDialog) {
     super(store);
     this.authUser = getCurrentAuthUser(store);
   }
@@ -377,13 +381,31 @@ export class DashboardComponent extends PageComponent implements IDashboardCompo
     }
   }
 
-  exportDataWidget($event: Event, widget: DashboardWidget) {
-    if ($event) {
-      $event.stopPropagation();
+  exportDataWidget(widget: DashboardWidget) {
+    var sources = { 
+      data: widget.widgetContext.data,
+      datasources: widget.widgetContext.datasources,
+      typeAlias: widget.widget.typeAlias,
+      timewindow: widget.hasTimewindow
     }
-    console.log("Export Data from widget!!");
-    debugger;
+
+    const dialogRef = this.dialog.open(DataExportDialog, { data: sources });
   }
+
+  isExportable(widget: DashboardWidget) {
+    const exportableWidgetType = 
+        [
+            "timeseries_table", 
+            "openstreetmap", 
+            "entities_table", 
+            "basic_timeseries",
+            "timeseries_bars_flot"
+        ];
+    if(exportableWidgetType.includes(widget.widget.typeAlias)) {
+        return true;
+    }
+    return false;
+}
   
   exportWidget($event: Event, widget: DashboardWidget) {
     if ($event) {
