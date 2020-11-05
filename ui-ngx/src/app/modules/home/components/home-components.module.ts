@@ -33,6 +33,7 @@ import { AttributeTableComponent } from '@home/components/attribute/attribute-ta
 import { AddAttributeDialogComponent } from '@home/components/attribute/add-attribute-dialog.component';
 import { EditAttributeValuePanelComponent } from '@home/components/attribute/edit-attribute-value-panel.component';
 import { DashboardComponent } from '@home/components/dashboard/dashboard.component';
+import { DataExportDialog } from '@home/components/dashboard/data-export-dialog.component';
 import { WidgetComponent } from '@home/components/widget/widget.component';
 import { WidgetComponentService } from '@home/components/widget/widget-component.service';
 import { LegendComponent } from '@home/components/widget/legend.component';
@@ -111,6 +112,7 @@ import { FilterPredicateValueComponent } from './filter/filter-predicate-value.c
       EntityAliasesDialogComponent,
       EntityAliasDialogComponent,
       DashboardComponent,
+      DataExportDialog,
       WidgetComponent,
       LegendComponent,
       WidgetConfigComponent,
@@ -173,6 +175,7 @@ import { FilterPredicateValueComponent } from './filter/filter-predicate-value.c
     EntityAliasesDialogComponent,
     EntityAliasDialogComponent,
     DashboardComponent,
+    DataExportDialog,
     WidgetComponent,
     LegendComponent,
     WidgetConfigComponent,
