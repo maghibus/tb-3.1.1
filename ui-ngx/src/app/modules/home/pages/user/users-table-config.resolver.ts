@@ -98,6 +98,9 @@ export class UsersTableConfigResolver implements Resolve<EntityTableConfig<User>
     this.config.deleteEntity = id => this.userService.deleteUser(id.id);
     this.config.onEntityAction = action => this.onUserAction(action);
     this.config.addEntity = () => this.addUser();
+
+    this.config.addEnabled = false;
+    this.config.entitiesDeleteEnabled = false;
   }
 
   resolve(route: ActivatedRouteSnapshot): Observable<EntityTableConfig<User>> {

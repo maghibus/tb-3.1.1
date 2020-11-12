@@ -18,6 +18,7 @@ const webpack = require("webpack");
 const dirTree = require("directory-tree");
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 const targetCustomer = process.env.TARGET_CUSTOMER || "default";
+console.log("Target customer: ", targetCustomer);
 
 var langs = [];
 
@@ -26,6 +27,15 @@ dirTree("./src/assets/locale/", {extensions: /\.json$/}, (item) => {
   /* 'locale.constant-LANG_CODE[_REGION_CODE].json', e.g. locale.constant-es.json or locale.constant-zh_CN.json*/
   langs.push(item.name.slice(item.name.lastIndexOf("-") + 1, -5));
 });
+
+const ncp = require('ncp').ncp;
+ncp.limit = 16,
+ncp(`./customer_assets/${targetCustomer}/platform-header.config.ts`,
+  './src/app/modules/home/platform-header.config.ts',
+  function (err) {
+    if (err) throw err;
+    console.log('Files copied to destination');
+  });
 
 module.exports = (env, argv) => {
   const customPlugins = {
@@ -52,8 +62,7 @@ module.exports = (env, argv) => {
             { source: `./customer_assets/${targetCustomer}/themes/*.scss`, destination: `./src` },
             { source: `./customer_assets/${targetCustomer}/images/favicon.ico`, destination: `./src` },
             { source: `./customer_assets/${targetCustomer}/scss/*.scss`, destination: `./src/scss` },
-            { source: `./customer_assets/${targetCustomer}/images/*.png`, destination: `./src/assets` },
-            { source: `./customer_assets/${targetCustomer}/platform-header.config.ts`, destination: `./src/app/modules/home` }
+            { source: `./customer_assets/${targetCustomer}/images/*.png`, destination: `./src/assets` }
           ],
         }
       })

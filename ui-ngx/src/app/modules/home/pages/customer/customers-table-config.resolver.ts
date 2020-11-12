@@ -58,12 +58,6 @@ export class CustomersTableConfigResolver implements Resolve<EntityTableConfig<C
 
     this.config.cellActionDescriptors.push(
       {
-        name: this.translate.instant('customer.manage-customer-users'),
-        icon: 'account_circle',
-        isEnabled: (customer) => !customer.additionalInfo || !customer.additionalInfo.isPublic,
-        onAction: ($event, entity) => this.manageCustomerUsers($event, entity)
-      },
-      {
         name: this.translate.instant('customer.manage-customer-assets'),
         nameFunction: (customer) => {
           return customer.additionalInfo && customer.additionalInfo.isPublic
@@ -111,9 +105,6 @@ export class CustomersTableConfigResolver implements Resolve<EntityTableConfig<C
     this.config.deleteEnabled = (customer) => customer && (!customer.additionalInfo || !customer.additionalInfo.isPublic);
     this.config.entitySelectionEnabled = (customer) => customer && (!customer.additionalInfo || !customer.additionalInfo.isPublic);
     this.config.detailsReadonly = (customer) => customer && customer.additionalInfo && customer.additionalInfo.isPublic;
-
-    this.config.addEnabled = false;
-    this.config.entitiesDeleteEnabled = false;
   }
 
   resolve(): EntityTableConfig<Customer> {
