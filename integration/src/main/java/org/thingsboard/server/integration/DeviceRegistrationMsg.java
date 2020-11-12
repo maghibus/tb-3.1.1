@@ -22,6 +22,7 @@ import org.thingsboard.server.common.data.id.TenantId;
 
 import java.util.UUID;
 
+@JsonIgnoreProperties
 public class DeviceRegistrationMsg {
 
     @JsonProperty(value = "tenant", required=true)
@@ -66,3 +67,4 @@ public class DeviceRegistrationMsg {
         }
     }
 }
+
