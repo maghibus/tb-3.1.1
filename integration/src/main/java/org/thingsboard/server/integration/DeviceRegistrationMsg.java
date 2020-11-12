@@ -23,7 +23,7 @@ import org.thingsboard.server.common.data.id.TenantId;
 
 import java.util.UUID;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DeviceRegistrationMsg {
 
     @JsonProperty(value = "tenant", required=true)
@@ -55,6 +55,7 @@ public class DeviceRegistrationMsg {
     @Getter
     @JsonProperty(value = "geopositionLongitude")
     String lon;
+
 
     public TenantId getTenantId() {
         return new TenantId(UUID.fromString(this.tenantId));
