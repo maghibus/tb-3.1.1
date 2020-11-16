@@ -28,15 +28,6 @@ dirTree("./src/assets/locale/", {extensions: /\.json$/}, (item) => {
   langs.push(item.name.slice(item.name.lastIndexOf("-") + 1, -5));
 });
 
-const ncp = require('ncp').ncp;
-ncp.limit = 16,
-ncp(`./customer_assets/${targetCustomer}/platform-header.config.ts`,
-  './src/app/modules/home/platform-header.config.ts',
-  function (err) {
-    if (err) throw err;
-    console.log('Files copied to destination');
-  });
-
 module.exports = (env, argv) => {
   const customPlugins = {
     plugins: [
