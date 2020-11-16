@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "node --max_old_space_size=8048 ./node_modules/@angular/cli/bin/ng serve --host 0.0.0.0 --open",
-    "prebuild": "cp ./customer_assets/$TARGET_CUSTOMER/platform-header.config.ts ./src/app/modules/home/platform-header.config.ts 2>/dev/null || :",
     "build": "ng build",
+    "prebuild:prod": "cp ./customer_assets/$TARGET_CUSTOMER/platform-header.config.ts ./src/app/modules/home/platform-header.config.ts 2>/dev/null || :",
     "build:prod": "ng build --prod --vendor-chunk",
     "test": "ng test",
     "lint": "ng lint",
