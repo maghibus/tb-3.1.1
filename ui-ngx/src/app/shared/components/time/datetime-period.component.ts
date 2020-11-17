@@ -17,6 +17,7 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FixedWindow } from '@shared/models/time/time.models';
+import { DateAdapter } from '@angular/material/core';
 
 @Component({
   selector: 'tb-datetime-period',
@@ -49,10 +50,18 @@ export class DatetimePeriodComponent implements OnInit, ControlValueAccessor {
 
   private propagateChange = null;
 
-  constructor() {
+  constructor(private dateAdapter: DateAdapter<Date>) {
+    this.dateAdapter.setLocale('it-IT');
   }
 
   ngOnInit(): void {
+  }
+
+  getLang() {
+    if (navigator.languages != undefined)
+      return navigator.languages[0];
+    else
+      return 'en-US';
   }
 
   registerOnChange(fn: any): void {

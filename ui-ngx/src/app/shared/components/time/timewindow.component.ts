@@ -270,8 +270,8 @@ export class TimewindowComponent implements OnInit, OnDestroy, ControlValueAcces
         this.innerValue.displayValue += this.translate.instant('timewindow.last-prefix') + ' ' +
           this.millisecondsToTimeStringPipe.transform(this.innerValue.history.timewindowMs);
       } else {
-        const startString = this.datePipe.transform(this.innerValue.history.fixedTimewindow.startTimeMs, 'yyyy-MM-dd HH:mm:ss');
-        const endString = this.datePipe.transform(this.innerValue.history.fixedTimewindow.endTimeMs, 'yyyy-MM-dd HH:mm:ss');
+        const startString = this.datePipe.transform(this.innerValue.history.fixedTimewindow.startTimeMs, 'dd-MM-yyyy HH:mm:ss');
+        const endString = this.datePipe.transform(this.innerValue.history.fixedTimewindow.endTimeMs, 'dd-MM-yyyy HH:mm:ss');
         this.innerValue.displayValue += this.translate.instant('timewindow.period', {startTime: startString, endTime: endString});
       }
     }
