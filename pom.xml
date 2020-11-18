@@ -729,6 +729,7 @@
                             <exclude>ui/**</exclude>
                             <exclude>src/browserslist</exclude>
                             <exclude>**/*.raw</exclude>
+                            <exclude>**/*.sh</exclude>
                         </excludes>
                         <mapping>
                             <proto>JAVADOC_STYLE</proto>
