@@ -74,7 +74,7 @@
           <button [fxShow]="!hideFullscreenButton()" mat-icon-button
                   matTooltip="{{(isFullscreen ? 'fullscreen.exit' : 'fullscreen.expand') | translate}}"
                   matTooltipPosition="below"
-                  (click)="isFullscreen = !isFullscreen">
+                  (click)="isFullscreen = !isFullscreen; enableFullscreen()">
             <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
           </button>
           <button [fxShow]="isEdit || displayExport()" mat-icon-button

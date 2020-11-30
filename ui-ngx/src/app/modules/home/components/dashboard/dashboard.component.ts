@@ -90,6 +90,9 @@ export class DashboardComponent extends PageComponent implements IDashboardCompo
 
   @Input()
   isEdit: boolean;
+  
+  @Input()
+  nextDisplayFullscreen: string;
 
   @Input()
   autofillHeight: boolean;
@@ -324,6 +327,25 @@ export class DashboardComponent extends PageComponent implements IDashboardCompo
     } else {
       return isDefined(this.autofillHeight) ? this.autofillHeight : false;
     }
+  }
+
+  enableFullScreen(event, widget) {
+    // remove header in full screen
+    const headerPlugin = document.getElementById("platform-header");
+    const tbRoot = document.getElementById("tb-root");
+
+    let display = headerPlugin.style.display;
+    if(widget.isFullscreen) {
+      if(display==="none") this.nextDisplayFullscreen = "none";
+      else this.nextDisplayFullscreen = "block";
+      display = "none";
+    } else if(this.nextDisplayFullscreen === "none") {
+      display = "none";
+    } else {
+      display = "block";
+    }
+
+    headerPlugin.style.display = display;
   }
 
   openDashboardContextMenu($event: MouseEvent) {

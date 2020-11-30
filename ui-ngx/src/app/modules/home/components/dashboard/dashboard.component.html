@@ -121,7 +121,7 @@
                 <mat-icon>{{ action.icon }}</mat-icon>
               </button>
               <button mat-button mat-icon-button
-                      [fxShow]="!isEdit && isExportable(widget)"
+                      [fxShow]="!isEdit && !widget.dashboard.authUser.isPublic && isExportable(widget)"
                       (click)="exportDataWidget(widget)"
                       matTooltip="{{ 'action.export-data' | translate}}"
                       matTooltipPosition="above">
@@ -129,7 +129,7 @@
               </button>
               <button mat-button mat-icon-button
                       [fxShow]="!isEdit && widget.enableFullscreen"
-                      (click)="$event.stopPropagation(); widget.isFullscreen = !widget.isFullscreen"
+                      (click)="$event.stopPropagation(); widget.isFullscreen = !widget.isFullscreen; enableFullScreen($event, widget)"
                       matTooltip="{{(widget.isFullscreen ? 'fullscreen.exit' : 'fullscreen.expand') | translate}}"
                       matTooltipPosition="above">
                 <mat-icon>{{ widget.isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>

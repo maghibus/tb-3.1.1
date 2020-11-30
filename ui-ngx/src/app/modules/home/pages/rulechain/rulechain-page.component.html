@@ -165,7 +165,7 @@
           <button mat-button
                   type="button"
                   mat-icon-button class="tb-fullscreen-button"
-                  (click)="isFullscreen = !isFullscreen"
+                  (click)="isFullscreen = !isFullscreen; enableFullScreen()"
                   matTooltip="{{(isFullscreen ? 'fullscreen.exit' : 'fullscreen.expand') | translate}}"
                   matTooltipPosition="above">
             <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>

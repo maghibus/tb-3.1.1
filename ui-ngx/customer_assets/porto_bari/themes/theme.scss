@@ -189,10 +189,6 @@
    @include angular-material-theme($tb-dark-theme);
  }
  
- mat-drawer-content {
-   height: 95% !important;
- }
- 
  // PLATFORM HEADER PLUGIN CUSTOMIZATION
  .gph {
    background-color: $header-default !important;

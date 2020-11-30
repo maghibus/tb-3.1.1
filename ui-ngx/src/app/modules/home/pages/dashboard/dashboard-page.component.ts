@@ -255,7 +255,6 @@ export class DashboardPageComponent extends PageComponent implements IDashboardC
   }
 
   private init(data: any) {
-
     this.reset();
 
     this.currentDashboardId = this.route.snapshot.params.dashboardId;
@@ -288,6 +287,13 @@ export class DashboardPageComponent extends PageComponent implements IDashboardC
       };
       this.window.parent.postMessage(JSON.stringify(message), '*');
     }
+
+    if(this.singlePageMode) {
+      const tbRoot = document.getElementById("tb-root");
+      tbRoot.style.marginTop = "0px";
+      tbRoot.style.display = "unset";
+    }
+    debugger;
   }
 
   private reset() {
@@ -425,6 +431,15 @@ export class DashboardPageComponent extends PageComponent implements IDashboardC
 
   public toggleLayouts() {
     this.isRightLayoutOpened = !this.isRightLayoutOpened;
+  }
+
+  public enableFullscreen() {
+    // remove header and footer
+    let display = "block";
+    if(this.isFullscreen) display = "none"; 
+
+    const headerPlugin = document.getElementById("platform-header");
+    headerPlugin.style.display = display;
   }
 
   public openRightLayout() {

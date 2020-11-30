@@ -683,6 +683,16 @@ export class RuleChainPageComponent extends PageComponent
     this.ruleChainMenuTrigger.closeMenu();
   }
 
+  enableFullScreen() {
+    // remove header in full screen
+    const headerPlugin = document.getElementById("platform-header");
+
+    let display = headerPlugin.style.display;
+    this.isFullscreen ? display = "none" : display = "block";
+
+    headerPlugin.style.display = display;
+  }
+
   private prepareContextMenu(item: FcItemInfo): RuleChainMenuContextInfo {
     if (this.objectsSelected() || (!item.node && !item.edge)) {
       return this.prepareRuleChainContextMenu();
