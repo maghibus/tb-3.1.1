@@ -293,7 +293,7 @@ export class DashboardPageComponent extends PageComponent implements IDashboardC
       tbRoot.style.marginTop = "0px";
       tbRoot.style.display = "unset";
     }
-    debugger;
+    //debugger;
   }
 
   private reset() {

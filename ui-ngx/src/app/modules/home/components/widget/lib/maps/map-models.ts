@@ -62,6 +62,8 @@ export type MapSettings = {
     useCustomProvider: boolean,
     customProviderTileUrl: string;
     mapPageSize: number;
+    showFilter?: boolean;
+    filterData?: string;
 };
 
 export enum MapProviders {
@@ -237,7 +239,9 @@ export const defaultSettings: any = {
     draggableMarker: false,
     editablePolygon: false,
     fitMapBounds: true,
-    mapPageSize: DEFAULT_MAP_PAGE_SIZE
+    mapPageSize: DEFAULT_MAP_PAGE_SIZE,
+    showFilter: false,
+    filter: {}
 };
 
 export const hereProviders = [

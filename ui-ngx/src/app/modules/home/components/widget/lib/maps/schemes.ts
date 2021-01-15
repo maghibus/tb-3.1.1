@@ -306,6 +306,15 @@ export const commonMapSettingsSchema =
                 title: 'Label function: f(data, dsData, dsIndex)',
                 type: 'string'
             },
+            showFilter: {
+                title: 'Show filter (openstreetmap)',
+                type: 'boolean',
+                default: true
+            },
+            filterData: {
+                title: 'Filter (pattern examples: \'entitykey:entity attribute string type,another entity attribute string type, ...\' )',
+                type: 'string'
+            },
             showTooltip: {
                 title: 'Show tooltip',
                 type: 'boolean',
@@ -504,7 +513,9 @@ export const commonMapSettingsSchema =
                     type: 'image'
                 }
             ]
-        }
+        },
+        'showFilter',
+        'filterData'
     ]
 };
 
@@ -1064,7 +1075,7 @@ export const tripAnimationSchema = {
         },
         required: []
     },
-    form: ['normalizationStep', 'latKeyName', 'lngKeyName', 'showLabel', 'label', 'useLabelFunction', {
+    form: ['normalizationStep', 'latKeyName', 'lngKeyName', 'showLabel', 'label', 'useLabelFunction', 'showFilter', 'filterData', {
         key: 'labelFunction',
         type: 'javascript'
     }, 'showTooltip', {

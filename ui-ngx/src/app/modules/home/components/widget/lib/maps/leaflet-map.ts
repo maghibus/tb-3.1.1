@@ -77,6 +77,8 @@ export default abstract class LeafletMap {
     updatePending = false;
     addMarkers: L.Marker[] = [];
     addPolygons: L.Polygon[] = [];
+    filteredData: string[] = [];
+    keyFilter: string;
 
     protected constructor(public ctx: WidgetContext,
                           public $container: HTMLElement,
@@ -320,6 +322,43 @@ export default abstract class LeafletMap {
           this.updatePending = false;
           this.updateData(this.drawRoutes, this.showPolygon);
         }
+        if(this.options.showFilter && this.options.filterData && this.options.filterData.length>0){
+            let filterBox = L.control.attribution({position: 'topright'});
+           
+            filterBox.onAdd =  ()=> {
+              let div = L.DomUtil.create('div', 'filterBox');
+              div.setAttribute('style', 'background:white;line-height: 35px;border-bottom: 2px solid #ccc;border-radius: 4px;'); 
+                this.keyFilter = this.options.filterData.split(':')[0];
+                let dataFilter = this.options.filterData.split(':')[1];
+
+                let label = L.DomUtil.create('span', '', div);
+                label.innerHTML = this.keyFilter+ ': ';
+                  let filterArray = dataFilter.split(',');
+                  for(let i=0; i< filterArray.length; i++){
+                    let checkbox = L.DomUtil.create('input', '', div);
+                    checkbox.setAttribute('style', 'width:20px; height:20px;cursor:pointer;');
+                    checkbox.setAttribute('type', 'checkbox');
+                    checkbox.setAttribute('value', filterArray[i]);
+                    let span = L.DomUtil.create('span', '', div);
+                    span.innerHTML = filterArray[i] + '</ br>';
+                    checkbox.addEventListener('click', (e)=>{            
+                      if((<any>e.target).checked){
+                        this.filteredData.push((<any>e.target).value);
+                      } else {
+                        if(this.filteredData.indexOf((<any>e.target).value) > -1) {
+                          const index = this.filteredData.indexOf((<any>e.target).value);
+                          if (index > -1) {
+                            this.filteredData.splice(index, 1);
+                          }
+                        }
+                      }
+                    });
+                  }
+              return div;
+          };
+          
+          filterBox.addTo(this.map);          
+        }
     }
 
     public saveMarkerLocation(datasource: FormattedData, lat?: number, lng?: number): Observable<any> {
@@ -454,6 +493,30 @@ export default abstract class LeafletMap {
         if (this.options.draggableMarker || this.options.editablePolygon) {
           this.datasources = formattedData;
         }
+        /**/ 
+        if(this.options.showFilter && this.filteredData.length>0){
+           this.datasources = formattedData.filter(el => {
+            if(!el[this.keyFilter]){
+              return false;
+            }
+            if(this.filteredData.indexOf(el[this.keyFilter]) > -1){
+              return true;
+            };
+            return false;
+          });
+          this.updateMarkers(this.datasources, false);
+          if (drawRoutes) {
+            let lineData = data.filter(el=>{
+              for(let i=0; i<this.datasources.length; i++){
+                if(el.datasource.entityName === this.datasources[i].entityName){
+                  return true;
+                }
+              }
+              return false;
+            });
+            this.updatePolylines(parseArray(lineData), false);
+          }
+        }/**/ 
       } else {
         this.updatePending = true;
       }
