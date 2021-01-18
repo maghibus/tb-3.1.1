@@ -20,7 +20,7 @@ pipeline {
 				    echo "Deployment environment params: ${ENVIRONMENT}"
 				    envParams = "${ENVIRONMENT}".split(" ");
 
-                    responseCode = sh (script: "curl -i -X PATCH https://${envParams[0]}/k8s/clusters/${envParams[1]}/apis/apps/v1beta2/namespaces/${envParams[3]}/deployments/${K8S_DEPLOYMENT_NAME} \
+                    responseCode = sh (script: "curl -i -X PATCH https://${envParams[0]}/k8s/clusters/${envParams[1]}/apis/apps/v1/namespaces/${envParams[3]}/deployments/${K8S_DEPLOYMENT_NAME} \
                          --user ${envParams[2]} \
                          -H Content-Type:application/json-patch+json \
                          -d '[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"${DOCKER_REGISTRY_URL}/${DOCKER_REGISTRY_NAME}/${DOCKER_IMAGE_NAME}:${IMAGE_VERSION}\" }]' \
