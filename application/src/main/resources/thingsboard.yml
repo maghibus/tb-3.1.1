@@ -605,6 +605,7 @@ swagger:
     title: "${SWAGGER_LICENSE_TITLE:Apache License Version 2.0}"
     url: "${SWAGGER_LICENSE_URL:https://github.com/thingsboard/thingsboard/blob/master/LICENSE}"
   version: "${SWAGGER_VERSION:2.0}"
+  group_name: "${SWAGGER_GROUP_NAME:IoT Platform}"
 
 components:
   exclude:

@@ -66,6 +66,8 @@ public class SwaggerConfiguration {
     private String licenseUrl;
     @Value("${swagger.version}")
     private String version;
+    @Value("${swagger.group_name}")
+    private String groupName;
 
     @Bean
     public Docket thingsboardApi() {
@@ -78,7 +80,7 @@ public class SwaggerConfiguration {
                         String.class);
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("thingsboard")
+                .groupName(groupName)
                 .apiInfo(apiInfo())
                 .alternateTypeRules(
                         new AlternateTypeRule(
