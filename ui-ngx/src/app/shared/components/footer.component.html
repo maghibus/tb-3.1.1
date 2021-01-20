@@ -15,7 +15,8 @@
     limitations under the License.
 
 -->
-<section class="footer-text"> 
+<section [class]="this.footerClass"> 
     <img class="footer-img" [src]="footerImage" alt="footer">
+    <a *ngIf="this.showSwaggerLink" href="/swagger-ui.html">Platform API</a>
     <small>Copyright © {{year}} The ThingsBoard Authors</small>
 </section>

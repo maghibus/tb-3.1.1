@@ -17,6 +17,7 @@
 export default 
 {  
   appTitle: 'CITTÀ DI REGGIO CALABRIA',
+  swaggerLink: false,
   appUrlsConfig: {
     bigdata: `https://${window.location.hostname}/giotto-web`,
     iot: `https://${window.location.hostname}/home`,

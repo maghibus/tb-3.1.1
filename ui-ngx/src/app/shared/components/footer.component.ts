@@ -15,6 +15,7 @@
 ///
 
 import { Component } from '@angular/core';
+import customerConfig from '../../modules/home/customer.config';
 
 @Component({
   selector: 'tb-footer',
@@ -25,4 +26,12 @@ export class FooterComponent {
 
   year = new Date().getFullYear();
   footerImage = require('../../../assets/pon_metro_logo.png').default;
+  showSwaggerLink = customerConfig.swaggerLink;
+  footerClass = "footer-text"
+
+  constructor() {
+    if(this.showSwaggerLink) {
+      this.footerClass = "footer-text footer-text-with-swagger"
+    }
+  }
 }

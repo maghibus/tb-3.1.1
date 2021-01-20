@@ -32,7 +32,7 @@ import { WINDOW } from '@core/services/window.service';
 import { instanceOfSearchableComponent, ISearchableComponent } from '@home/models/searchable-component.models';
 
 import Header from "@giotto-jfrog/giotto-platform-header/dist/index";
-import platformHeaderConfig from './platform-header.config';
+import customerConfig from './customer.config';
 import { AuthService } from '@app/core/auth/auth.service';
 import { Router } from '@angular/router';
 
@@ -113,11 +113,11 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
       let instance = new Header(
         platformHeader, 
         { 
-          appTitle: platformHeaderConfig.appTitle,
+          appTitle: customerConfig.appTitle,
           logoDir: this.platformHeaderLogo,
           appContext: "iot",
           logout: logoutTb,
-          appUrlsConfig: platformHeaderConfig.appUrlsConfig
+          appUrlsConfig: customerConfig.appUrlsConfig
         });
       instance.init();
   }
