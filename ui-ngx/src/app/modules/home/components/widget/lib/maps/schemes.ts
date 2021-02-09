@@ -309,7 +309,7 @@ export const commonMapSettingsSchema =
             showFilter: {
                 title: 'Show filter (openstreetmap)',
                 type: 'boolean',
-                default: true
+                default: false
             },
             filterData: {
                 title: 'Filter (pattern examples: \'entitykey:entity attribute string type,another entity attribute string type, ...\' )',
