@@ -183,7 +183,17 @@ export const openstreetMapSettingsSchema =
                 title: 'Custom provider tile URL',
                 type: 'string',
                 default: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-            }
+            },
+            useCustomWmsProvider: {
+                title: 'Use custom wms list provider',
+                type: 'boolean',
+                default: false
+            },
+            customWmsProviderTileUrls: {
+                title: 'Custom wms list provider tile URLS',
+                type: 'string',
+                default: "var data = \n{'Default':L.tileLayer.wms('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{}),\n'Cave': L.tileLayer.wms('http://www502.regione.toscana.it/wmsraster/com.rt.wms.RTmap/wms?map=wmscave&language=ita',\n{\n'format': 'image/png',\n'transparent': true,\n'layers': 'rt_piano_cave'\n}\n),\n'Idro': L.tileLayer.wms('http://www502.regione.toscana.it/wmsraster/com.rt.wms.RTmap/wms?map=wmsidrogr&map_resolution=91&language=ita&',\n{'format': 'image/png',\n'transparent': true,\n'layers': 'rt_idrog'\n}\n)\n}"
+            } 
         },
         required: []
     },
@@ -223,6 +233,12 @@ export const openstreetMapSettingsSchema =
         {
             key: 'customProviderTileUrl',
             condition: 'model.useCustomProvider === true',
+        },
+        'useCustomWmsProvider',
+        {
+            key: 'customWmsProviderTileUrls',
+            type: 'javascript',
+            condition: 'model.useCustomWmsProvider === true',
         }
     ]
 };

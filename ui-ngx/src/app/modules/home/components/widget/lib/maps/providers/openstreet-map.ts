@@ -32,6 +32,34 @@ export class OpenStreetMap extends LeafletMap {
           tileLayer = (L.tileLayer as any).provider(options.mapProvider || 'OpenStreetMap.Mapnik');
         }
         tileLayer.addTo(map);
+        /**/
+        if (!!options.useCustomWmsProvider) {
+            let data: any = options.customWmsProviderTileUrls;
+          
+           // data is any because ts didn't recognize replaceAll, should we target esnext?
+           let data2 = data.replaceAll('\n','')
+           .replace(/^var \w+\s*=\s*/, "")
+           .replaceAll('L.tileLayer.wms(','{"url":')
+           .replaceAll("})","}}")
+           .replaceAll(',{',',"data":{')
+           .replaceAll("'", '"');
+
+          let parsedData = JSON.parse(data2);
+          
+          if (!!parsedData) {
+          let params = {};   
+          for (let k in parsedData) {
+            if (parsedData.hasOwnProperty(k)) {
+              params[k] = L.tileLayer.wms(
+                parsedData[k].url,
+                parsedData[k].data
+              );
+            }
+          }
+          L.control.layers({},params).addTo(map);
+          }
+        }
+        /**/
         super.initSettings(options);
         super.setMap(map);
     }

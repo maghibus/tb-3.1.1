@@ -61,6 +61,8 @@ export type MapSettings = {
     removeOutsideVisibleBounds: boolean,
     useCustomProvider: boolean,
     customProviderTileUrl: string;
+    useCustomWmsProvider: boolean;
+    customWmsProviderTileUrls: GenericFunction;
     mapPageSize: number;
     showFilter?: boolean;
     filterData?: string;
