@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.collapse {
+.collapseFilterPanel {
     background-color: rgba(255, 255, 255, 0.800);
     color: #444;
     cursor: pointer;
@@ -28,10 +28,6 @@
     box-shadow: 0 1px 5px rgb(0 0 0 / 65%);
 }
 
-.active, 
-    .collapse:hover { 
-        background-color: rgba(231, 228, 228, 0.9);;
-    }
 
 .filterPanel {
     color: #444;
@@ -43,6 +39,13 @@
 .filterText{
     font-weight: bold;
     font-size: 15px;
+    display:table;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.checkboxDiv{
+    display: flex;
 }
 
 .checkboxPanel {
@@ -52,4 +55,9 @@
     white-space: nowrap;
     height: 20px;
     cursor: pointer;
+}
+
+.leaflet-top.leaflet-right .leaflet-control-layers:nth-child(2) .leaflet-control-layers-toggle {
+    background-image: url('../../../../../../../assets/heatmap-icon2.png'); /*set you value*/
+    transform: scale(.75);
 }

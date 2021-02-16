@@ -63,6 +63,14 @@ export type MapSettings = {
     customProviderTileUrl: string;
     useCustomWmsProvider: boolean;
     customWmsProviderTileUrls: GenericFunction;
+    enableHeatMap: boolean;
+    heatMapFieldValue: string;
+    heatMapLatValue: string;
+    heatMapLngValue: string;
+    heatMapRadiusValue: number;
+    heatMapMaxOpacityValue: number;
+    heatMapScaleRadiusValue: boolean;
+    heatMapUseLocalExtremaValue: boolean;
     mapPageSize: number;
     showFilter?: boolean;
     filterData?: string;

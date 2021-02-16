@@ -1119,10 +1119,10 @@
     "@types/flowjs" "2.13.3"
     tslib "^1.9.0"
 
-"@giotto-jfrog/giotto-platform-header@^1.0.8":
-  version "1.0.8"
-  resolved "http://jfrog.almaviva.it:8081/artifactory/api/npm/giotto-npm/@giotto-jfrog/giotto-platform-header/-/@giotto-jfrog/giotto-platform-header-1.0.8.tgz#1e89b0c8925a5b0d99f7c9c57edd8942d86a6885"
-  integrity sha1-HomwyJJaWw2Z98nFft2JQthqaIU=
+"@giotto-jfrog/giotto-platform-header@^1.0.9":
+  version "1.0.9"
+  resolved "http://jfrog.almaviva.it:8081/artifactory/api/npm/giotto-npm/@giotto-jfrog/giotto-platform-header/-/@giotto-jfrog/giotto-platform-header-1.0.9.tgz#151357228bead93e38ff8a253d06233ebaae1235"
+  integrity sha1-FRNXIovq2T44/4olPQYjPrquEjU=
 
 "@istanbuljs/schema@^0.1.2":
   version "0.1.2"
@@ -4854,6 +4854,11 @@ hash.js@^1.0.0, hash.js@^1.0.3:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
 
+heatmap.js@*, heatmap.js@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/heatmap.js/-/heatmap.js-2.0.5.tgz#466d3b86513f5d49112a49d25700ab2730149153"
+  integrity sha1-Rm07hlE/XUkRKknSVwCrJzAUkVM=
+
 hex-color-regex@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
@@ -5982,6 +5987,14 @@ leaflet-editable@^1.2.0:
   resolved "https://registry.yarnpkg.com/leaflet-editable/-/leaflet-editable-1.2.0.tgz#a3a01001764ba58ea923381ee6a1c814708a0b84"
   integrity sha512-wG11JwpL8zqIbypTop6xCRGagMuWw68ihYu4uqrqc5Ep0wnEJeyob7NB2Rt5t74Oih4rwJ3OfwaGbzdowOGfYQ==
 
+leaflet-heatmap@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/leaflet-heatmap/-/leaflet-heatmap-1.0.0.tgz#83cc04249d39ed91526aeaa7d7669bdaa86d6b1f"
+  integrity sha1-g8wEJJ057ZFSauqn12ab2qhtax8=
+  dependencies:
+    heatmap.js "*"
+    leaflet "*"
+
 leaflet-polylinedecorator@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/leaflet-polylinedecorator/-/leaflet-polylinedecorator-1.6.0.tgz#9ef79fd1b5302d67b72efe959a8ecd2553f27266"
@@ -6008,6 +6021,11 @@ leaflet.markercluster@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/leaflet.markercluster/-/leaflet.markercluster-1.4.1.tgz#b53f2c4f2ca7306ddab1dbb6f1861d5e8aa6c5e5"
   integrity sha512-ZSEpE/EFApR0bJ1w/dUGwTSUvWlpalKqIzkaYdYB7jaftQA/Y2Jav+eT4CMtEYFj+ZK4mswP13Q2acnPBnhGOw==
+
+leaflet@*:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.7.1.tgz#10d684916edfe1bf41d688a3b97127c0322a2a19"
+  integrity sha512-/xwPEBidtg69Q3HlqPdU3DnrXQOvQU/CCHA1tcDQVzOwm91YMYaILjNp7L4Eaw5Z4sOYdbBz6koWyibppd8Zqw==
 
 leaflet@^1.6.0:
   version "1.6.0"

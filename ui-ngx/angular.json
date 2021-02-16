@@ -117,7 +117,10 @@
               "node_modules/ace-builds/src-min/snippets/java.js",
               "node_modules/ace-builds/src-min/snippets/javascript.js",
               "node_modules/systemjs/dist/system.js",
-              "node_modules/jstree/dist/jstree.min.js"
+              "node_modules/jstree/dist/jstree.min.js",
+              "node_modules/leaflet/dist/leaflet.js",
+              "node_modules/heatmap.js/build/heatmap.min.js",
+              "node_modules/leaflet-heatmap/leaflet-heatmap.js"
             ],
             "customWebpackConfig": {
               "path": "./extra-webpack.config.js"

@@ -51,6 +51,9 @@ import {
 } from '@home/components/widget/lib/maps/maps-utils';
 import { WidgetContext } from '@home/models/widget-component.models';
 import { deepClone, isDefinedAndNotNull, isEmptyStr, isString } from '@core/utils';
+import 'heatmap.js';
+import "leaflet-heatmap";
+declare var HeatmapOverlay: any;
 
 export default abstract class LeafletMap {
 
@@ -79,6 +82,7 @@ export default abstract class LeafletMap {
     addPolygons: L.Polygon[] = [];
     filteredData: string[] = [];
     keyFilter: string;
+    heatmapLayer: any;
 
     protected constructor(public ctx: WidgetContext,
                           public $container: HTMLElement,
@@ -323,27 +327,38 @@ export default abstract class LeafletMap {
           this.updateData(this.drawRoutes, this.showPolygon);
         }
         /****/
+        if (
+          this.options.enableHeatMap &&
+          this.options.heatMapFieldValue &&
+          this.options.heatMapFieldValue.length > 0 &&
+          this.options.heatMapLatValue &&
+          this.options.heatMapLatValue.length > 0 &&
+          this.options.heatMapLngValue &&
+          this.options.heatMapLngValue.length > 0
+        ) {
+          this.loadHeatMap();
+        }
+        /****/
         if ( this.options.showFilter &&
           this.options.filterData &&
           this.options.filterData.length > 0
         ) {
-          let filterBox = L.control.attribution({ position: "topright" });
+          let filterBox = L.control.attribution({ position: 'topright'});
 
           filterBox.onAdd = () => {
             let div = L.DomUtil.create("div", "filterBox");
-            div.setAttribute("class", "collapse");
+            div.setAttribute("class", "collapseFilterPanel");
             this.keyFilter = this.options.filterData.split(":")[0];
             let dataFilter = this.options.filterData.split(":")[1];
 
-            let label = L.DomUtil.create("span", "", div);
+            let label = L.DomUtil.create("span", "titleFilter", div);
             label.innerHTML = "Filters";
 
             let divPanel = L.DomUtil.create("div", "filterPanel", div);
             divPanel.setAttribute("div", "filterPanel");
             divPanel.style.display = "none";
-            let labelFilter = L.DomUtil.create("span", "", divPanel);
-            labelFilter.setAttribute("class", "filterText");
-            labelFilter.innerHTML = this.keyFilter + "</br>";
+            let labelFilter = L.DomUtil.create("span", "filterText", divPanel);
+            labelFilter.innerHTML = this.keyFilter + "<hr>";
 
             div.addEventListener("click", (e) => {
               divPanel.style.display =
@@ -352,11 +367,12 @@ export default abstract class LeafletMap {
 
             let filterArray = dataFilter.split(",");
             for (let i = 0; i < filterArray.length; i++) {
-              let checkbox = L.DomUtil.create("input", "", divPanel);
-              checkbox.setAttribute("class", "checkboxPanel");
+
+              let checkboxDiv = L.DomUtil.create("div", "checkboxDiv", divPanel);
+              let checkbox = L.DomUtil.create("input", "checkboxPanel", checkboxDiv);
               checkbox.setAttribute("type", "checkbox");
               checkbox.setAttribute("value", filterArray[i]);
-              let span = L.DomUtil.create("span", "", divPanel);
+              let span = L.DomUtil.create("span", "checkboxTexValue", checkboxDiv);
               span.innerHTML = filterArray[i] + "</ br>";
               checkbox.addEventListener("click", (e) => {
                 if ((<any>e.target).checked) {
@@ -379,6 +395,34 @@ export default abstract class LeafletMap {
           filterBox.addTo(this.map);
         }
         /****/
+    }
+
+    private loadHeatMap(): void {
+      let cfg = {
+        // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+        // if scaleRadius is false it will be the constant radius used in pixels
+        radius: this.options.heatMapRadiusValue,  //50,
+        maxOpacity: this.options.heatMapMaxOpacityValue,  //0.8,
+        // scales the radius based on map zoom
+        scaleRadius: this.options.heatMapScaleRadiusValue,  //false,
+        // if set to false the heatmap uses the global maximum for colorization
+        // if activated: uses the data maximum within the current map boundaries
+        //   (there will always be a red spot with useLocalExtremas true)
+        useLocalExtrema: this.options.heatMapUseLocalExtremaValue, //true,
+        // which field name in your data represents the latitude - default "lat"
+        latField: this.options.heatMapLatValue, //"lat",
+        // which field name in your data represents the longitude - default "lng"
+        lngField: this.options.heatMapLngValue, //"lng",
+        // which field name in your data represents the data value - default "value"
+        valueField: this.options.heatMapFieldValue //"count",
+      };
+
+      this.heatmapLayer = new HeatmapOverlay(cfg);
+
+      let overlayMaps = {
+        Heatmap: this.heatmapLayer,
+      };
+      L.control.layers({}, overlayMaps, {collapsed: true }).addTo(this.map);
     }
 
     public saveMarkerLocation(datasource: FormattedData, lat?: number, lng?: number): Observable<any> {
@@ -514,13 +558,13 @@ export default abstract class LeafletMap {
           this.datasources = formattedData;
         }
         /**/ 
-        if(this.options.showFilter && this.filteredData.length>0){
+        if (this.options.showFilter && this.filteredData.length > 0) {
           let idx = 0;
            let dataFiltered = formattedData.filter(el => {
             if(!el[this.keyFilter]){
               return false;
             }
-            if(this.filteredData.indexOf(el[this.keyFilter]) > -1){
+            if (this.filteredData.indexOf(el[this.keyFilter]) > -1) {
               el.dsIndex = idx;
               idx++;
               return true;
@@ -539,11 +583,51 @@ export default abstract class LeafletMap {
             this.updatePolylines(parseArray(lineData), false);
           }
           this.updateMarkers(dataFiltered, false);
-        }/**/ 
+          if (!!this.options.enableHeatMap) {
+            this.showHeatMap(dataFiltered);
+          }
+        }
+        /**/ 
+        /****/
+         if (
+            this.options.enableHeatMap &&
+            this.filteredData.length == 0 ) {
+             this.showHeatMap(formattedData);
+         }
+        /****/
       } else {
         this.updatePending = true;
       }
     }
+
+  private showHeatMap(fdata: FormattedData[]): void {
+    if (
+      this.options.heatMapFieldValue &&
+      this.options.heatMapFieldValue.length > 0 &&
+      this.options.heatMapLatValue &&
+      this.options.heatMapLatValue.length > 0 &&
+      this.options.heatMapLngValue &&
+      this.options.heatMapLngValue.length > 0) {
+      let heatMapData = {
+        max: 8,
+        data: [],
+      };
+
+      for (let i = 0; i < fdata.length; i++) {
+      if (this.options.heatMapFieldValue in fdata[i] &&
+        this.options.heatMapLatValue in fdata[i] &&
+        this.options.heatMapLngValue in fdata[i]) {
+        
+        heatMapData.data.push({
+          [this.options.heatMapLatValue]: fdata[i][this.options.heatMapLatValue],
+          [this.options.heatMapLngValue]: fdata[i][this.options.heatMapLngValue],
+          [this.options.heatMapFieldValue]: fdata[i][this.options.heatMapFieldValue]
+        });
+        }
+      }
+      this.heatmapLayer.setData(heatMapData);
+    }
+  }
 
   private updateBoundsInternal() {
     const bounds = new L.LatLngBounds(null, null);

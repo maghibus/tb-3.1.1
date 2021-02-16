@@ -193,7 +193,47 @@ export const openstreetMapSettingsSchema =
                 title: 'Custom wms list provider tile URLS',
                 type: 'string',
                 default: "var data = \n{'Default':L.tileLayer.wms('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{}),\n'Cave': L.tileLayer.wms('http://www502.regione.toscana.it/wmsraster/com.rt.wms.RTmap/wms?map=wmscave&language=ita',\n{\n'format': 'image/png',\n'transparent': true,\n'layers': 'rt_piano_cave'\n}\n),\n'Idro': L.tileLayer.wms('http://www502.regione.toscana.it/wmsraster/com.rt.wms.RTmap/wms?map=wmsidrogr&map_resolution=91&language=ita&',\n{'format': 'image/png',\n'transparent': true,\n'layers': 'rt_idrog'\n}\n)\n}"
-            } 
+            },  
+            enableHeatMap: {
+                title: 'Use heatmap',
+                type: 'boolean',
+                default: false
+            },
+            heatMapFieldValue: {
+                title: 'Value field (which field name in your data represents the data value)',
+                type: 'string',
+                default: 'count'
+            },
+            heatMapLatValue: {
+                title: 'Latitude field (which field name in your data represents the latitude)',
+                type: 'string',
+                default: 'lat'
+            },
+            heatMapLngValue: {
+                title: 'Longitude field (which field name in your data represents the longitude)',
+                type: 'string',
+                default: 'lng'
+            },
+            heatMapRadiusValue: {
+                title: 'Radius field (radius should be small ONLY if scaleRadius is true (or small radius is intended) - if scaleRadius is false it will be the constant radius used in pixels)',
+                type: 'number',
+                default: 50
+            },
+            heatMapMaxOpacityValue: {
+                title: 'Max opacity field',
+                type: 'number',
+                default: 0.8
+            },
+            heatMapScaleRadiusValue: {
+                title: 'Scale radius field (scales the radius based on map zoom)',
+                type: 'boolean',
+                default: false
+            },
+            heatMapUseLocalExtremaValue: {
+                title: 'Local Extrema field (if activated: uses the data maximum within the current map boundaries)',
+                type: 'boolean',
+                default: true
+            }
         },
         required: []
     },
@@ -238,7 +278,36 @@ export const openstreetMapSettingsSchema =
         {
             key: 'customWmsProviderTileUrls',
             type: 'javascript',
-            condition: 'model.useCustomWmsProvider === true',
+            condition: 'model.useCustomWmsProvider === true'
+        },
+        'enableHeatMap',
+        {
+            key: 'heatMapFieldValue',
+            condition: 'model.enableHeatMap === true'
+        },
+        {
+            key: 'heatMapLatValue',
+            condition: 'model.enableHeatMap === true'
+        },
+        {
+            key: 'heatMapLngValue',
+            condition: 'model.enableHeatMap === true'
+        },
+        {
+            key: 'heatMapRadiusValue',
+            condition: 'model.enableHeatMap === true'
+        },
+        {
+            key: 'heatMapMaxOpacityValue',
+            condition: 'model.enableHeatMap === true'
+        },
+        {
+            key: 'heatMapScaleRadiusValue',
+            condition: 'model.enableHeatMap === true'
+        },
+        {
+            key: 'heatMapUseLocalExtremaValue',
+            condition: 'model.enableHeatMap === true'
         }
     ]
 };
