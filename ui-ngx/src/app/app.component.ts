@@ -30,6 +30,7 @@ import { combineLatest } from 'rxjs';
 import { selectIsAuthenticated, selectIsUserLoaded } from '@core/auth/auth.selectors';
 import { distinctUntilChanged, filter, map, skip } from 'rxjs/operators';
 import { AuthService } from '@core/auth/auth.service';
+import { CustomizationService } from './core/services/customization.service'
 
 @Component({
   selector: 'tb-root',
@@ -39,13 +40,14 @@ import { AuthService } from '@core/auth/auth.service';
 export class AppComponent implements OnInit {
 
   constructor(private store: Store<AppState>,
-              private storageService: LocalStorageService,
-              private translate: TranslateService,
-              private matIconRegistry: MatIconRegistry,
-              private domSanitizer: DomSanitizer,
-              private authService: AuthService) {
+    private storageService: LocalStorageService,
+    private translate: TranslateService,
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
+    private authService: AuthService,
+    private customizationService: CustomizationService) {
 
-   // console.log(`ThingsBoard Version: ${env.tbVersion}`);
+    // console.log(`ThingsBoard Version: ${env.tbVersion}`);
 
     this.matIconRegistry.addSvgIconSetInNamespace('mdi',
       this.domSanitizer.bypassSecurityTrustResourceUrl('./assets/mdi.svg'));
@@ -62,7 +64,7 @@ export class AppComponent implements OnInit {
     this.matIconRegistry.addSvgIconLiteral(
       'alpha-e-circle-outline',
       this.domSanitizer.bypassSecurityTrustHtml(
-        '<svg viewBox="0 0 24 24"><path d="M9,7H15V9H11V11H15V13H11V15H15V17H9V7M12,2A10,10 0 0,'+
+        '<svg viewBox="0 0 24 24"><path d="M9,7H15V9H11V11H15V13H11V15H15V17H9V7M12,2A10,10 0 0,' +
         '1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 ' +
         '0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4Z" /></svg>'
       )
@@ -90,9 +92,9 @@ export class AppComponent implements OnInit {
       this.store.pipe(select(selectIsAuthenticated)),
       this.store.pipe(select(selectIsUserLoaded))]
     ).pipe(
-      map(results => ({isAuthenticated: results[0], isUserLoaded: results[1]})),
+      map(results => ({ isAuthenticated: results[0], isUserLoaded: results[1] })),
       distinctUntilChanged(),
-      filter((data) => data.isUserLoaded ),
+      filter((data) => data.isUserLoaded),
       skip(1),
     ).subscribe((data) => {
       this.authService.gotoDefaultPlace(data.isAuthenticated);
@@ -101,6 +103,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.customizationService.changeTheme();
   }
 
 }

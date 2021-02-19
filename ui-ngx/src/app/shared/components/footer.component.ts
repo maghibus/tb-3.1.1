@@ -15,6 +15,7 @@
 ///
 
 import { Component } from '@angular/core';
+import { CustomizationService } from '@app/core/services/customization.service';
 import customerConfig from '../../modules/home/customer.config';
 
 @Component({
@@ -25,12 +26,12 @@ import customerConfig from '../../modules/home/customer.config';
 export class FooterComponent {
 
   year = new Date().getFullYear();
-  footerImage = require('../../../assets/pon_metro_logo.png').default;
-  showSwaggerLink = customerConfig.swaggerLink;
+  footerImage = this.customizationService.getPlatformConfiguration().footerImage;
+  showSwaggerLink = this.customizationService.getPlatformConfiguration().swaggerLink;
   footerClass = "footer-text"
 
-  constructor() {
-    if(this.showSwaggerLink) {
+  constructor(private customizationService: CustomizationService) {
+    if (this.showSwaggerLink) {
       this.footerClass = "footer-text footer-text-with-swagger"
     }
   }

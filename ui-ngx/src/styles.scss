@@ -25,6 +25,21 @@
 @import './scss/mixins';
 @import './scss/fonts';
 
+:root{
+  --primary: #337ab7;
+  --secondary-color: #527dad;
+  --header-gradient: #555;
+  --hue-color: #a7c1de;
+  --toolbar-icon-color : white;
+  --container-icon-color:#337ab7;
+  --title-color: #337ab7;
+  --platform-header-background: #eee;
+  --header-logo-height: 36px;
+}
+
+$primary-default-gradient: linear-gradient(to right, $tb-primary-color, $tb-header-gradient);
+$secondary-default-gradient: linear-gradient(to bottom, $tb-primary-color, $tb-header-gradient);
+
 body, html {
   height: 100%;
   min-height: 100%;
@@ -78,12 +93,12 @@ body {
   line-height: normal;
 }
 
+
 a {
   font-weight: 400;
   color: #106cc8;
   text-decoration: none;
   border-bottom: 1px solid rgba(64, 84, 178, .25);
-
   transition: border-bottom .35s;
 }
 
@@ -556,9 +571,20 @@ mat-label {
     }
   }
 
-  // Material table
+ .mat-toolbar-single-row {
+    background:#{$primary-default-gradient}!important;
+  }
+  .tb-side-menu-toolbar{
+    background:#{$secondary-default-gradient}!important;
+  }
 
+  .tb-nav-header-toolbar{
+    background: $tb-primary-color !important;
+  }
+
+  // Material table
   mat-toolbar.mat-primary {
+
     button.mat-icon-button {
       mat-icon {
         color: white;

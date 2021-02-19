@@ -16,7 +16,7 @@
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from '@core/core.module';
@@ -26,12 +26,18 @@ import { HomeModule } from '@home/home.module';
 import { AppComponent } from './app.component';
 import { DashboardRoutingModule } from '@modules/dashboard/dashboard-routing.module';
 import { RouterModule, Routes } from '@angular/router';
+import { CustomizationService } from './core/services/customization.service';
 
 const routes: Routes = [
-  { path: '**',
+  {
+    path: '**',
     redirectTo: 'home'
   }
 ];
+
+export function appInit(appConfigService: CustomizationService) {
+  return () => appConfigService.load();
+}
 
 @NgModule({
   imports: [
@@ -53,9 +59,15 @@ export class PageNotFoundRoutingModule { }
     LoginModule,
     HomeModule,
     DashboardRoutingModule,
-    PageNotFoundRoutingModule
+    PageNotFoundRoutingModule],
+  providers: [CustomizationService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInit,
+      multi: true,
+      deps: [CustomizationService]
+    }
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

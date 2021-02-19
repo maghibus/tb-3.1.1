@@ -35,6 +35,7 @@ import Header from "@giotto-jfrog/giotto-platform-header/dist/index";
 import customerConfig from './customer.config';
 import { AuthService } from '@app/core/auth/auth.service';
 import { Router } from '@angular/router';
+import { CustomizationService } from '@app/core/services/customization.service';
 
 const screenfull = _screenfull as _screenfull.Screenfull;
 
@@ -55,8 +56,7 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
   sidenavMode: 'over' | 'push' | 'side' = 'side';
   sidenavOpened = true;
 
-  logo = require('../../../assets/home_component_logo.png').default;
-  platformHeaderLogo = require('../../../assets/platform-header-logo.png').default;
+  logo = this.customizationService.getPlatformConfiguration().logo;
 
   @ViewChild('sidenav')
   sidenav: MatSidenav;
@@ -74,15 +74,15 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
   searchText = '';
 
   constructor(protected store: Store<AppState>,
-              @Inject(WINDOW) private window: Window,
-              public breakpointObserver: BreakpointObserver,
-              private authService: AuthService,
-              private router: Router) {
+    @Inject(WINDOW) private window: Window,
+    public breakpointObserver: BreakpointObserver,
+    private authService: AuthService,
+    private router: Router,
+    private customizationService: CustomizationService) {
     super(store);
   }
 
   ngOnInit() {
-
     this.authUser$ = this.store.pipe(select(selectAuthUser));
     this.userDetails$ = this.store.pipe(select(selectUserDetails));
     this.userDetailsString = this.userDetails$.pipe(map((user: User) => {
@@ -96,30 +96,30 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
     this.breakpointObserver
       .observe(MediaBreakpoints['gt-sm'])
       .subscribe((state: BreakpointState) => {
-          if (state.matches) {
-            this.sidenavMode = 'side';
-            this.sidenavOpened = true;
-          } else {
-            this.sidenavMode = 'over';
-            this.sidenavOpened = false;
-          }
+        if (state.matches) {
+          this.sidenavMode = 'side';
+          this.sidenavOpened = true;
+        } else {
+          this.sidenavMode = 'over';
+          this.sidenavOpened = false;
         }
+      }
       );
 
-      const logoutTb = () => {
-        this.authService.logout();
-      }
-      let platformHeader = document.getElementById('platform-header');
-      let instance = new Header(
-        platformHeader, 
-        { 
-          appTitle: customerConfig.appTitle,
-          logoDir: this.platformHeaderLogo,
-          appContext: "iot",
-          logout: logoutTb,
-          appUrlsConfig: customerConfig.appUrlsConfig
-        });
-      instance.init();
+    const logoutTb = () => {
+      this.authService.logout();
+    }
+    let platformHeader = document.getElementById('platform-header');
+    let instance = new Header(
+      platformHeader,
+      {
+        appTitle: this.customizationService.getHeaderConfiguration().appTitle,
+        logoDir: this.customizationService.getHeaderConfiguration().logoDir,
+        appContext: "iot",
+        logout: logoutTb,
+        appUrlsConfig: this.customizationService.getHeaderConfiguration().appUrlsConfig
+      });
+    instance.init();
   }
 
   ngAfterViewInit() {

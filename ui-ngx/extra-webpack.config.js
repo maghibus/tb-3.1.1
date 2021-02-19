@@ -50,9 +50,9 @@ module.exports = (env, argv) => {
       new FileManagerPlugin({
         onStart: {
           copy: [
-            { source: `./customer_assets/${targetCustomer}/themes/*.scss`, destination: `./src` },
+            // { source: `./customer_assets/${targetCustomer}/themes/*.scss`, destination: `./src` },
             { source: `./customer_assets/${targetCustomer}/images/favicon.ico`, destination: `./src` },
-            { source: `./customer_assets/${targetCustomer}/scss/*.scss`, destination: `./src/scss` },
+            // { source: `./customer_assets/${targetCustomer}/scss/*.scss`, destination: `./src/scss` },
             { source: `./customer_assets/${targetCustomer}/images/*.png`, destination: `./src/assets` }
           ],
         }

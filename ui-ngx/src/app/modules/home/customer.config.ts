@@ -15,13 +15,13 @@
 ///
 
 export default {
-    appTitle: 'SMART CITY PLATFORM',
-    swaggerLink: true,
-    appUrlsConfig: {
-      bigdata: `https://${window.location.hostname}/giotto-web`,
-      iot: `https://${window.location.hostname}/home`,
-      admin: `https://${window.location.hostname}/oneadmin`,
-      udm: `https://${window.location.hostname}/udm-fe`,
-      mlai: `https://${window.location.hostname}/serving-ai`
-    }
+  appTitle: 'SMART CITY PLATFORM',
+  swaggerLink: true,
+  appUrlsConfig: {
+    bigdata: `https://${window.location.hostname}/giotto-web`,
+    iot: `https://${window.location.hostname}/home`,
+    admin: `https://${window.location.hostname}/oneadmin`,
+    udm: `https://${window.location.hostname}/udm-fe`,
+    mlai: `https://${window.location.hostname}/serving-ai`
+  }
 }

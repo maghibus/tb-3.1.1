@@ -21,6 +21,7 @@
 
 $tb-primary: mat-palette($tb-mat-indigo);
 $tb-accent: mat-palette($mat-deep-orange);
+$tb-primary-date-picker: mat-palette($tb-mat-indigo-date-picker);
 
 $background: (background: map_get($mat-grey, 200));
 
@@ -31,7 +32,13 @@ $tb-mat-theme: mat-light-theme(
     $tb-accent
 );
 
+$tb-mat-theme-date-picker: mat-light-theme(
+    $tb-primary-date-picker,
+    $tb-accent
+);
+
 $tb-theme: map_merge($tb-mat-theme, (background: $tb-theme-background));
+$tb-theme-date-picker: map_merge($tb-mat-theme-date-picker, (background: $tb-theme-background));
 
 $primary: mat-color($tb-primary);
 $accent: mat-color($tb-accent);
@@ -105,20 +112,39 @@ mat-card-content mat-grid-list div mat-grid-tile figure{
   background-color: transparent !important;
 }
 
+.tb-dark .mat-toolbar, .tb-default .mat-toolbar {
+  color: $toolbar-icon-color !important;
+}
+
 .tb-home-links .tb-card-button{
   max-width: none !important;
 }
 
-mat-card-content:hover {
+.tb-home-links-card:hover {
   background-color: $gray !important;
   border-radius: 10px !important;
   color: $primary !important;
   box-shadow: 2px 2px 5px 4px #bbb !important;
-  padding: 16px !important;
 }
 
 .mat-table-toolbar {
   background: white !important;
+}
+
+mat-sidenav.tb-site-sidenav {
+  .tb-nav-header {
+    .tb-nav-header-toolbar {
+      & > div {
+        .tb-logo-title {
+          height: $header-logo-height !important;
+        }
+      }
+    }
+  }
+}
+
+a {
+  color: $toolbar-icon-color !important;
 }
 
 @function get-tb-dark-theme($primary, $accent, $warn: mat-palette($mat-red)) {
@@ -181,7 +207,7 @@ $tb-dark-theme: get-tb-dark-theme(
 
 .tb-default {
   @include angular-material-theme($tb-theme);
-  @include mat-datetimepicker-theme($tb-theme);
+  @include mat-datetimepicker-theme($tb-theme-date-picker);
   @include tb-components-theme($tb-theme);
 }
 

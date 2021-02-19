@@ -1,0 +1,28 @@
+{
+    "platform": {
+        "primary": "#337ab7",
+        "titleColor": "#337ab7",
+        "secondaryColor": "#c30c26",
+        "headerGradient": "#555",
+        "hueColor": "#a7c1de",
+        "menuIconColor": "white",
+        "containerIconColor": "#337ab7",
+        "platformHeaderBackground": "#eee",
+        "headerLogoHeight": "36px",
+        "logo": "/configuration-service/images/default/home_component_logo.png",
+        "footerImage": "/configuration-service/images/default/pon_metro_logo.png",
+        "swaggerLink": true
+    },
+    "header": {
+        "oauth2LogOutUrl": "https://domain/oidc/logout",
+        "logOutRedirectUrl": "https://domain/oneadmin/login",
+        "logoDir": "assets/platform-header-logo.png",
+        "appTitle": "SMART CITY PLATFORM",
+        "appUrlsConfig": {
+            "bigdata": "/giotto-web",
+            "iot": "/home",
+            "admin": "/oneadmin",
+            "udm": "/udm-fe"
+        }
+    }
+}

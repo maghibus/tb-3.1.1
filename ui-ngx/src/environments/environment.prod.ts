@@ -17,9 +17,10 @@
 export const environment = {
   appTitle: 'IotPlatform',
   production: true,
-// @ts-ignore
+  // @ts-ignore
   tbVersion: TB_VERSION,
-// @ts-ignore
+  // @ts-ignore
   supportedLangs: SUPPORTED_LANGS,
-  defaultLang: 'en_US'
+  defaultLang: 'en_US',
+  configurationUrl: '/configuration-service/api/theme/customization'
 };

@@ -33,16 +33,21 @@ $mat-gt-xl: "screen and (min-width: 1920px)";
 
 $primary-hue-3: rgb(207, 216, 220) !default;
 
-$tb-primary-color: #337ab7; // #305680;
-$tb-secondary-color: #527dad;
-$tb-hue3-color: #a7c1de;
+$tb-primary-color: var(--primary); // #305680;
+$tb-secondary-color: var(--secondary-color);
+$tb-header-gradient: var(--header-gradient);
+$tb-hue3-color: var(--hue-color);
 $tb-dark-primary-color: #9fa8da;
-$background-toolbar:  linear-gradient(to right, $tb-primary-color, #555); //change color header
-$background-sidemenu: linear-gradient(to bottom, $tb-primary-color, #555);  //change color sidemenu
+$background-toolbar:  linear-gradient(to right, $tb-primary-color, $tb-header-gradient); //change color header
+$background-sidemenu: linear-gradient(to bottom, $tb-primary-color, $tb-header-gradient);  //change color sidemenu
+$toolbar-icon-color : var(--toolbar-icon-color);
+$container-icon-color: var(--container-icon-color);
+$title-color: var(--title-color);
+$header-logo-height: var(--header-logo-height);
 $gray: #eeeeee !default;
 $white: #fff !default;
 
-$header-default: #eee !default;
+$header-default: var(--platform-header-background) !default;
 $header-title: $tb-primary-color !default;
 
 $tb-mat-indigo: (
@@ -108,5 +113,38 @@ $tb-dark-mat-indigo: (
     A200: $dark-primary-text,
     A400: $dark-primary-text,
     A700: $dark-primary-text,
+  )
+);
+
+$tb-mat-indigo-date-picker: (
+  50: #e8eaf6,
+  100: #c5cae9,
+  200: #9fa8da,
+  300: #7986cb,
+  400: #5c6bc0,
+  500: #337ab7,
+  600: #2e72b0,
+  700: #303f9f,
+  800: #283593,
+  900: #1a237e,
+  A100: #c4dcff,
+  A200: #536dfe,
+  A400: #3d5afe,
+  A700: #304ffe,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $light-primary-text,
+    400: $light-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $light-primary-text,
+    A400: $light-primary-text,
+    A700: $light-primary-text,
   )
 );
