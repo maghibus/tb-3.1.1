@@ -83,6 +83,7 @@ export default abstract class LeafletMap {
     filteredData: string[] = [];
     keyFilter: string;
     heatmapLayer: any;
+    lineData: Array<any>;
 
     protected constructor(public ctx: WidgetContext,
                           public $container: HTMLElement,
@@ -365,26 +366,29 @@ export default abstract class LeafletMap {
                 divPanel.style.display == "none" ? "block" : "none";
             });
 
-            let filterArray = dataFilter.split(",");
-            for (let i = 0; i < filterArray.length; i++) {
+            this.filteredData = dataFilter.split(",");
+            for (let i = 0; i < this.filteredData.length; i++) {
 
               let checkboxDiv = L.DomUtil.create("div", "checkboxDiv", divPanel);
               let checkbox = L.DomUtil.create("input", "checkboxPanel", checkboxDiv);
               checkbox.setAttribute("type", "checkbox");
-              checkbox.setAttribute("value", filterArray[i]);
+              checkbox.setAttribute("value", this.filteredData[i]);
+              checkbox.setAttribute("checked", 'true');
               let span = L.DomUtil.create("span", "checkboxTexValue", checkboxDiv);
-              span.innerHTML = filterArray[i] + "</ br>";
+              span.innerHTML = this.filteredData[i] + "</ br>";
               checkbox.addEventListener("click", (e) => {
                 if ((<any>e.target).checked) {
-                  this.filteredData.push((<any>e.target).value);
+                  if (this.filteredData.indexOf((<any>e.target).value) <= -1) {
+                   this.filteredData.push((<any>e.target).value);
+                  } 
                 } else {
                   if (this.filteredData.indexOf((<any>e.target).value) > -1) {
-                    const index = this.filteredData.indexOf(
-                      (<any>e.target).value
-                    );
-                    if (index > -1) {
-                      this.filteredData.splice(index, 1);
-                    }
+                      const index = this.filteredData.indexOf(
+                        (<any>e.target).value
+                      );
+                      if (index > -1) {
+                        this.filteredData.splice(index, 1);
+                      }
                   }
                 }
                 this.updateData(this.drawRoutes, this.showPolygon);
@@ -558,7 +562,7 @@ export default abstract class LeafletMap {
           this.datasources = formattedData;
         }
         /**/ 
-        if (this.options.showFilter && this.filteredData.length > 0) {
+        if (this.options.showFilter && this.filteredData && this.filteredData.length > 0) {
           let idx = 0;
            let dataFiltered = formattedData.filter(el => {
             if(!el[this.keyFilter]){
@@ -572,7 +576,7 @@ export default abstract class LeafletMap {
             return false;
           });
           if (drawRoutes) {
-            let lineData = data.filter(el=>{
+            this.lineData = data.filter(el=>{
               for(let i=0; i<dataFiltered.length; i++){
                 if(el.datasource.entityName === dataFiltered[i].entityName){
                   return true;
@@ -580,19 +584,24 @@ export default abstract class LeafletMap {
               }
               return false;
             });
-            this.updatePolylines(parseArray(lineData), false);
+            this.updatePolylines(parseArray(this.lineData), false);
           }
           this.updateMarkers(dataFiltered, false);
           if (!!this.options.enableHeatMap) {
-            this.showHeatMap(dataFiltered);
+            this.showHeatMap(dataFiltered, drawRoutes, parseArray(this.lineData));
           }
+        } else if (this.options.showFilter && 
+          this.filteredData &&
+          this.filteredData.length == 0) {
+            this.updateMarkers([], false);
+            this.updatePolylines(parseArray([]), false); 
         }
         /**/ 
         /****/
          if (
             this.options.enableHeatMap &&
             this.filteredData.length == 0 ) {
-             this.showHeatMap(formattedData);
+            this.showHeatMap(formattedData, drawRoutes, parseArray(data));
          }
         /****/
       } else {
@@ -600,7 +609,7 @@ export default abstract class LeafletMap {
       }
     }
 
-  private showHeatMap(fdata: FormattedData[]): void {
+  private showHeatMap(fdata: FormattedData[], drawRoutes: boolean, polyData: FormattedData[][] ): void {
     if (
       this.options.heatMapFieldValue &&
       this.options.heatMapFieldValue.length > 0 &&
@@ -614,7 +623,25 @@ export default abstract class LeafletMap {
       };
 
       for (let i = 0; i < fdata.length; i++) {
-      if (this.options.heatMapFieldValue in fdata[i] &&
+        if (drawRoutes) {
+            for (let i = 0; i < polyData.length; i++) {
+              for (let j = 0; j < polyData[i].length; j++) {
+                if (
+                  this.options.heatMapLatValue in polyData[i][j] &&
+                  this.options.heatMapLngValue in polyData[i][j]
+                ) {
+                  polyData[i][j][this.options.heatMapFieldValue] = 1;
+                  
+                  heatMapData.data.push({
+                    [this.options.heatMapLatValue]: polyData[i][j][this.options.heatMapLatValue],
+                    [this.options.heatMapLngValue]: polyData[i][j][this.options.heatMapLngValue],
+                    [this.options.heatMapFieldValue]: polyData[i][j][this.options.heatMapFieldValue],
+                  });
+                }
+              }
+            }
+        }
+        else if (this.options.heatMapFieldValue in fdata[i] &&
         this.options.heatMapLatValue in fdata[i] &&
         this.options.heatMapLngValue in fdata[i]) {
         

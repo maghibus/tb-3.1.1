@@ -200,7 +200,7 @@ export const openstreetMapSettingsSchema =
                 default: false
             },
             heatMapFieldValue: {
-                title: 'Value field (which field name in your data represents the data value)',
+                title: 'Value field (which field name in your data represents the data value). For the route map only use "mostTraveledRoute" to get the field based on the route that has been traveled most frequently',
                 type: 'string',
                 default: 'count'
             },
