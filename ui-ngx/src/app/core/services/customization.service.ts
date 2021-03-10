@@ -71,6 +71,7 @@ export class CustomizationService {
     document.documentElement.style.setProperty('--container-icon-color', this.getPlatformConfiguration().containerIconColor);
     document.documentElement.style.setProperty('--title-color', this.getPlatformConfiguration().titleColor);
     document.documentElement.style.setProperty('--header-logo-height', this.getPlatformConfiguration().headerLogoHeight);
+    document.documentElement.style.setProperty('--footer-img-width', this.getPlatformConfiguration().footerImgWidth);
   }
 
 }

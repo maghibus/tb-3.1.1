@@ -28,6 +28,7 @@ export class Platform {
     containerIconColor: string = '#337ab7';
     titleColor: string = '#337ab7';
     headerLogoHeight: string = "36px";
+    footerImgWidth: string = "340px";
     logo: string = 'assets/home_component_logo.png';
     footerImage: string = 'assets/pon_metro_logo.png';
     swaggerLink: boolean = true;

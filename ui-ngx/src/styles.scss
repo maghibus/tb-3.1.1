@@ -35,6 +35,7 @@
   --title-color: #337ab7;
   --platform-header-background: #eee;
   --header-logo-height: 36px;
+  --footer-img-width: 340px;
 }
 
 $primary-default-gradient: linear-gradient(to right, $tb-primary-color, $tb-header-gradient);
@@ -571,9 +572,6 @@ mat-label {
     }
   }
 
- .mat-toolbar-single-row {
-    background:#{$primary-default-gradient}!important;
-  }
   .tb-side-menu-toolbar{
     background:#{$secondary-default-gradient}!important;
   }

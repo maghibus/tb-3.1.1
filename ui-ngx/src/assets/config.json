@@ -9,6 +9,7 @@
         "containerIconColor": "#337ab7",
         "platformHeaderBackground": "#eee",
         "headerLogoHeight": "36px",
+        "footerImgWidth": "530px",
         "logo": "/configuration-service/images/default/home_component_logo.png",
         "footerImage": "/configuration-service/images/default/pon_metro_logo.png",
         "swaggerLink": true
