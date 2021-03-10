@@ -18,6 +18,7 @@ import L from 'leaflet';
 import LeafletMap from '../leaflet-map';
 import { UnitedMapSettings } from '../map-models';
 import { WidgetContext } from '@home/models/widget-component.models';
+import wms from 'leaflet.wms';
 
 export class OpenStreetMap extends LeafletMap {
     constructor(ctx: WidgetContext, $container, options: UnitedMapSettings) {
@@ -36,27 +37,43 @@ export class OpenStreetMap extends LeafletMap {
         if (!!options.useCustomWmsProvider) {
             let data: any = options.customWmsProviderTileUrls;
           
-           // data is any because ts didn't recognize replaceAll, should we target esnext?
-           let data2 = data.replaceAll('\n','')
+          // data is any because ts didn't recognize replaceAll, should we target esnext?
+          let data2 = data.replaceAll('\n','')
            .replace(/^var \w+\s*=\s*/, "")
            .replaceAll('L.tileLayer.wms(','{"url":')
+           .replaceAll('wms.source(','{"urlWms":')
            .replaceAll("})","}}")
            .replaceAll(',{',',"data":{')
            .replaceAll("'", '"');
 
           let parsedData = JSON.parse(data2);
-          
           if (!!parsedData) {
-          let params = {};   
+          let params = {};
+          let paramsWmsSource = {};
+
           for (let k in parsedData) {
             if (parsedData.hasOwnProperty(k)) {
-              params[k] = L.tileLayer.wms(
-                parsedData[k].url,
-                parsedData[k].data
-              );
+              if (parsedData[k].url && parsedData[k].url != "") {
+                params[k] = L.tileLayer.wms(
+                  parsedData[k].url,
+                  parsedData[k].data
+                );
+              } else if (parsedData[k].urlWms && parsedData[k].urlWms != "") {
+                paramsWmsSource[k] = wms.source(
+                  parsedData[k].urlWms,
+                  parsedData[k].data
+                );
+              }
             }
           }
-          L.control.layers({},params).addTo(map);
+          
+          // Tile mode (Uses L.WMS.TileLayer)
+          for (let nameSource in paramsWmsSource) {
+            //paramsWmsSource[nameSource].getLayer(paramsWmsSource[nameSource].options.layers).addTo(map);
+            params[nameSource] = paramsWmsSource[nameSource].getLayer(paramsWmsSource[nameSource].options.layers);
+          }
+          
+          L.control.layers({}, params).addTo(map);
           }
         }
         /**/

@@ -117,10 +117,15 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
         logoDir: this.customizationService.getHeaderConfiguration().logoDir,
         appContext: "iot",
         logout: logoutTb,
+        oauth2LogOutUrl: this.customizationService.getHeaderConfiguration().oauth2LogOutUrl,
+        logOutRedirectUrl: this.customizationService.getHeaderConfiguration().logOutRedirectUrl,
         appUrlsConfig: this.customizationService.getHeaderConfiguration().appUrlsConfig
       });
     instance.init();
-  }
+    //oidc logout enabled
+    if(!!this.customizationService.getHeaderConfiguration().oauth2LogOutUrl)
+      this.authService.setExternalLogoutCallback(instance.logOut());
+    }
 
   ngAfterViewInit() {
     fromEvent(this.searchInputField.nativeElement, 'keyup')
