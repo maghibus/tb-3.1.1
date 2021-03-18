@@ -17,6 +17,7 @@
     "header": {
         "oauth2LogOutUrl": "https://smartcityplatform.develop.it/oidc/logout",
         "logOutRedirectUrl": "https://smartcityplatform.develop.it/oneadmin/login",
+        "federatedLogoutUrl": null,
         "logoDir": "assets/platform-header-logo.png",
         "appTitle": "SMART CITY PLATFORM",
         "appUrlsConfig": {

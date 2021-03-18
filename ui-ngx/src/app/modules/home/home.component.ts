@@ -119,6 +119,7 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
         logout: logoutTb,
         oauth2LogOutUrl: this.customizationService.getHeaderConfiguration().oauth2LogOutUrl,
         logOutRedirectUrl: this.customizationService.getHeaderConfiguration().logOutRedirectUrl,
+        federatedLogoutUrl: this.customizationService.getHeaderConfiguration().federatedLogoutUrl,
         appUrlsConfig: this.customizationService.getHeaderConfiguration().appUrlsConfig
       });
     instance.init();
