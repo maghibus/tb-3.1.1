@@ -482,6 +482,11 @@ export const commonMapSettingsSchema =
                     title: 'Marker image',
                     type: 'string'
                 }
+            },
+            aggregatesMarkersWithSameLocation: {
+                title: 'Aggregates markers with same location',
+                type: 'boolean',
+                default: false
             }
         },
         required: []
@@ -599,6 +604,7 @@ export const commonMapSettingsSchema =
                 }
             ]
         },
+        'aggregatesMarkersWithSameLocation',
         'showFilter',
         'filterData'
     ]
@@ -911,6 +917,11 @@ export const pathSchema =
                 title: 'Decorator repeat',
                 type: 'string',
                 default: '20px'
+            },
+            aggregatesMarkersWithSameLocation: {
+                title: 'Aggregates markers with same location',
+                type: 'boolean',
+                default: false
             }
         },
         required: []

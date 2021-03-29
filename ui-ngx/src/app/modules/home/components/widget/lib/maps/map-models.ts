@@ -107,6 +107,7 @@ export type MarkerSettings = {
     markerImages?: string[];
     markerImageSize: number;
     fitMapBounds: boolean;
+    aggregatesMarkersWithSameLocation: boolean;
     markerImage: string;
     markerClick: { [name: string]: actionsHandler };
     colorFunction: GenericFunction;

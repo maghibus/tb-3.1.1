@@ -60,7 +60,6 @@
     "jszip": "^3.5.0",
     "leaflet": "^1.6.0",
     "leaflet-editable": "^1.2.0",
-    "leaflet-heatmap": "^1.0.0",
     "leaflet-polylinedecorator": "^1.6.0",
     "leaflet-providers": "^1.10.2",
     "leaflet.gridlayer.googlemutant": "0.10.0",

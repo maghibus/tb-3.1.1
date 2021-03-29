@@ -51,9 +51,9 @@ import {
 } from '@home/components/widget/lib/maps/maps-utils';
 import { WidgetContext } from '@home/models/widget-component.models';
 import { deepClone, isDefinedAndNotNull, isEmptyStr, isString } from '@core/utils';
-import 'heatmap.js';
-import "leaflet-heatmap";
-declare var HeatmapOverlay: any;
+import h337 from 'heatmap.js';
+import CustomLeafletHeatmap from './custom-leaflet-heatmap';
+import { Layers } from '@material-ui/icons';
 
 export default abstract class LeafletMap {
 
@@ -113,6 +113,9 @@ export default abstract class LeafletMap {
                 animate,
                 chunkedLoading
             };
+            if(!!this.options.aggregatesMarkersWithSameLocation) {
+                clusteringSettings.spiderfyOnMaxZoom = false;
+            }
             if (maxClusterRadius && maxClusterRadius > 0) {
                 clusteringSettings.maxClusterRadius = Math.floor(maxClusterRadius);
             }
@@ -421,8 +424,8 @@ export default abstract class LeafletMap {
         valueField: this.options.heatMapFieldValue //"count",
       };
 
-      this.heatmapLayer = new HeatmapOverlay(cfg);
-
+      const heatmapFactory = new CustomLeafletHeatmap(L,h337).getHeatmapLayer();
+      this.heatmapLayer = new heatmapFactory(cfg);
       let overlayMaps = {
         Heatmap: this.heatmapLayer,
       };
@@ -604,10 +607,76 @@ export default abstract class LeafletMap {
             this.showHeatMap(formattedData, drawRoutes, parseArray(data));
          }
         /****/
+        /**/
+        if (
+          !!this.options.aggregatesMarkersWithSameLocation &&
+          this.options.useClusterMarkers
+        ) {
+          let that = this;
+        
+          let sameLocationData = this.getMergedDataFromSameLocation(formattedData);
+          this.markersCluster.on("clusterclick", function (a) {
+          if (a.target._zoom > 15) {  
+            let popUpText = L.DomUtil.create("ul", "ulMarkers");
+            let clusterMarkers = [];
+            let entityLocation = [];
+              for (let i=0; i<sameLocationData.length; i++) {
+                for (let j=0; j<a.layer._markers.length; j++) {
+                  if (sameLocationData[i][that.options.latKeyName] == a.layer._markers[j]._latlng.lat && 
+                      sameLocationData[i][that.options.lngKeyName] == a.layer._markers[j]._latlng.lng) {
+                     clusterMarkers.push(a.layer._markers[j]);
+                      if (entityLocation.length == 0 ){
+                        entityLocation = sameLocationData[i].children;
+                      }
+                  } else {
+                    that.map.closePopup();
+                    a.layer["__parent"].unspiderfy();
+                  }
+                }
+              }
+              if (entityLocation.length > 0 && 
+                clusterMarkers.length > 0 && 
+                entityLocation.length ==  clusterMarkers.length 
+                && a.layer) {
+                that.aggregateMarkers(entityLocation, clusterMarkers, a.layer._leaflet_id, popUpText);
+                L.popup().setLatLng([a["latlng"].lat, a["latlng"].lng]).setContent(popUpText).openOn(that.map);
+              }
+            } 
+          });
+        }
+      /**/
       } else {
         this.updatePending = true;
       }
     }
+
+  private aggregateMarkers(entityArray: FormattedData[], clusterArray: any[], parentLeafletLayerId: string, parentDomElement: HTMLElement) :void{
+
+    for (let i=0; i<entityArray.length; i++) {
+      var liElement = L.DomUtil.create("li", "liMarkers");
+      liElement.setAttribute("style", "cursor:pointer;");
+      liElement.innerText = entityArray[i].entityName;
+      liElement.setAttribute("id",clusterArray[i]._leaflet_id); //marker id
+      liElement.setAttribute("value", parentLeafletLayerId); //markerCluster id
+
+      liElement.addEventListener("click", (e) => {
+        let markerId = parseInt((<any>e.target).id);
+        let markerClusterId = (<any>e.target).value;
+        this.map.closePopup();
+        this.map.eachLayer((layer) => {
+          if (layer["_leaflet_id"] == markerClusterId) {
+            layer["__parent"].spiderfy();
+          }
+        });
+        this.markersCluster.eachLayer((layer) => {
+          if (layer["_leaflet_id"] == markerId) {
+            layer.openPopup();
+          }
+        });
+      });
+        parentDomElement.appendChild(liElement);
+    }
+  }
 
   private showHeatMap(fdata: FormattedData[], drawRoutes: boolean, polyData: FormattedData[][] ): void {
     if (
@@ -745,9 +814,37 @@ export default abstract class LeafletMap {
         }
         this.saveMarkerLocation({ ...data, ...this.convertToCustomFormat(e.target._latlng) }).subscribe();
     }
+    
+    private getMergedDataFromSameLocation (data: FormattedData[]): any[] {
+      let newData = [];
+
+      for (let i = 0; i< data.length; i++) {
+        let alreadyExistsIndex: number = -1;
+        
+        for (let j = 0; j< newData.length; j++) {
+            if (data[i][this.options.latKeyName] == newData[j][this.options.latKeyName] &&
+              data[i][this.options.lngKeyName] == newData[j][this.options.lngKeyName]) {
+              alreadyExistsIndex = j;
+              break;
+            }
+        }
+        
+        if (alreadyExistsIndex != -1) {
+          newData[alreadyExistsIndex].children.push(data[i]);
+        } else {
+          let parentObj = {}
+            parentObj[this.options.latKeyName] =  data[i][this.options.latKeyName],
+            parentObj[this.options.lngKeyName] = data[i][this.options.lngKeyName],
+            parentObj["children"] =  [data[i]]
+          
+            newData.push(parentObj);
+        } 
+      }
+      return newData;
+    }
 
     private createMarker(key: string, data: FormattedData, dataSources: FormattedData[], settings: MarkerSettings,
-                         updateBounds = true, callback?): Marker {
+                       updateBounds = true, callback?): Marker {
       const newMarker = new Marker(this, this.convertPosition(data), settings, data, dataSources, this.dragMarker);
       if (callback) {
         newMarker.leafletMarker.on('click', () => {

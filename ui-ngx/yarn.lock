@@ -4885,7 +4885,7 @@ hash.js@^1.0.0, hash.js@^1.0.3:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
 
-heatmap.js@*, heatmap.js@^2.0.5:
+heatmap.js@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/heatmap.js/-/heatmap.js-2.0.5.tgz#466d3b86513f5d49112a49d25700ab2730149153"
   integrity sha1-Rm07hlE/XUkRKknSVwCrJzAUkVM=
@@ -6023,14 +6023,6 @@ leaflet-editable@^1.2.0:
   resolved "https://registry.yarnpkg.com/leaflet-editable/-/leaflet-editable-1.2.0.tgz#a3a01001764ba58ea923381ee6a1c814708a0b84"
   integrity sha512-wG11JwpL8zqIbypTop6xCRGagMuWw68ihYu4uqrqc5Ep0wnEJeyob7NB2Rt5t74Oih4rwJ3OfwaGbzdowOGfYQ==
 
-leaflet-heatmap@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/leaflet-heatmap/-/leaflet-heatmap-1.0.0.tgz#83cc04249d39ed91526aeaa7d7669bdaa86d6b1f"
-  integrity sha1-g8wEJJ057ZFSauqn12ab2qhtax8=
-  dependencies:
-    heatmap.js "*"
-    leaflet "*"
-
 leaflet-polylinedecorator@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/leaflet-polylinedecorator/-/leaflet-polylinedecorator-1.6.0.tgz#9ef79fd1b5302d67b72efe959a8ecd2553f27266"
@@ -6064,11 +6056,6 @@ leaflet.wms@^0.2.0:
   integrity sha1-tGfrJKF++nkJhZtG+nJtkS6X0rw=
   dependencies:
     uglify-js "^2.7.3"
-
-leaflet@*:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.7.1.tgz#10d684916edfe1bf41d688a3b97127c0322a2a19"
-  integrity sha512-/xwPEBidtg69Q3HlqPdU3DnrXQOvQU/CCHA1tcDQVzOwm91YMYaILjNp7L4Eaw5Z4sOYdbBz6koWyibppd8Zqw==
 
 leaflet@^1.6.0:
   version "1.6.0"
