@@ -36,6 +36,7 @@ export class Platform {
 
 export class HeaderConfig {
     oauth2LogOutUrl: string = 'https://domain/oidc/logout';
+    logoutOnCloseSession: boolean = false;
     logOutRedirectUrl: string = 'https://domain/oneadmin/login';
     federatedLogoutUrl: string = null;
     logoDir: string = 'assets/platform-header-logo.png';
