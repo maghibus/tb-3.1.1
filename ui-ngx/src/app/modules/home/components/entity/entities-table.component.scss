@@ -49,6 +49,16 @@
         text-overflow: ellipsis;
       }
     }
+    
+    .selection-toolbar {
+      color: black;
+
+      button.mat-icon-button {
+        mat-icon {
+          color: grey;
+        }
+      }
+    }
   }
 
   @media #{$mat-xs} {

@@ -120,7 +120,7 @@
             </button>
           </div>
         </mat-toolbar>
-        <mat-toolbar *ngIf="entitiesTableConfig.selectionEnabled" class="mat-table-toolbar" color="primary" [fxShow]="!dataSource.selection.isEmpty()">
+        <mat-toolbar *ngIf="entitiesTableConfig.selectionEnabled" class="mat-table-toolbar selection-toolbar" color="primary" [fxShow]="!dataSource.selection.isEmpty()">
           <div class="mat-toolbar-tools">
             <span class="tb-entity-table-info">
               {{ translations.selectedEntities | translate:{count: dataSource.selection.selected.length} }}
