@@ -82,9 +82,13 @@ public class CassandraToSqlTable {
             String name = resultSet.getString("COLUMN_NAME");
             int sqlType = resultSet.getInt("DATA_TYPE");
             int size = resultSet.getInt("COLUMN_SIZE");
-            CassandraToSqlColumn column = this.getColumn(name);
-            column.setSize(size);
-            column.setSqlType(sqlType);
+            try {
+                CassandraToSqlColumn column = this.getColumn(name);
+                column.setSize(size);
+                column.setSqlType(sqlType);
+            } catch (NoSuchElementException e) {
+                log.warn("[{}] postgres column {} not found in cassandra, skipping...", this.sqlTableName, name);
+            }
         }
         this.sqlInsertStatement = createSqlInsertStatement(conn);
         Statement cassandraSelectStatement = createCassandraSelectStatement();
