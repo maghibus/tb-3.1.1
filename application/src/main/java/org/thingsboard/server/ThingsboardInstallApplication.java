@@ -18,14 +18,17 @@ package org.thingsboard.server;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.thingsboard.server.install.ThingsboardInstallService;
+import org.thingsboard.server.integration.kafka.config.KafkaConfig;
 
 import java.util.Arrays;
 
 @Slf4j
-@SpringBootConfiguration
+@SpringBootApplication(exclude = KafkaAutoConfiguration.class)
 @ComponentScan({"org.thingsboard.server.install",
         "org.thingsboard.server.service.component",
         "org.thingsboard.server.service.install",
