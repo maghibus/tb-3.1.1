@@ -34,14 +34,14 @@ call insert_tb_schema_settings();
 
 CREATE TABLE IF NOT EXISTS admin_settings (
     id uuid NOT NULL CONSTRAINT admin_settings_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     json_value varchar,
     key varchar(255)
 );
 
 CREATE TABLE IF NOT EXISTS alarm (
     id uuid NOT NULL CONSTRAINT alarm_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     ack_ts bigint,
     clear_ts bigint,
     additional_info varchar,
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS alarm (
 
 CREATE TABLE IF NOT EXISTS asset (
     id uuid NOT NULL CONSTRAINT asset_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     additional_info varchar,
     customer_id uuid,
     name varchar(255),
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS asset (
 
 CREATE TABLE IF NOT EXISTS audit_log (
     id uuid NOT NULL CONSTRAINT audit_log_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     tenant_id uuid,
     customer_id uuid,
     entity_id uuid,
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS attribute_kv (
 
 CREATE TABLE IF NOT EXISTS component_descriptor (
     id uuid NOT NULL CONSTRAINT component_descriptor_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     actions varchar(255),
     clazz varchar UNIQUE,
     configuration_descriptor varchar,
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS component_descriptor (
 
 CREATE TABLE IF NOT EXISTS customer (
     id uuid NOT NULL CONSTRAINT customer_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     additional_info varchar,
     address varchar,
     address2 varchar,
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS customer (
 
 CREATE TABLE IF NOT EXISTS dashboard (
     id uuid NOT NULL CONSTRAINT dashboard_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     configuration varchar(10000000),
     assigned_customers varchar(1000000),
     search_text varchar(255),
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS dashboard (
 
 CREATE TABLE IF NOT EXISTS device (
     id uuid NOT NULL CONSTRAINT device_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     additional_info varchar,
     customer_id uuid,
     type varchar(255),
@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS device (
 
 CREATE TABLE IF NOT EXISTS device_credentials (
     id uuid NOT NULL CONSTRAINT device_credentials_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     credentials_id varchar,
     credentials_type varchar(255),
     credentials_value varchar,
@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS device_credentials (
 
 CREATE TABLE IF NOT EXISTS event (
     id uuid NOT NULL CONSTRAINT event_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     body varchar(10000000),
     entity_id uuid,
     entity_type varchar(255),
@@ -196,7 +196,7 @@ CREATE TABLE IF NOT EXISTS relation (
 
 CREATE TABLE IF NOT EXISTS tb_user (
     id uuid NOT NULL CONSTRAINT tb_user_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     additional_info varchar,
     authority varchar(255),
     customer_id uuid,
@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS tb_user (
 
 CREATE TABLE IF NOT EXISTS tenant (
     id uuid NOT NULL CONSTRAINT tenant_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     additional_info varchar,
     address varchar,
     address2 varchar,
@@ -228,7 +228,7 @@ CREATE TABLE IF NOT EXISTS tenant (
 
 CREATE TABLE IF NOT EXISTS user_credentials (
     id uuid NOT NULL CONSTRAINT user_credentials_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     activate_token varchar(255) UNIQUE,
     enabled boolean,
     password varchar(255),
@@ -238,7 +238,7 @@ CREATE TABLE IF NOT EXISTS user_credentials (
 
 CREATE TABLE IF NOT EXISTS widget_type (
     id uuid NOT NULL CONSTRAINT widget_type_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     alias varchar(255),
     bundle_alias varchar(255),
     descriptor varchar(1000000),
@@ -248,7 +248,7 @@ CREATE TABLE IF NOT EXISTS widget_type (
 
 CREATE TABLE IF NOT EXISTS widgets_bundle (
     id uuid NOT NULL CONSTRAINT widgets_bundle_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     alias varchar(255),
     search_text varchar(255),
     tenant_id uuid,
@@ -257,7 +257,7 @@ CREATE TABLE IF NOT EXISTS widgets_bundle (
 
 CREATE TABLE IF NOT EXISTS rule_chain (
     id uuid NOT NULL CONSTRAINT rule_chain_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     additional_info varchar,
     configuration varchar(10000000),
     name varchar(255),
@@ -270,7 +270,7 @@ CREATE TABLE IF NOT EXISTS rule_chain (
 
 CREATE TABLE IF NOT EXISTS rule_node (
     id uuid NOT NULL CONSTRAINT rule_node_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     rule_chain_id uuid,
     additional_info varchar,
     configuration varchar(10000000),
@@ -282,7 +282,7 @@ CREATE TABLE IF NOT EXISTS rule_node (
 
 CREATE TABLE IF NOT EXISTS entity_view (
     id uuid NOT NULL CONSTRAINT entity_view_pkey PRIMARY KEY,
-    created_time bigint NOT NULL,
+    created_time bigint NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000),
     entity_id uuid,
     entity_type varchar(255),
     tenant_id uuid,
