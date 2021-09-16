@@ -22,6 +22,7 @@ import org.thingsboard.server.common.data.UUIDConverter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Data
@@ -157,9 +158,11 @@ public class CassandraToSqlColumn {
                     int intValue = enumVal.ordinal();
                     sqlInsertStatement.setInt(this.sqlIndex, intValue);
                     break;
+                case ID:
+                    sqlInsertStatement.setObject(this.sqlIndex, UUID.fromString(value));
+                    break;
                 case JSON:
                 case STRING:
-                case ID:
                 default:
                     sqlInsertStatement.setString(this.sqlIndex, value);
                     break;
