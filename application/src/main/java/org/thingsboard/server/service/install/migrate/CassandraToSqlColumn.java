@@ -159,7 +159,7 @@ public class CassandraToSqlColumn {
                     sqlInsertStatement.setInt(this.sqlIndex, intValue);
                     break;
                 case ID:
-                    sqlInsertStatement.setObject(this.sqlIndex, UUID.fromString(value));
+                    sqlInsertStatement.setObject(this.sqlIndex, UUIDConverter.fromString(value));
                     break;
                 case JSON:
                 case STRING:
