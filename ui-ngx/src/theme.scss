@@ -252,4 +252,8 @@ $tb-dark-theme: get-tb-dark-theme(
   background-color: $tb-primary-color !important;
 }
 
+////
 
+.cdk-overlay-container {
+  z-index: 3000;
+}
