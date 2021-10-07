@@ -173,32 +173,7 @@ export class AuthService {
   }
 
   public logout(captureLastUrl: boolean = false) {
-    if (captureLastUrl) {
-      this.redirectUrl = this.router.url;
-    }
-    let redirectUrl
-    this.http.post('/api/auth/logout', null, defaultHttpOptions(true, true))
-      .subscribe(() => {
-          if(!!this.externalLogoutCallback)
-            redirectUrl = this.externalLogoutCallback();
-          this.clearJwtToken();
-          localStorage.clear();
-          if(!!this.externalLogoutCallback && !!redirectUrl)
-            location.href = redirectUrl;
-          else
-            location.pathname = "/oneadmin";
-        },
-        () => {
-          if(!!this.externalLogoutCallback)
-            redirectUrl = this.externalLogoutCallback();
-          this.clearJwtToken();
-          localStorage.clear();
-          if(!!this.externalLogoutCallback && !!redirectUrl)
-            location.href = redirectUrl;
-          else
-            location.pathname = "/oneadmin";
-        }
-      );
+    this.externalLogoutCallback()
   }
 
   private notifyUserLoaded(isUserLoaded: boolean) {

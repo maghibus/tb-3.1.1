@@ -39,6 +39,8 @@ export class HeaderConfig {
     logoutOnCloseSession: boolean = false;
     logOutRedirectUrl: string = 'https://domain/oneadmin/login';
     federatedLogoutUrl: string = null;
+    disableBigdataLogout: boolean = false;
+    disableIotLogout: boolean = false;
     logoDir: string = 'assets/platform-header-logo.png';
     appTitle: string = 'SMART CITY PLATFORM';
     appUrlsConfig: {

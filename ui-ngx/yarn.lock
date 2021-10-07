@@ -1042,6 +1042,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.15.4":
+  version "7.15.4"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.15.4.tgz#fd17d16bfdf878e6dd02d19753a39fa8a8d9c84a"
+  integrity sha512-99catp6bHCaxr4sJ/DbTGgHS4+Rs2RVd2g7iOap6SLGPDknRK9ztKNsE/Fg6QhSeh1FGE5f6gHGQmvvn3I3xhw==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/template@7.8.6":
   version "7.8.6"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.8.6.tgz#86b22af15f828dfb086474f964dcc3e39c43ce2b"
@@ -1119,10 +1126,13 @@
     "@types/flowjs" "2.13.3"
     tslib "^1.9.0"
 
-"@giotto-jfrog/giotto-platform-header@^1.1.0":
-  version "1.1.0"
-  resolved "http://jfrog.almaviva.it:8081/artifactory/api/npm/giotto-npm/@giotto-jfrog/giotto-platform-header/-/@giotto-jfrog/giotto-platform-header-1.1.0.tgz#da8990f37d6e77e01775777a88fc8946c2b1e3a2"
-  integrity sha1-2omQ831ud+AXdXd6iPyJRsKx46I=
+"@giotto-jfrog/giotto-platform-header@~2.0.0":
+  version "2.0.0"
+  resolved "http://jfrog.almaviva.it:8081/artifactory/api/npm/giotto-npm/@giotto-jfrog/giotto-platform-header/-/@giotto-jfrog/giotto-platform-header-2.0.0.tgz#2ea2e735cb0366e6092f820aa4417c6271df3114"
+  integrity sha1-LqLnNcsDZuYJL4IKpEF8YnHfMRQ=
+  dependencies:
+    "@babel/runtime" "^7.15.4"
+    jwt-decode "^3.1.2"
 
 "@istanbuljs/schema@^0.1.2":
   version "0.1.2"
@@ -5909,6 +5919,11 @@ junk@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/junk/-/junk-3.1.0.tgz#31499098d902b7e98c5d9b9c80f43457a88abfa1"
   integrity sha512-pBxcB3LFc8QVgdggvZWyeys+hnrNWg4OcZIU/1X59k5jQdLBlCsYGRQaz234SqoRLTCgMH00fY0xRJH+F9METQ==
+
+jwt-decode@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
+  integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
 
 karma-chrome-launcher@~3.1.0:
   version "3.1.0"
