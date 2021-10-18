@@ -62,6 +62,7 @@ import {
 import { Overlay } from '@angular/cdk/overlay';
 import { SubscriptionEntityInfo } from '@core/api/widget-api.models';
 import { DatePipe } from '@angular/common';
+import { localeDateFormat } from '@app/core/utils';
 
 interface TimeseriesTableWidgetSettings {
   showTimestamp: boolean;
@@ -213,7 +214,7 @@ export class TimeseriesTableWidgetComponent extends PageComponent implements OnI
     this.displayPagination = isDefined(this.settings.displayPagination) ? this.settings.displayPagination : true;
     this.hideEmptyLines = isDefined(this.settings.hideEmptyLines) ? this.settings.hideEmptyLines : false;
     this.showTimestamp = this.settings.showTimestamp !== false;
-    this.dateFormatFilter = (this.settings.showMilliseconds !== true) ? 'yyyy-MM-dd HH:mm:ss' :  'yyyy-MM-dd HH:mm:ss.sss';
+    this.dateFormatFilter = (this.settings.showMilliseconds !== true) ? localeDateFormat() : `${localeDateFormat()}.sss`;
 
     const pageSize = this.settings.defaultPageSize;
     if (isDefined(pageSize) && isNumber(pageSize) && pageSize > 0) {

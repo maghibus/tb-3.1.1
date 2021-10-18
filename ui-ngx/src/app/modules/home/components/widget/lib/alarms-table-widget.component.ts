@@ -103,6 +103,7 @@ import {
   AlarmFilterPanelData
 } from '@home/components/widget/lib/alarm-filter-panel.component';
 import { entityFields } from '@shared/models/entity.models';
+import { localeDateFormat } from '@app/core/utils';
 
 interface AlarmsTableWidgetSettings extends TableWidgetSettings {
   alarmsTitle: string;
@@ -804,7 +805,7 @@ export class AlarmsTableWidgetComponent extends PageComponent implements OnInit,
       const alarmField = alarmFields[key.name];
       if (alarmField) {
         if (alarmField.time) {
-          return this.datePipe.transform(value, 'yyyy-MM-dd HH:mm:ss');
+          return this.datePipe.transform(value, localeDateFormat());
         } else if (alarmField.value === alarmFields.severity.value) {
           return this.translate.instant(alarmSeverityTranslations.get(value));
         } else if (alarmField.value === alarmFields.status.value) {
@@ -818,7 +819,7 @@ export class AlarmsTableWidgetComponent extends PageComponent implements OnInit,
       const entityField = entityFields[key.name];
       if (entityField) {
         if (entityField.time) {
-          return this.datePipe.transform(value, 'yyyy-MM-dd HH:mm:ss');
+          return this.datePipe.transform(value, localeDateFormat());
         }
       }
       const decimals = (contentInfo.decimals || contentInfo.decimals === 0) ? contentInfo.decimals : this.ctx.widgetConfig.decimals;

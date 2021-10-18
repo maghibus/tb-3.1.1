@@ -87,6 +87,7 @@ import {
 import { sortItems } from '@shared/models/page/page-link';
 import { entityFields } from '@shared/models/entity.models';
 import { DatePipe } from '@angular/common';
+import { localeDateFormat } from '@app/core/utils';
 
 interface EntitiesTableWidgetSettings extends TableWidgetSettings {
   entitiesTitle: string;
@@ -540,7 +541,7 @@ export class EntitiesTableWidgetComponent extends PageComponent implements OnIni
       const entityField = entityFields[key.name];
       if (entityField) {
         if (entityField.time) {
-          return this.datePipe.transform(value, 'yyyy-MM-dd HH:mm:ss');
+          return this.datePipe.transform(value, localeDateFormat());
         }
       }
       const decimals = (contentInfo.decimals || contentInfo.decimals === 0) ? contentInfo.decimals : this.ctx.widgetConfig.decimals;

@@ -33,6 +33,7 @@ import { AlarmService } from '@core/http/alarm.service';
 import { tap } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
+import { localeDateFormat } from '@app/core/utils';
 
 export interface AlarmDetailsDialogData {
   alarmId: string;
@@ -105,24 +106,24 @@ export class AlarmDetailsDialogComponent extends DialogComponent<AlarmDetailsDia
 
   loadAlarmFields(alarm: AlarmInfo) {
     this.alarmFormGroup.get('createdTime')
-      .patchValue(this.datePipe.transform(alarm.createdTime, 'yyyy-MM-dd HH:mm:ss'));
+      .patchValue(this.datePipe.transform(alarm.createdTime, localeDateFormat()));
     this.alarmFormGroup.get('originatorName')
       .patchValue(alarm.originatorName);
     if (alarm.startTs) {
       this.alarmFormGroup.get('startTime')
-        .patchValue(this.datePipe.transform(alarm.startTs, 'yyyy-MM-dd HH:mm:ss'));
+        .patchValue(this.datePipe.transform(alarm.startTs, localeDateFormat()));
     }
     if (alarm.endTs) {
       this.alarmFormGroup.get('endTime')
-        .patchValue(this.datePipe.transform(alarm.endTs, 'yyyy-MM-dd HH:mm:ss'));
+        .patchValue(this.datePipe.transform(alarm.endTs, localeDateFormat()));
     }
     if (alarm.ackTs) {
       this.alarmFormGroup.get('ackTime')
-        .patchValue(this.datePipe.transform(alarm.ackTs, 'yyyy-MM-dd HH:mm:ss'));
+        .patchValue(this.datePipe.transform(alarm.ackTs, localeDateFormat()));
     }
     if (alarm.clearTs) {
       this.alarmFormGroup.get('clearTime')
-        .patchValue(this.datePipe.transform(alarm.clearTs, 'yyyy-MM-dd HH:mm:ss'));
+        .patchValue(this.datePipe.transform(alarm.clearTs, localeDateFormat()));
     }
     this.alarmFormGroup.get('type').patchValue(alarm.type);
     this.alarmFormGroup.get('alarmSeverity')

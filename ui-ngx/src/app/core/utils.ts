@@ -387,3 +387,7 @@ export function sortObjectKeys<T>(obj: T): T {
     return acc;
   }, {} as T);
 }
+
+export function localeDateFormat() {
+  return navigator.language === 'it-IT' ? 'dd-MM-yyyy HH:mm:ss' : 'yyyy-MM-dd HH:mm:ss';
+}

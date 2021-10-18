@@ -30,6 +30,7 @@ import { EntitiesTableComponent } from '@home/components/entity/entities-table.c
 import { EntityTableHeaderComponent } from '@home/components/entity/entity-table-header.component';
 import { ActivatedRoute } from '@angular/router';
 import { EntityTabsComponent } from '../../components/entity/entity-tabs.component';
+import { localeDateFormat } from '@app/core/utils';
 
 export type EntityBooleanFunction<T extends BaseData<HasId>> = (entity: T) => boolean;
 export type EntityStringFunction<T extends BaseData<HasId>> = (entity: T) => string;
@@ -113,7 +114,7 @@ export class DateEntityTableColumn<T extends BaseData<HasId>> extends EntityTabl
               title: string,
               datePipe: DatePipe,
               width: string = '0px',
-              dateFormat: string = 'yyyy-MM-dd HH:mm:ss',
+              dateFormat: string = localeDateFormat(),
               cellStyleFunction: CellStyleFunction<T> = () => ({})) {
     super(key,
           title,
