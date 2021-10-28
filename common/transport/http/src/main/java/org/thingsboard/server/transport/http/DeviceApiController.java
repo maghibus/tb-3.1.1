@@ -111,6 +111,7 @@ public class DeviceApiController {
     @RequestMapping(value = "/{deviceToken}/telemetry", method = RequestMethod.POST)
     public DeferredResult<ResponseEntity> postTelemetry(@PathVariable("deviceToken") String deviceToken,
                                                         @RequestBody String json, HttpServletRequest request) {
+        log.debug("Upload telemetry endpoint called");
         DeferredResult<ResponseEntity> responseWriter = new DeferredResult<ResponseEntity>();
         transportContext.getTransportService().process(ValidateDeviceTokenRequestMsg.newBuilder().setToken(deviceToken).build(),
                 new DeviceAuthCallback(transportContext, responseWriter, sessionInfo -> {

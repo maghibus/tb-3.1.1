@@ -18,6 +18,7 @@ import _ from 'lodash';
 import { Observable, Subject } from 'rxjs';
 import { finalize, share } from 'rxjs/operators';
 import { Datasource } from '@app/shared/models/widget.models';
+import { AppRoutingModule } from '@app/app-routing.module';
 
 const varsRegex = /\${([^}]*)}/g;
 
@@ -390,4 +391,14 @@ export function sortObjectKeys<T>(obj: T): T {
 
 export function localeDateFormat() {
   return navigator.language === 'it-IT' ? 'dd-MM-yyyy HH:mm:ss' : 'yyyy-MM-dd HH:mm:ss';
+}
+
+export function enforceBooleanClaims(token : any) {
+  const { isPublic, enabled, ...rest } = token;
+
+  return {
+    isPublic: isPublic === "true" || isPublic === true,
+    enabled: enabled === "true" || enabled ===  true,
+    ...rest
+  }
 }

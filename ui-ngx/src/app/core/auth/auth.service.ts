@@ -27,6 +27,7 @@ import { defaultHttpOptions } from '../http/http-utils';
 import { UserService } from '../http/user.service';
 import { Store } from '@ngrx/store';
 import { AppState } from '../core.state';
+import { enforceBooleanClaims } from '@app/core/utils';
 import { ActionAuthAuthenticated, ActionAuthLoadUser, ActionAuthUnauthenticated } from './auth.actions';
 import { getCurrentAuthState, getCurrentAuthUser } from './auth.selectors';
 import { Authority } from '@shared/models/authority.enum';
@@ -44,6 +45,7 @@ import { AdminService } from '@core/http/admin.service';
 import { ActionNotificationShow } from '@core/notification/notification.actions';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { AlertDialogComponent } from '@shared/components/dialog/alert-dialog.component';
+import { E } from '@angular/cdk/keycodes';
 
 @Injectable({
     providedIn: 'root'
@@ -344,8 +346,9 @@ export class AuthService {
     this.validateJwtToken(doTokenRefresh).subscribe(
       () => {
         let authPayload = {} as AuthPayload;
-        const jwtToken = AuthService._storeGet('access_token');
-        authPayload.authUser = this.jwtHelper.decodeToken(jwtToken);
+        const jwtToken = AuthService._storeGet('access_token');   
+        const decodedToken = this.jwtHelper.decodeToken(jwtToken);                              
+        authPayload.authUser = enforceBooleanClaims(decodedToken);
         if (authPayload.authUser && authPayload.authUser.scopes && authPayload.authUser.scopes.length) {
           authPayload.authUser.authority = Authority[authPayload.authUser.scopes[0]];
         } else if (authPayload.authUser) {
@@ -517,7 +520,8 @@ export class AuthService {
   public parsePublicId(): string {
     const token = AuthService.getJwtToken();
     if (token) {
-      const tokenData = this.jwtHelper.decodeToken(token);
+      const decodedToken = this.jwtHelper.decodeToken(token);                    
+      const tokenData = enforceBooleanClaims(decodedToken);
       if (tokenData && tokenData.isPublic) {
         return tokenData.sub;
       }
@@ -539,7 +543,8 @@ export class AuthService {
 
   private updateAndValidateToken(token, prefix, notify) {
     let valid = false;
-    const tokenData = this.jwtHelper.decodeToken(token);
+    const decodedToken = this.jwtHelper.decodeToken(token);
+    const tokenData = enforceBooleanClaims(decodedToken);
     const issuedAt = tokenData.iat;
     const expTime = tokenData.exp;
     if (issuedAt && expTime) {

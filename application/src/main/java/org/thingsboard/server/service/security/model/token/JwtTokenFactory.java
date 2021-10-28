@@ -110,8 +110,13 @@ public class JwtTokenFactory {
         securityUser.setAuthority(auth);
         securityUser.setFirstName(claims.get(FIRST_NAME, String.class));
         securityUser.setLastName(claims.get(LAST_NAME, String.class));
-        securityUser.setEnabled(claims.get(ENABLED, Boolean.class));
-        boolean isPublic = claims.get(IS_PUBLIC, Boolean.class);
+        // can be either a String or a Boolean, depending whether Identity Server custom token issuer is active or not
+        Object enabledObj = claims.get(ENABLED);
+        Boolean enabled = Boolean.parseBoolean(enabledObj + "");
+        securityUser.setEnabled((Boolean)enabled);
+        // can be either a String or a Boolean, depending whether Identity Server custom token issuer is active or not
+        Object isPublicObj = claims.get(IS_PUBLIC);
+        Boolean isPublic = Boolean.parseBoolean(isPublicObj + "");
         UserPrincipal principal = new UserPrincipal(isPublic ? UserPrincipal.Type.PUBLIC_ID : UserPrincipal.Type.USER_NAME, subject);
         securityUser.setUserPrincipal(principal);
         String tenantId = claims.get(TENANT_ID, String.class);
