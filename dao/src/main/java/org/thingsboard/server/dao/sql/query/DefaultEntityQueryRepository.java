@@ -17,6 +17,7 @@ package org.thingsboard.server.dao.sql.query;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -58,8 +59,9 @@ import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
+@ConditionalOnProperty(prefix = "features", value = "multiple_customer_enabled", havingValue = "false", matchIfMissing = true)
 public class DefaultEntityQueryRepository implements EntityQueryRepository {
-    private static final Map<EntityType, String> entityTableMap = new HashMap<>();
+    protected static final Map<EntityType, String> entityTableMap = new HashMap<>();
     private static final String SELECT_PHONE = " CASE WHEN entity.entity_type = 'TENANT' THEN (select phone from tenant where id = entity_id)" +
             " WHEN entity.entity_type = 'CUSTOMER' THEN (select phone from customer where id = entity_id) END as phone";
     private static final String SELECT_ZIP = " CASE WHEN entity.entity_type = 'TENANT' THEN (select zip from tenant where id = entity_id)" +
@@ -231,9 +233,9 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
     private static final String HIERARCHICAL_TO_QUERY_TEMPLATE = HIERARCHICAL_QUERY_TEMPLATE.replace("$in", "to").replace("$out", "from");
     private static final String HIERARCHICAL_FROM_QUERY_TEMPLATE = HIERARCHICAL_QUERY_TEMPLATE.replace("$in", "from").replace("$out", "to");
 
-    private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final TransactionTemplate transactionTemplate;
-    private final DefaultQueryLogComponent queryLog;
+    protected final NamedParameterJdbcTemplate jdbcTemplate;
+    protected final TransactionTemplate transactionTemplate;
+    protected final DefaultQueryLogComponent queryLog;
 
     public DefaultEntityQueryRepository(NamedParameterJdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate, DefaultQueryLogComponent queryLog) {
         this.jdbcTemplate = jdbcTemplate;
@@ -306,27 +308,14 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
                 topSelection = topSelection + ", " + latestSelection;
             }
 
-            String fromClauseCount = String.format("from (select %s from (select %s from %s e where %s) entities %s ) result %s",
-                    "entities.*",
-                    entityFieldsSelection,
-                    addEntityTableQuery(ctx, query.getEntityFilter()),
-                    entityWhereClause,
-                    latestJoinsCnt,
-                    textSearchQuery);
-
-            String fromClauseData = String.format("from (select %s from (select %s from %s e where %s) entities %s ) result %s",
-                    topSelection,
-                    entityFieldsSelection,
-                    addEntityTableQuery(ctx, query.getEntityFilter()),
-                    entityWhereClause,
-                    latestJoinsData,
-                    textSearchQuery);
+            String fromClauseCount = getFromClauseCount(query, ctx, entityWhereClause, latestJoinsCnt, textSearchQuery, entityFieldsSelection);
+            String fromClauseData = getFromClauseData(query, ctx, entityWhereClause, latestJoinsData, textSearchQuery, entityFieldsSelection, topSelection);
 
             if (!StringUtils.isEmpty(pageLink.getTextSearch())) {
                 //Unfortunately, we need to sacrifice performance in case of full text search, because it is applied to all joined records.
                 fromClauseCount = fromClauseData;
             }
-            String countQuery = String.format("select count(id) %s", fromClauseCount);
+            String countQuery = getCountQuery(fromClauseCount);
 
             long startTs = System.currentTimeMillis();
             int totalElements;
@@ -339,7 +328,7 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
             if (totalElements == 0) {
                 return new PageData<>();
             }
-            String dataQuery = String.format("select * %s", fromClauseData);
+            String dataQuery = getDataQuery(fromClauseData);
 
             EntityDataSortOrder sortOrder = pageLink.getSortOrder();
             if (sortOrder != null) {
@@ -370,7 +359,32 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
         });
     }
 
-    private String buildEntityWhere(QueryContext ctx, EntityFilter entityFilter, List<EntityKeyMapping> entityFieldsFilters) {
+    protected String getCountQuery(String fromClauseCount){
+        return String.format("select count(id) %s", fromClauseCount);
+    }
+
+    protected String getFromClauseData(EntityDataQuery query, QueryContext ctx, String entityWhereClause, String latestJoinsData, String textSearchQuery, String entityFieldsSelection, String topSelection) {
+        return String.format("from (select %s from (select %s from %s e where %s) entities %s ) result %s",
+                topSelection,
+                entityFieldsSelection,
+                addEntityTableQuery(ctx, query.getEntityFilter()),
+                entityWhereClause,
+                latestJoinsData,
+                textSearchQuery);
+    }
+
+    protected String getFromClauseCount(EntityDataQuery query, QueryContext ctx, String entityWhereClause, String latestJoinsCnt, String textSearchQuery, String entityFieldsSelection) {
+        return String.format("from (select %s from (select %s from %s e where %s) entities %s ) result %s",
+                "entities.*",
+                entityFieldsSelection,
+                addEntityTableQuery(ctx, query.getEntityFilter()),
+                entityWhereClause,
+                latestJoinsCnt,
+                textSearchQuery);
+    }
+
+
+    protected String buildEntityWhere(QueryContext ctx, EntityFilter entityFilter, List<EntityKeyMapping> entityFieldsFilters) {
         String permissionQuery = this.buildPermissionQuery(ctx, entityFilter);
         String entityFilterQuery = this.buildEntityFilterQuery(ctx, entityFilter);
         String entityFieldsQuery = EntityKeyMapping.buildQuery(ctx, entityFieldsFilters, entityFilter.getType());
@@ -384,7 +398,11 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
         return result;
     }
 
-    private String buildPermissionQuery(QueryContext ctx, EntityFilter entityFilter) {
+    protected String getDataQuery(String fromClauseData){
+        return String.format("select * %s", fromClauseData);
+    }
+
+    protected String buildPermissionQuery(QueryContext ctx, EntityFilter entityFilter) {
         switch (entityFilter.getType()) {
             case RELATIONS_QUERY:
             case DEVICE_SEARCH_QUERY:
@@ -401,7 +419,8 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
         }
     }
 
-    private String defaultPermissionQuery(QueryContext ctx) {
+
+    protected String defaultPermissionQuery(QueryContext ctx) {
         ctx.addUuidParameter("permissions_tenant_id", ctx.getTenantId().getId());
         if (ctx.getCustomerId() != null && !ctx.getCustomerId().isNullUid()) {
             ctx.addUuidParameter("permissions_customer_id", ctx.getCustomerId().getId());
@@ -437,7 +456,7 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
         }
     }
 
-    private String addEntityTableQuery(QueryContext ctx, EntityFilter entityFilter) {
+    protected String addEntityTableQuery(QueryContext ctx, EntityFilter entityFilter) {
         switch (entityFilter.getType()) {
             case RELATIONS_QUERY:
                 return relationQuery(ctx, (RelationsQueryFilter) entityFilter);
@@ -454,6 +473,9 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
                 return entityTableMap.get(ctx.getEntityType());
         }
     }
+
+
+
 
     private String entitySearchQuery(QueryContext ctx, EntitySearchQueryFilter entityFilter, EntityType entityType, List<String> types) {
         EntityId rootId = entityFilter.getRootEntity();
@@ -576,7 +598,7 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
         return from;
     }
 
-    private String buildTextSearchQuery(QueryContext ctx, List<EntityKeyMapping> selectionMapping, String searchText) {
+    protected String buildTextSearchQuery(QueryContext ctx, List<EntityKeyMapping> selectionMapping, String searchText) {
         if (!StringUtils.isEmpty(searchText) && !selectionMapping.isEmpty()) {
             String lowerSearchText = "%" + searchText.toLowerCase() + "%";
             ctx.addStringParameter("lowerSearchTextParam", lowerSearchText);
@@ -632,7 +654,7 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
         return "e.type = :entity_filter_type_query_type and lower(e.search_text) like lower(concat(:entity_filter_type_query_name, '%%'))";
     }
 
-    private EntityType resolveEntityType(EntityFilter entityFilter) {
+    protected EntityType resolveEntityType(EntityFilter entityFilter) {
         switch (entityFilter.getType()) {
             case SINGLE_ENTITY:
                 return ((SingleEntityFilter) entityFilter).getSingleEntity().getEntityType();

@@ -803,3 +803,7 @@ management:
 integration:
   kafka:
     bootstrap.servers: "${INTEGRATION_KAFKA_SERVERS:localhost:9092}"
+
+
+features:
+  multiple_customer_enabled: "${FEATURES_MULTIPLE_CUSTOMER_ENABLED:false}" # enables the feature that permits multiple customers for a device/asset and the filter that blocks calls to single association endpoints

@@ -31,18 +31,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.thingsboard.server.common.data.Customer;
-import org.thingsboard.server.common.data.Device;
-import org.thingsboard.server.common.data.DeviceInfo;
-import org.thingsboard.server.common.data.EntitySubtype;
-import org.thingsboard.server.common.data.EntityType;
-import org.thingsboard.server.common.data.EntityView;
-import org.thingsboard.server.common.data.Tenant;
+import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.device.DeviceSearchQuery;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.EntityId;
 import org.thingsboard.server.common.data.id.TenantId;
+import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.relation.EntityRelation;
@@ -50,6 +45,7 @@ import org.thingsboard.server.common.data.relation.EntitySearchDirection;
 import org.thingsboard.server.common.data.security.DeviceCredentials;
 import org.thingsboard.server.common.data.security.DeviceCredentialsType;
 import org.thingsboard.server.dao.customer.CustomerDao;
+import org.thingsboard.server.dao.devicecustomerassociation.DeviceCustomerAssociationService;
 import org.thingsboard.server.dao.entity.AbstractEntityService;
 import org.thingsboard.server.dao.entityview.EntityViewService;
 import org.thingsboard.server.dao.event.EventService;
@@ -94,6 +90,9 @@ public class DeviceServiceImpl extends AbstractEntityService implements DeviceSe
 
     @Autowired
     private DeviceCredentialsService deviceCredentialsService;
+
+    @Autowired
+    private DeviceCustomerAssociationService deviceCustomerAssociationService;
 
     @Autowired
     private EntityViewService entityViewService;
@@ -221,6 +220,7 @@ public class DeviceServiceImpl extends AbstractEntityService implements DeviceSe
         cache.evict(list);
 
         deviceDao.removeById(tenantId, deviceId.getId());
+        deviceCustomerAssociationService.deleteByDeviceId(device.getTenantId(), device.getId());
     }
 
     @Override
@@ -322,6 +322,28 @@ public class DeviceServiceImpl extends AbstractEntityService implements DeviceSe
     }
 
     @Override
+    public DeviceCustomerAssociation assignDeviceToCustomers(TenantId tenantId, DeviceId deviceId, CustomerId addedCustomerId) {
+        DeviceCustomerAssociation deviceCustomerAssociation = new DeviceCustomerAssociation();
+        deviceCustomerAssociation.setDeviceId(deviceId.getId());
+        deviceCustomerAssociation.setCustomerId(addedCustomerId.getId());
+        return deviceCustomerAssociationService.saveDeviceCustomerAssociation(tenantId,deviceCustomerAssociation);
+    }
+
+    @Override
+    public DeviceCustomerAssociation unassignDeviceFromCustomer(TenantId tenantId, DeviceId deviceId, CustomerId customerId) {
+        DeviceCustomerAssociation deviceCustomerAssociation = new DeviceCustomerAssociation();
+        deviceCustomerAssociation.setDeviceId(deviceId.getId());
+        deviceCustomerAssociation.setCustomerId(customerId.getId());
+        deviceCustomerAssociationService.deleteDeviceCustomerAssociation(tenantId, deviceCustomerAssociation);
+        return deviceCustomerAssociation;
+    }
+
+    @Override
+    public Integer unassignAllDeviceCustomerAssociation(TenantId tenantId, DeviceId deviceId) {
+        return deviceCustomerAssociationService.deleteByDeviceId(tenantId, deviceId);
+    }
+
+    @Override
     public void unassignCustomerDevices(TenantId tenantId, CustomerId customerId) {
         log.trace("Executing unassignCustomerDevices, tenantId [{}], customerId [{}]", tenantId, customerId);
         validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
@@ -390,6 +412,73 @@ public class DeviceServiceImpl extends AbstractEntityService implements DeviceSe
         device.setTenantId(tenantId);
         device.setCustomerId(null);
         return doSaveDevice(device, null);
+    }
+
+    @Override
+    public DeviceWithMultipleCustomers findDeviceInfoWithMultipleCustomerByDeviceId(DeviceId deviceId) {
+        DeviceWithMultipleCustomers deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByDeviceId(deviceId.getId());
+        deviceWithMultipleCustomers.setCustomerInfo(customerDao.findAssociatedCustomerInfoByDeviceId(deviceId.getId()));
+        return deviceWithMultipleCustomers;
+    }
+
+    @Override
+    public PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndType(TenantId tenantId, String type, PageLink pageLink) {
+        log.trace("Executing findDeviceInfoWithMultipleCustomerByTenantIdAndType, tenantId [{}], type [{}], pageLink [{}]", tenantId, type, pageLink);
+        validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
+        validateString(type, "Incorrect type " + type);
+        validatePageLink(pageLink);
+        PageData<DeviceWithMultipleCustomers> deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByTenantIdAndType(tenantId.getId(), type, pageLink);
+
+        deviceWithMultipleCustomers.getData().forEach(
+                x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByDeviceId(x.getId().getId()))
+        );
+
+        return deviceWithMultipleCustomers;
+    }
+
+    @Override
+    public PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantId(TenantId tenantId, PageLink pageLink) {
+        log.trace("Executing findDeviceInfoWithMultipleCustomerByTenantId, tenantId [{}], pageLink [{}]", tenantId, pageLink);
+        validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
+        validatePageLink(pageLink);
+        PageData<DeviceWithMultipleCustomers> deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByTenantId(tenantId.getId(), pageLink);
+
+        deviceWithMultipleCustomers.getData().forEach(
+                x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByDeviceId(x.getId().getId()))
+        );
+
+        return deviceWithMultipleCustomers;
+    }
+
+    @Override
+    public PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(TenantId tenantId, CustomerId customerId, String type, PageLink pageLink) {
+        log.trace("Executing findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType, tenantId [{}], customerId [{}], type [{}], pageLink [{}]", tenantId, customerId, type, pageLink);
+        validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
+        validateId(customerId, INCORRECT_CUSTOMER_ID + customerId);
+        validateString(type, "Incorrect type " + type);
+        validatePageLink(pageLink);
+        PageData<DeviceWithMultipleCustomers> deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(tenantId.getId(), customerId.getId(), type, pageLink);
+
+        deviceWithMultipleCustomers.getData().forEach(
+                x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByDeviceId(x.getId().getId()))
+        );
+
+        return deviceWithMultipleCustomers;
+    }
+
+    @Override
+    public PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(TenantId tenantId, CustomerId customerId, PageLink pageLink) {
+        log.trace("Executing findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId, tenantId [{}], customerId [{}], pageLink [{}]", tenantId, customerId, pageLink);
+        validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
+        validateId(customerId, INCORRECT_CUSTOMER_ID + customerId);
+        validatePageLink(pageLink);
+        PageData<DeviceWithMultipleCustomers> deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(tenantId.getId(), customerId.getId(), pageLink);
+
+        deviceWithMultipleCustomers.getData().forEach(
+                x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByDeviceId(x.getId().getId()))
+        );
+
+        return deviceWithMultipleCustomers;
     }
 
     private DataValidator<Device> deviceValidator =

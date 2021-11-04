@@ -17,6 +17,7 @@ package org.thingsboard.server.controller;
 
 import com.datastax.oss.driver.api.core.uuid.Uuids;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -27,9 +28,11 @@ import org.thingsboard.server.common.data.Device;
 import org.thingsboard.server.common.data.EntitySubtype;
 import org.thingsboard.server.common.data.Tenant;
 import org.thingsboard.server.common.data.User;
+import org.thingsboard.server.common.data.asset.Asset;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.DeviceCredentialsId;
 import org.thingsboard.server.common.data.id.DeviceId;
+import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.relation.EntityRelation;
@@ -42,8 +45,11 @@ import org.thingsboard.server.dao.model.ModelConstants;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.thingsboard.server.dao.model.ModelConstants.NULL_UUID;
 
@@ -90,7 +96,7 @@ public abstract class BaseDeviceControllerTest extends AbstractControllerTest {
 
         Assert.assertNotNull(savedDevice);
         Assert.assertNotNull(savedDevice.getId());
-        Assert.assertTrue(savedDevice.getCreatedTime() > 0);
+        assertTrue(savedDevice.getCreatedTime() > 0);
         Assert.assertEquals(savedTenant.getId(), savedDevice.getTenantId());
         Assert.assertNotNull(savedDevice.getCustomerId());
         Assert.assertEquals(NULL_UUID, savedDevice.getCustomerId().getId());

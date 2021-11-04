@@ -32,5 +32,4 @@ public interface Dao<T> {
     T save(TenantId tenantId, T t);
 
     boolean removeById(TenantId tenantId, UUID id);
-
 }

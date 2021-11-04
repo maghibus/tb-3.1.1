@@ -16,56 +16,32 @@
 package org.thingsboard.server.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.SSLContexts;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.thingsboard.server.common.data.DataConstants;
-import org.thingsboard.server.common.data.Device;
-import org.thingsboard.server.common.data.EntityType;
-import org.thingsboard.server.common.data.Tenant;
-import org.thingsboard.server.common.data.User;
+import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.EntityId;
-import org.thingsboard.server.common.data.kv.Aggregation;
+import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
 import org.thingsboard.server.common.data.page.PageData;
-import org.thingsboard.server.common.data.query.DeviceTypeFilter;
-import org.thingsboard.server.common.data.query.EntityCountQuery;
-import org.thingsboard.server.common.data.query.EntityData;
-import org.thingsboard.server.common.data.query.EntityDataPageLink;
-import org.thingsboard.server.common.data.query.EntityDataQuery;
-import org.thingsboard.server.common.data.query.EntityDataSortOrder;
-import org.thingsboard.server.common.data.query.EntityKey;
-import org.thingsboard.server.common.data.query.EntityKeyType;
-import org.thingsboard.server.common.data.query.EntityListFilter;
-import org.thingsboard.server.common.data.query.FilterPredicateValue;
-import org.thingsboard.server.common.data.query.KeyFilter;
-import org.thingsboard.server.common.data.query.NumericFilterPredicate;
+import org.thingsboard.server.common.data.query.*;
 import org.thingsboard.server.common.data.security.Authority;
-import org.thingsboard.server.service.telemetry.cmd.v2.EntityDataCmd;
-import org.thingsboard.server.service.telemetry.cmd.v2.EntityHistoryCmd;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public abstract class BaseEntityQueryControllerTest extends AbstractControllerTest {
 
     private Tenant savedTenant;
     private User tenantAdmin;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @Before
     public void beforeTest() throws Exception {
@@ -285,4 +261,30 @@ public abstract class BaseEntityQueryControllerTest extends AbstractControllerTe
         Assert.assertEquals(deviceHighTemperatures, loadedHighTemperatures);
 
     }
+
+
+    @Test
+    public void entitiesQueryFind() throws Exception {
+        Device device = new Device();
+        device.setName("My device");
+        device.setType("default");
+        Device savedDevice = doPost("/api/device", device, Device.class);
+
+        Customer customer = new Customer();
+        customer.setTitle("Customer To ADD 1");
+        Customer customerToAdd1 = doPost("/api/customer", customer, Customer.class);
+
+        String[] strCustomerIds = {customerToAdd1.getId().toString()};
+        doPatch("/api/device/" + savedDevice.getId().getId().toString() + "/customer/association", strCustomerIds, DeviceWithMultipleCustomers.class);
+
+
+        String json = "{\"entityFilter\":{\"type\":\"singleEntity\",\"singleEntity\":{\"entityType\":\"DEVICE\",\"id\":\""+
+                savedDevice.getId().getId().toString()+"\"}},\"pageLink\":{\"pageSize\":1,\"page\":0,\"sortOrder\":{\"key\":{\"type\":\"ENTITY_FIELD\",\"key\":\"createdTime\"},\"direction\":\"DESC\"}},\"entityFields\":[{\"type\":\"ENTITY_FIELD\",\"key\":\"name\"},{\"type\":\"ENTITY_FIELD\",\"key\":\"label\"},{\"type\":\"ENTITY_FIELD\",\"key\":\"additionalInfo\"}]}";
+
+        EntityDataQuery query = objectMapper.readValue(json, EntityDataQuery.class);
+
+        PageData<EntityData> data = doPostWithTypedResponse("/api/entitiesQuery/find", query, new TypeReference<PageData<EntityData>>() {});
+        assertTrue(data.getData().size()>0);
+    }
+
 }

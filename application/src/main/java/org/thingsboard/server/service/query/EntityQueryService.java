@@ -16,11 +16,7 @@
 package org.thingsboard.server.service.query;
 
 import org.thingsboard.server.common.data.page.PageData;
-import org.thingsboard.server.common.data.query.AlarmData;
-import org.thingsboard.server.common.data.query.AlarmDataQuery;
-import org.thingsboard.server.common.data.query.EntityCountQuery;
-import org.thingsboard.server.common.data.query.EntityData;
-import org.thingsboard.server.common.data.query.EntityDataQuery;
+import org.thingsboard.server.common.data.query.*;
 import org.thingsboard.server.service.security.model.SecurityUser;
 
 public interface EntityQueryService {

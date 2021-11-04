@@ -32,12 +32,7 @@ import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootContextLoader;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -45,10 +40,6 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpInputMessage;
 import org.springframework.mock.http.MockHttpOutputMessage;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -78,10 +69,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
@@ -400,6 +388,22 @@ public abstract class AbstractWebTest {
         return readResponse(doPost(urlTemplate, content, params).andExpect(status().isOk()), responseClass);
     }
 
+    protected <T> T doPatch(String urlTemplate, Class<T> responseClass, String... params) throws Exception {
+        return readResponse(doPatch(urlTemplate, params).andExpect(status().isOk()), responseClass);
+    }
+
+    protected <T> T doPatch(String urlTemplate, T content, Class<T> responseClass, ResultMatcher resultMatcher, String... params) throws Exception {
+        return readResponse(doPatch(urlTemplate, content, params).andExpect(resultMatcher), responseClass);
+    }
+
+    protected <T> T doPatch(String urlTemplate, T content, Class<T> responseClass, String... params) throws Exception {
+        return readResponse(doPatch(urlTemplate, content, params).andExpect(status().isOk()), responseClass);
+    }
+
+    protected <C,T> T doPatch(String urlTemplate, C content, Class<T> responseClass) throws Exception{
+        return readResponse(doPatchWithDifferentContent(urlTemplate, content).andExpect(status().isOk()), responseClass);
+    }
+
     protected <T, R> R doPostWithResponse(String urlTemplate, T content, Class<R> responseClass, String... params) throws Exception {
         return readResponse(doPost(urlTemplate, content, params).andExpect(status().isOk()), responseClass);
     }
@@ -441,6 +445,39 @@ public abstract class AbstractWebTest {
         String json = json(content);
         postRequest.contentType(contentType).content(json);
         MvcResult result = mockMvc.perform(postRequest).andReturn();
+        result.getAsyncResult(timeout);
+        return mockMvc.perform(asyncDispatch(result));
+    }
+
+    protected ResultActions doPatch(String urlTemplate, String... params) throws Exception {
+        MockHttpServletRequestBuilder patchRequest = patch(urlTemplate);
+        setJwtToken(patchRequest);
+        populateParams(patchRequest, params);
+        return mockMvc.perform(patchRequest);
+    }
+
+    protected <T> ResultActions doPatch(String urlTemplate, T content, String... params) throws Exception {
+        MockHttpServletRequestBuilder patchRequest = patch(urlTemplate, params);
+        setJwtToken(patchRequest);
+        String json = json(content);
+        patchRequest.contentType(contentType).content(json);
+        return mockMvc.perform(patchRequest);
+    }
+
+    protected <C,T> ResultActions doPatchWithDifferentContent(String urlTemplate, C content, String... params) throws Exception {
+        MockHttpServletRequestBuilder patchRequest = patch(urlTemplate, params);
+        setJwtToken(patchRequest);
+        String json = json(content);
+        patchRequest.contentType(contentType).content(json);
+        return mockMvc.perform(patchRequest);
+    }
+
+    protected <T> ResultActions doPatchAsync(String urlTemplate, T content, Long timeout, String... params) throws Exception {
+        MockHttpServletRequestBuilder patchRequest = patch(urlTemplate, params);
+        setJwtToken(patchRequest);
+        String json = json(content);
+        patchRequest.contentType(contentType).content(json);
+        MvcResult result = mockMvc.perform(patchRequest).andReturn();
         result.getAsyncResult(timeout);
         return mockMvc.perform(asyncDispatch(result));
     }

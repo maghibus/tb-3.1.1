@@ -16,11 +16,14 @@
 package org.thingsboard.server.dao.customer;
 
 import org.thingsboard.server.common.data.Customer;
+import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.TenantId;
+import org.thingsboard.server.common.data.multiplecustomer.MultipleCustomerInfo;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.dao.Dao;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -54,5 +57,8 @@ public interface CustomerDao extends Dao<Customer> {
      * @return the optional customer object
      */
     Optional<Customer> findCustomersByTenantIdAndTitle(UUID tenantId, String title);
-    
+
+    List<MultipleCustomerInfo> findAssociatedCustomerInfoByDeviceId(UUID deviceId);
+
+    List<MultipleCustomerInfo> findAssociatedCustomerInfoByAssetId(UUID assetId);
 }

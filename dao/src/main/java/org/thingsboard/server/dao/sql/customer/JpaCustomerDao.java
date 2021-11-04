@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 import org.thingsboard.server.common.data.Customer;
+import org.thingsboard.server.common.data.multiplecustomer.MultipleCustomerInfo;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.dao.DaoUtil;
@@ -26,6 +27,7 @@ import org.thingsboard.server.dao.customer.CustomerDao;
 import org.thingsboard.server.dao.model.sql.CustomerEntity;
 import org.thingsboard.server.dao.sql.JpaAbstractSearchTextDao;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -61,5 +63,15 @@ public class JpaCustomerDao extends JpaAbstractSearchTextDao<CustomerEntity, Cus
     public Optional<Customer> findCustomersByTenantIdAndTitle(UUID tenantId, String title) {
         Customer customer = DaoUtil.getData(customerRepository.findByTenantIdAndTitle(tenantId, title));
         return Optional.ofNullable(customer);
+    }
+
+    @Override
+    public List<MultipleCustomerInfo> findAssociatedCustomerInfoByDeviceId(UUID deviceId) {
+        return customerRepository.findAssociatedCustomerInfoByDeviceId(deviceId);
+    }
+
+    @Override
+    public List<MultipleCustomerInfo> findAssociatedCustomerInfoByAssetId(UUID assetId) {
+        return customerRepository.findAssociatedCustomerInfoByAssetId(assetId);
     }
 }

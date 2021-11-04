@@ -24,6 +24,7 @@ import java.util.UUID;
 
 public class ModelConstants {
 
+
     private ModelConstants() {
     }
 
@@ -147,6 +148,21 @@ public class ModelConstants {
     public static final String DEVICE_BY_CUSTOMER_BY_TYPE_AND_SEARCH_TEXT_COLUMN_FAMILY_NAME = "device_by_customer_by_type_and_search_text";
     public static final String DEVICE_BY_TENANT_AND_NAME_VIEW_NAME = "device_by_tenant_and_name";
     public static final String DEVICE_TYPES_BY_TENANT_VIEW_NAME = "device_types_by_tenant";
+
+    /**
+     * Cassandra device customer association constants.
+     */
+    public static final String DEVICE_CUSTOMER_ASSOCIATION_COLUMN_FAMILY_NAME = "device_customer_association";
+    public static final String DEVICE_CUSTOMER_ASSOCIATION_DEVICE_ID_PROPERTY = "deviceId";
+    public static final String DEVICE_CUSTOMER_ASSOCIATION_CUSTOMER_ID_PROPERTY = "customerId";
+
+    /**
+     *
+     */
+    public static final String ASSET_CUSTOMER_ASSOCIATION_COLUMN_FAMILY_NAME = "asset_customer_association";
+    public static final String ASSET_CUSTOMER_ASSOCIATION_ASSET_ID_PROPERTY = "assetId";
+    public static final String ASSET_CUSTOMER_ASSOCIATION_CUSTOMER_ID_PROPERTY = "customerId";
+
 
     /**
      * Cassandra entityView constants.

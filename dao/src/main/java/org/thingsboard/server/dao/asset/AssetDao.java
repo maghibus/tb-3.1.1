@@ -20,6 +20,7 @@ import org.thingsboard.server.common.data.EntitySubtype;
 import org.thingsboard.server.common.data.asset.Asset;
 import org.thingsboard.server.common.data.asset.AssetInfo;
 import org.thingsboard.server.common.data.id.TenantId;
+import org.thingsboard.server.common.data.multiplecustomer.AssetWithMultipleCustomers;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.dao.Dao;
@@ -166,4 +167,13 @@ public interface AssetDao extends Dao<Asset> {
      */
     ListenableFuture<List<EntitySubtype>> findTenantAssetTypesAsync(UUID tenantId);
 
+    AssetWithMultipleCustomers findDeviceInfoWithMultipleCustomerByDeviceId(UUID id);
+
+    PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomerByTenantIdAndType(UUID id, String type, PageLink pageLink);
+
+    PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomerByTenantId(UUID tenantId, PageLink pageLink);
+
+    PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(UUID tenantId, UUID customerId, String type, PageLink pageLink);
+
+    PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(UUID tenantId, UUID customerId, PageLink pageLink);
 }

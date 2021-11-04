@@ -29,6 +29,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 import org.thingsboard.server.common.data.exception.ThingsboardErrorCode;
 import org.thingsboard.server.common.data.exception.ThingsboardException;
+import org.thingsboard.server.common.msg.tools.TbFeatureDisabledException;
 import org.thingsboard.server.common.msg.tools.TbRateLimitsException;
 import org.thingsboard.server.service.security.exception.AuthMethodNotSupportedException;
 import org.thingsboard.server.service.security.exception.JwtExpiredTokenException;
@@ -69,6 +70,8 @@ public class ThingsboardErrorResponseHandler implements AccessDeniedHandler {
                     handleThingsboardException((ThingsboardException) exception, response);
                 } else if (exception instanceof TbRateLimitsException) {
                     handleRateLimitException(response, (TbRateLimitsException) exception);
+                } else if (exception instanceof TbFeatureDisabledException) {
+                    handleFeatureDisabledException(response, (TbFeatureDisabledException)exception);
                 } else if (exception instanceof AccessDeniedException) {
                     handleAccessDeniedException(response);
                 } else if (exception instanceof AuthenticationException) {
@@ -116,6 +119,14 @@ public class ThingsboardErrorResponseHandler implements AccessDeniedHandler {
 
         response.setStatus(status.value());
         mapper.writeValue(response.getWriter(), ThingsboardErrorResponse.of(thingsboardException.getMessage(), errorCode, status));
+    }
+
+    private void handleFeatureDisabledException(HttpServletResponse response, TbFeatureDisabledException exception) throws IOException {
+        response.setStatus(HttpStatus.NOT_FOUND.value());
+        String message = "Feature Disabled for " + exception.getEntityType().name().toLowerCase() + "!";
+        mapper.writeValue(response.getWriter(),
+                ThingsboardErrorResponse.of(message,
+                        ThingsboardErrorCode.DISABLED, HttpStatus.NOT_FOUND));
     }
 
     private void handleRateLimitException(HttpServletResponse response, TbRateLimitsException exception) throws IOException {

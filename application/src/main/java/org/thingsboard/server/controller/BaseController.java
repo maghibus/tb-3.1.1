@@ -63,6 +63,8 @@ import org.thingsboard.server.common.data.id.WidgetTypeId;
 import org.thingsboard.server.common.data.id.WidgetsBundleId;
 import org.thingsboard.server.common.data.kv.AttributeKvEntry;
 import org.thingsboard.server.common.data.kv.DataType;
+import org.thingsboard.server.common.data.multiplecustomer.AssetWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.page.SortOrder;
 import org.thingsboard.server.common.data.page.TimePageLink;
@@ -76,6 +78,7 @@ import org.thingsboard.server.common.msg.TbMsg;
 import org.thingsboard.server.common.msg.TbMsgDataType;
 import org.thingsboard.server.common.msg.TbMsgMetaData;
 import org.thingsboard.server.dao.asset.AssetService;
+import org.thingsboard.server.dao.assetcustomerassociation.AssetCustomerAssociationService;
 import org.thingsboard.server.dao.attributes.AttributesService;
 import org.thingsboard.server.dao.audit.AuditLogService;
 import org.thingsboard.server.dao.customer.CustomerService;
@@ -83,6 +86,7 @@ import org.thingsboard.server.dao.dashboard.DashboardService;
 import org.thingsboard.server.dao.device.ClaimDevicesService;
 import org.thingsboard.server.dao.device.DeviceCredentialsService;
 import org.thingsboard.server.dao.device.DeviceService;
+import org.thingsboard.server.dao.devicecustomerassociation.DeviceCustomerAssociationService;
 import org.thingsboard.server.dao.entityview.EntityViewService;
 import org.thingsboard.server.dao.exception.DataValidationException;
 import org.thingsboard.server.dao.exception.IncorrectParameterException;
@@ -159,6 +163,12 @@ public abstract class BaseController {
     protected WidgetTypeService widgetTypeService;
 
     @Autowired
+    protected DeviceCustomerAssociationService deviceCustomerAssociationService;
+
+    @Autowired
+    protected AssetCustomerAssociationService assetCustomerAssociationService;
+
+    @Autowired
     protected DashboardService dashboardService;
 
     @Autowired
@@ -196,6 +206,8 @@ public abstract class BaseController {
 
     @Autowired
     protected TbQueueProducerProvider producerProvider;
+
+
 
     @Value("${server.log_controller_error_stack_trace}")
     @Getter
@@ -409,6 +421,31 @@ public abstract class BaseController {
             throw handleException(e, false);
         }
     }
+
+    DeviceWithMultipleCustomers checkDeviceWithMultipleCustomersDeviceId(DeviceId deviceId, Operation operation) throws ThingsboardException {
+        try {
+            validateId(deviceId, "Incorrect deviceId " + deviceId);
+            DeviceWithMultipleCustomers device = deviceService.findDeviceInfoWithMultipleCustomerByDeviceId( deviceId);
+            checkNotNull(device);
+            accessControlService.checkPermission(getCurrentUser(), Resource.DEVICE, operation, deviceId, device);
+            return device;
+        } catch (Exception e) {
+            throw handleException(e, false);
+        }
+    }
+
+    AssetWithMultipleCustomers checkAssetWithMultipleCustomersAssetId(AssetId assetId, Operation operation) throws ThingsboardException {
+        try {
+            validateId(assetId, "Incorrect assetId " + assetId);
+            AssetWithMultipleCustomers asset = assetService.findAssetInfoWithMultipleCustomerByDeviceId(assetId);
+            checkNotNull(asset);
+            accessControlService.checkPermission(getCurrentUser(), Resource.ASSET, operation, assetId, asset);
+            return asset;
+        } catch (Exception e) {
+            throw handleException(e, false);
+        }
+    }
+
 
     DeviceInfo checkDeviceInfoId(DeviceId deviceId, Operation operation) throws ThingsboardException {
         try {

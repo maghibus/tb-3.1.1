@@ -122,4 +122,23 @@ public interface AssetRepository extends PagingAndSortingRepository<AssetEntity,
     @Query("SELECT DISTINCT a.type FROM AssetEntity a WHERE a.tenantId = :tenantId")
     List<String> findTenantAssetTypes(@Param("tenantId") UUID tenantId);
 
+    @Query("SELECT new org.thingsboard.server.dao.model.sql.AssetInfoEntity(a, c.title, c.additionalInfo) " +
+            "FROM AssetEntity a, CustomerEntity c, AssetCustomerAssociationEntity aca " +
+            "WHERE c.id = aca.customerId " +
+            "AND a.id = aca.assetId "+
+            "AND a.tenantId = :tenantId " +
+            "AND aca.customerId = :customerId " +
+            "AND a.type = :type " +
+            "AND LOWER(a.searchText) LIKE LOWER(CONCAT(:textSearch, '%'))")
+    Page<AssetInfoEntity> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(@Param("tenantId") UUID tenantId, @Param("customerId") UUID customerId, @Param("type") String type, @Param("textSearch") String textSearch, Pageable toPageable);
+
+    @Query("SELECT new org.thingsboard.server.dao.model.sql.AssetInfoEntity(a, c.title, c.additionalInfo) " +
+            "FROM AssetEntity a, CustomerEntity c, AssetCustomerAssociationEntity aca  " +
+            "WHERE c.id = aca.customerId " +
+            "AND a.id = aca.assetId "+
+            "AND a.tenantId = :tenantId " +
+            "AND aca.customerId = :customerId " +
+            "AND LOWER(a.searchText) LIKE LOWER(CONCAT(:searchText, '%'))")
+    Page<AssetInfoEntity> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(@Param("tenantId") UUID tenantId, @Param("customerId") UUID customerId, @Param("searchText") String textSearch, Pageable toPageable);
+
 }

@@ -28,11 +28,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.thingsboard.server.common.data.Customer;
-import org.thingsboard.server.common.data.EntitySubtype;
-import org.thingsboard.server.common.data.EntityType;
-import org.thingsboard.server.common.data.EntityView;
-import org.thingsboard.server.common.data.Tenant;
+import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.asset.Asset;
 import org.thingsboard.server.common.data.asset.AssetInfo;
 import org.thingsboard.server.common.data.asset.AssetSearchQuery;
@@ -40,10 +36,12 @@ import org.thingsboard.server.common.data.id.AssetId;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.EntityId;
 import org.thingsboard.server.common.data.id.TenantId;
+import org.thingsboard.server.common.data.multiplecustomer.AssetWithMultipleCustomers;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.relation.EntityRelation;
 import org.thingsboard.server.common.data.relation.EntitySearchDirection;
+import org.thingsboard.server.dao.assetcustomerassociation.AssetCustomerAssociationService;
 import org.thingsboard.server.dao.customer.CustomerDao;
 import org.thingsboard.server.dao.entity.AbstractEntityService;
 import org.thingsboard.server.dao.entityview.EntityViewService;
@@ -62,10 +60,7 @@ import java.util.stream.Collectors;
 import static org.thingsboard.server.common.data.CacheConstants.ASSET_CACHE;
 import static org.thingsboard.server.dao.DaoUtil.toUUIDs;
 import static org.thingsboard.server.dao.model.ModelConstants.NULL_UUID;
-import static org.thingsboard.server.dao.service.Validator.validateId;
-import static org.thingsboard.server.dao.service.Validator.validateIds;
-import static org.thingsboard.server.dao.service.Validator.validatePageLink;
-import static org.thingsboard.server.dao.service.Validator.validateString;
+import static org.thingsboard.server.dao.service.Validator.*;
 
 @Service
 @Slf4j
@@ -89,6 +84,9 @@ public class BaseAssetService extends AbstractEntityService implements AssetServ
 
     @Autowired
     private CacheManager cacheManager;
+
+    @Autowired
+    private AssetCustomerAssociationService assetCustomerAssociationService;
 
     @Override
     public AssetInfo findAssetInfoById(TenantId tenantId, AssetId assetId) {
@@ -177,6 +175,7 @@ public class BaseAssetService extends AbstractEntityService implements AssetServ
         cache.evict(list);
 
         assetDao.removeById(tenantId, assetId.getId());
+        assetCustomerAssociationService.deleteByAssetId(tenantId, assetId);
     }
 
     @Override
@@ -313,6 +312,95 @@ public class BaseAssetService extends AbstractEntityService implements AssetServ
                     assetTypes.sort(Comparator.comparing(EntitySubtype::getType));
                     return assetTypes;
                 }, MoreExecutors.directExecutor());
+    }
+
+    @Override
+    public AssetCustomerAssociation assignAssetToCustomers(TenantId tenantId, AssetId assetId, CustomerId addedCustomerId) {
+        AssetCustomerAssociation assetCustomerAssociation = new AssetCustomerAssociation();
+        assetCustomerAssociation.setAssetId(assetId.getId());
+        assetCustomerAssociation.setCustomerId(addedCustomerId.getId());
+        return assetCustomerAssociationService.saveAssetCustomerAssociation(tenantId, assetCustomerAssociation);
+    }
+
+    @Override
+    public AssetCustomerAssociation unassignAssetFromCustomers(TenantId tenantId, AssetId assetId, CustomerId customerId) {
+        AssetCustomerAssociation assetCustomerAssociation = new AssetCustomerAssociation();
+        assetCustomerAssociation.setAssetId(assetId.getId());
+        assetCustomerAssociation.setCustomerId(customerId.getId());
+        assetCustomerAssociationService.deleteAssetCustomerAssociation(tenantId, assetCustomerAssociation);
+        return assetCustomerAssociation;
+    }
+
+    @Override
+    public Integer unassignAllAssetCustomerAssociation(TenantId tenantId, AssetId assetId) {
+        return assetCustomerAssociationService.deleteByAssetId(tenantId,assetId);
+    }
+
+    @Override
+    public AssetWithMultipleCustomers findAssetInfoWithMultipleCustomerByDeviceId(AssetId assetId) {
+        AssetWithMultipleCustomers assetWithMultipleCustomers = assetDao.findDeviceInfoWithMultipleCustomerByDeviceId(assetId.getId());
+        assetWithMultipleCustomers.setCustomerInfo(customerDao.findAssociatedCustomerInfoByAssetId(assetId.getId()));
+        return assetWithMultipleCustomers;
+    }
+
+    @Override
+    public PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomerByTenantIdAndType(TenantId tenantId, String type, PageLink pageLink) {
+        log.trace("Executing findAssetInfoWithMultipleCustomerByTenantIdAndType, tenantId [{}], type [{}], pageLink [{}]", tenantId, type, pageLink);
+        validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
+        validateString(type, "Incorrect type " + type);
+        validatePageLink(pageLink);
+        PageData<AssetWithMultipleCustomers> assetWithMultipleCustomers = assetDao.findAssetInfoWithMultipleCustomerByTenantIdAndType(tenantId.getId(), type, pageLink);
+
+        assetWithMultipleCustomers.getData().forEach(
+                x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByAssetId(x.getId().getId()))
+        );
+
+        return assetWithMultipleCustomers;
+    }
+
+    @Override
+    public PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomerByTenantId(TenantId tenantId, PageLink pageLink) {
+        log.trace("Executing findAssetInfoWithMultipleCustomerByTenantId, tenantId [{}], pageLink [{}]", tenantId, pageLink);
+        validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
+        validatePageLink(pageLink);
+        PageData<AssetWithMultipleCustomers> deviceWithMultipleCustomers = assetDao.findAssetInfoWithMultipleCustomerByTenantId(tenantId.getId(), pageLink);
+
+        deviceWithMultipleCustomers.getData().forEach(
+                x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByAssetId(x.getId().getId()))
+        );
+
+        return deviceWithMultipleCustomers;
+    }
+
+    @Override
+    public PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(TenantId tenantId, CustomerId customerId, String type, PageLink pageLink) {
+        log.trace("Executing findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType, tenantId [{}], customerId [{}], type [{}], pageLink [{}]", tenantId, customerId, type, pageLink);
+        validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
+        validateId(customerId, INCORRECT_CUSTOMER_ID + customerId);
+        validateString(type, "Incorrect type " + type);
+        validatePageLink(pageLink);
+        PageData<AssetWithMultipleCustomers> deviceWithMultipleCustomers = assetDao.findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(tenantId.getId(), customerId.getId(), type, pageLink);
+
+        deviceWithMultipleCustomers.getData().forEach(
+                x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByAssetId(x.getId().getId()))
+        );
+
+        return deviceWithMultipleCustomers;
+    }
+
+    @Override
+    public PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(TenantId tenantId, CustomerId customerId, PageLink pageLink) {
+        log.trace("Executing findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId, tenantId [{}], customerId [{}], pageLink [{}]", tenantId, customerId, pageLink);
+        validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
+        validateId(customerId, INCORRECT_CUSTOMER_ID + customerId);
+        validatePageLink(pageLink);
+        PageData<AssetWithMultipleCustomers> deviceWithMultipleCustomers = assetDao.findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(tenantId.getId(), customerId.getId(), pageLink);
+
+        deviceWithMultipleCustomers.getData().forEach(
+                x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByAssetId(x.getId().getId()))
+        );
+
+        return deviceWithMultipleCustomers;
     }
 
     private DataValidator<Asset> assetValidator =

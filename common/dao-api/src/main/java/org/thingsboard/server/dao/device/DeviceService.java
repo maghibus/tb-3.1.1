@@ -17,12 +17,14 @@ package org.thingsboard.server.dao.device;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import org.thingsboard.server.common.data.Device;
+import org.thingsboard.server.common.data.DeviceCustomerAssociation;
 import org.thingsboard.server.common.data.DeviceInfo;
 import org.thingsboard.server.common.data.EntitySubtype;
 import org.thingsboard.server.common.data.device.DeviceSearchQuery;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.TenantId;
+import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 
@@ -78,4 +80,19 @@ public interface DeviceService {
 
     Device assignDeviceToTenant(TenantId tenantId, Device device);
 
+    DeviceWithMultipleCustomers findDeviceInfoWithMultipleCustomerByDeviceId(DeviceId deviceId);
+
+    PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndType(TenantId tenantId, String type, PageLink pageLink);
+
+    PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantId(TenantId tenantId, PageLink pageLink);
+
+    DeviceCustomerAssociation assignDeviceToCustomers(TenantId tenantId, DeviceId deviceId, CustomerId addedCustomerId);
+
+    DeviceCustomerAssociation unassignDeviceFromCustomer(TenantId tenantId, DeviceId deviceId, CustomerId customerId);
+
+    Integer unassignAllDeviceCustomerAssociation(TenantId tenantId, DeviceId deviceId);
+
+    PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(TenantId tenantId, CustomerId customerId, String type, PageLink pageLink);
+
+    PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(TenantId tenantId, CustomerId customerId, PageLink pageLink);
 }

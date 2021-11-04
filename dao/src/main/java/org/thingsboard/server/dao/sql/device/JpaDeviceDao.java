@@ -24,7 +24,9 @@ import org.thingsboard.server.common.data.Device;
 import org.thingsboard.server.common.data.DeviceInfo;
 import org.thingsboard.server.common.data.EntitySubtype;
 import org.thingsboard.server.common.data.EntityType;
+import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.TenantId;
+import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.dao.DaoUtil;
@@ -33,12 +35,7 @@ import org.thingsboard.server.dao.model.sql.DeviceEntity;
 import org.thingsboard.server.dao.model.sql.DeviceInfoEntity;
 import org.thingsboard.server.dao.sql.JpaAbstractSearchTextDao;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Valerii Sosliuk on 5/6/2017.
@@ -183,6 +180,117 @@ public class JpaDeviceDao extends JpaAbstractSearchTextDao<DeviceEntity, Device>
         return service.submit(() -> DaoUtil.getData(deviceRepository.findByTenantIdAndId(tenantId.getId(), id)));
     }
 
+    @Override
+    public PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndType(UUID tenantId, String type, PageLink pageLink) {
+        List<DeviceWithMultipleCustomers> deviceWithMultipleCustomersList = new LinkedList<>();
+        PageData<DeviceInfo> pageData = DaoUtil.toPageData(deviceRepository.findDeviceInfosByTenantIdAndType(tenantId, type,  Objects.toString(pageLink.getTextSearch(), ""),
+                DaoUtil.toPageable(pageLink, DeviceInfoEntity.deviceInfoColumnMap)));
+        pageData.getData().forEach(elem -> {
+            DeviceWithMultipleCustomers deviceWithMultipleCustomers = new DeviceWithMultipleCustomers();
+            deviceWithMultipleCustomers.setId(elem.getId());
+            deviceWithMultipleCustomers.setCreatedTime(elem.getCreatedTime());
+            deviceWithMultipleCustomers.setTenantId(elem.getTenantId());
+            deviceWithMultipleCustomers.setName(elem.getName());
+            deviceWithMultipleCustomers.setLabel(elem.getLabel());
+            deviceWithMultipleCustomers.setType(elem.getType());
+            deviceWithMultipleCustomers.setAdditionalInfo(elem.getAdditionalInfo());
+            deviceWithMultipleCustomersList.add(deviceWithMultipleCustomers);
+        });
+
+        return new PageData(deviceWithMultipleCustomersList, pageData.getTotalPages(), pageData.getTotalElements(), pageData.hasNext());
+    }
+
+    @Override
+    public PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantId(UUID tenantId, PageLink pageLink) {
+        List<DeviceWithMultipleCustomers> deviceWithMultipleCustomersList = new LinkedList<>();
+
+        PageData<DeviceInfo> pageData = DaoUtil.toPageData(deviceRepository.findDeviceInfosByTenantId(tenantId, Objects.toString(pageLink.getTextSearch(), ""),
+                DaoUtil.toPageable(pageLink, DeviceInfoEntity.deviceInfoColumnMap)));
+
+        pageData.getData().forEach(elem -> {
+            DeviceWithMultipleCustomers deviceWithMultipleCustomers = new DeviceWithMultipleCustomers();
+            deviceWithMultipleCustomers.setId(elem.getId());
+            deviceWithMultipleCustomers.setCreatedTime(elem.getCreatedTime());
+            deviceWithMultipleCustomers.setTenantId(elem.getTenantId());
+            deviceWithMultipleCustomers.setName(elem.getName());
+            deviceWithMultipleCustomers.setLabel(elem.getLabel());
+            deviceWithMultipleCustomers.setType(elem.getType());
+            deviceWithMultipleCustomers.setAdditionalInfo(elem.getAdditionalInfo());
+            deviceWithMultipleCustomersList.add(deviceWithMultipleCustomers);
+        });
+
+        return new PageData(deviceWithMultipleCustomersList, pageData.getTotalPages(), pageData.getTotalElements(), pageData.hasNext());
+    }
+
+    @Override
+    public DeviceWithMultipleCustomers findDeviceInfoWithMultipleCustomerByDeviceId(UUID deviceId) {
+        Optional<DeviceEntity> device = deviceRepository.findById(deviceId);
+
+        DeviceEntity deviceEntity = device.get();
+        DeviceWithMultipleCustomers deviceWithMultipleCustomers = new DeviceWithMultipleCustomers();
+        deviceWithMultipleCustomers.setId(new DeviceId(deviceEntity.getId()));
+        deviceWithMultipleCustomers.setCreatedTime(deviceEntity.getCreatedTime());
+        deviceWithMultipleCustomers.setName(deviceEntity.getName());
+        deviceWithMultipleCustomers.setType(deviceEntity.getType());
+        deviceWithMultipleCustomers.setLabel(deviceEntity.getLabel());
+        deviceWithMultipleCustomers.setAdditionalInfo(deviceEntity.getAdditionalInfo());
+        deviceWithMultipleCustomers.setTenantId(new TenantId(deviceEntity.getTenantId()));
+        return deviceWithMultipleCustomers;
+    }
+
+    @Override
+    public PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(UUID tenantId, UUID customerId, String type, PageLink pageLink) {
+        List<DeviceWithMultipleCustomers> deviceWithMultipleCustomersList = new LinkedList<>();
+
+        PageData<DeviceInfo> pageData = DaoUtil.toPageData(
+                deviceRepository.findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(
+                        tenantId,
+                        customerId,
+                        type,
+                        Objects.toString(pageLink.getTextSearch(), ""),
+                        DaoUtil.toPageable(pageLink, DeviceInfoEntity.deviceInfoColumnMap)));
+
+        pageData.getData().forEach(elem -> {
+            DeviceWithMultipleCustomers deviceWithMultipleCustomers = new DeviceWithMultipleCustomers();
+            deviceWithMultipleCustomers.setId(elem.getId());
+            deviceWithMultipleCustomers.setCreatedTime(elem.getCreatedTime());
+            deviceWithMultipleCustomers.setTenantId(elem.getTenantId());
+            deviceWithMultipleCustomers.setName(elem.getName());
+            deviceWithMultipleCustomers.setLabel(elem.getLabel());
+            deviceWithMultipleCustomers.setType(elem.getType());
+            deviceWithMultipleCustomers.setAdditionalInfo(elem.getAdditionalInfo());
+            deviceWithMultipleCustomersList.add(deviceWithMultipleCustomers);
+        });
+
+        return new PageData(deviceWithMultipleCustomersList, pageData.getTotalPages(), pageData.getTotalElements(), pageData.hasNext());
+    }
+
+    @Override
+    public PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(UUID tenantId, UUID customerId, PageLink pageLink) {
+        List<DeviceWithMultipleCustomers> deviceWithMultipleCustomersList = new LinkedList<>();
+
+        PageData<DeviceInfo> pageData = DaoUtil.toPageData(
+                deviceRepository.findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(
+                        tenantId,
+                        customerId,
+                        Objects.toString(pageLink.getTextSearch(), ""),
+                        DaoUtil.toPageable(pageLink, DeviceInfoEntity.deviceInfoColumnMap)));
+
+        pageData.getData().forEach(elem -> {
+            DeviceWithMultipleCustomers deviceWithMultipleCustomers = new DeviceWithMultipleCustomers();
+            deviceWithMultipleCustomers.setId(elem.getId());
+            deviceWithMultipleCustomers.setCreatedTime(elem.getCreatedTime());
+            deviceWithMultipleCustomers.setTenantId(elem.getTenantId());
+            deviceWithMultipleCustomers.setName(elem.getName());
+            deviceWithMultipleCustomers.setLabel(elem.getLabel());
+            deviceWithMultipleCustomers.setType(elem.getType());
+            deviceWithMultipleCustomers.setAdditionalInfo(elem.getAdditionalInfo());
+            deviceWithMultipleCustomersList.add(deviceWithMultipleCustomers);
+        });
+
+        return new PageData(deviceWithMultipleCustomersList, pageData.getTotalPages(), pageData.getTotalElements(), pageData.hasNext());
+    }
+
     private List<EntitySubtype> convertTenantDeviceTypesToDto(UUID tenantId, List<String> types) {
         List<EntitySubtype> list = Collections.emptyList();
         if (types != null && !types.isEmpty()) {
@@ -193,4 +301,5 @@ public class JpaDeviceDao extends JpaAbstractSearchTextDao<DeviceEntity, Device>
         }
         return list;
     }
+
 }

@@ -20,8 +20,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.thingsboard.server.common.data.multiplecustomer.MultipleCustomerInfo;
 import org.thingsboard.server.dao.model.sql.CustomerEntity;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -37,4 +39,11 @@ public interface CustomerRepository extends PagingAndSortingRepository<CustomerE
 
     CustomerEntity findByTenantIdAndTitle(UUID tenantId, String title);
 
+    @Query("SELECT new org.thingsboard.server.common.data.multiplecustomer.MultipleCustomerInfo(c.title, c.additionalInfo, dca.customerId) FROM CustomerEntity c, DeviceCustomerAssociationEntity dca " +
+            "WHERE c.id = dca.customerId AND dca.deviceId = :deviceId")
+    List<MultipleCustomerInfo> findAssociatedCustomerInfoByDeviceId(@Param("deviceId") UUID deviceId);
+
+    @Query("SELECT new org.thingsboard.server.common.data.multiplecustomer.MultipleCustomerInfo(c.title, c.additionalInfo, aca.customerId) FROM CustomerEntity c, AssetCustomerAssociationEntity aca " +
+            "WHERE c.id = aca.customerId AND aca.assetId = :assetId")
+    List<MultipleCustomerInfo> findAssociatedCustomerInfoByAssetId(@Param("assetId") UUID assetId);
 }

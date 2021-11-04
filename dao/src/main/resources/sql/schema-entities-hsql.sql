@@ -146,6 +146,24 @@ CREATE TABLE IF NOT EXISTS device_credentials (
     CONSTRAINT device_credentials_device_id_unq_key UNIQUE (device_id)
 );
 
+CREATE TABLE IF NOT EXISTS device_customer_association (
+                                                           id uuid not null constraint device_customer_association_pkey primary key,
+                                                           created_time bigint NOT NULL,
+                                                           customer_id  uuid,
+                                                           device_id    uuid,
+                                                           constraint device_customer_association_unq_key unique (device_id, customer_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS asset_customer_association (
+                                                          id uuid not null constraint asset_customer_association_pkey primary key,
+                                                          created_time bigint NOT NULL,
+                                                          customer_id  uuid,
+                                                          asset_id    uuid,
+                                                          constraint asset_customer_association_unq_key unique (asset_id, customer_id)
+);
+
+
 CREATE TABLE IF NOT EXISTS event (
     id uuid NOT NULL CONSTRAINT event_pkey PRIMARY KEY,
     created_time bigint NOT NULL,

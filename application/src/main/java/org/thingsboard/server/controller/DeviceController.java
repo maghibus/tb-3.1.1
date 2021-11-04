@@ -19,28 +19,15 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.thingsboard.rule.engine.api.msg.DeviceCredentialsUpdateNotificationMsg;
 import org.thingsboard.rule.engine.api.msg.DeviceNameOrTypeUpdateMsg;
-import org.thingsboard.server.common.data.ClaimRequest;
-import org.thingsboard.server.common.data.Customer;
-import org.thingsboard.server.common.data.DataConstants;
-import org.thingsboard.server.common.data.Device;
-import org.thingsboard.server.common.data.DeviceInfo;
-import org.thingsboard.server.common.data.EntitySubtype;
-import org.thingsboard.server.common.data.EntityType;
-import org.thingsboard.server.common.data.Tenant;
+import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.audit.ActionType;
 import org.thingsboard.server.common.data.device.DeviceSearchQuery;
 import org.thingsboard.server.common.data.exception.ThingsboardErrorCode;
@@ -48,6 +35,8 @@ import org.thingsboard.server.common.data.exception.ThingsboardException;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.TenantId;
+import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultipleCustomerInfo;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.security.DeviceCredentials;
@@ -65,8 +54,8 @@ import org.thingsboard.server.service.security.permission.Resource;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RestController
@@ -75,6 +64,7 @@ import java.util.stream.Collectors;
 public class DeviceController extends BaseController {
 
     private static final String DEVICE_ID = "deviceId";
+
     private static final String DEVICE_NAME = "deviceName";
     private static final String TENANT_ID = "tenantId";
 
@@ -120,7 +110,7 @@ public class DeviceController extends BaseController {
                     savedDevice.getId(), savedDevice.getName(), savedDevice.getType()), null);
 
             logEntityAction(savedDevice.getId(), savedDevice,
-                    savedDevice.getCustomerId(),
+                   null,
                     device.getId() == null ? ActionType.ADDED : ActionType.UPDATED, null);
 
             if (device.getId() == null) {
@@ -128,6 +118,9 @@ public class DeviceController extends BaseController {
             } else {
                 deviceStateService.onDeviceUpdated(savedDevice);
             }
+
+
+
             return savedDevice;
         } catch (Exception e) {
             logEntityAction(emptyId(EntityType.DEVICE), device,
@@ -147,7 +140,7 @@ public class DeviceController extends BaseController {
             deviceService.deleteDevice(getCurrentUser().getTenantId(), deviceId);
 
             logEntityAction(deviceId, device,
-                    device.getCustomerId(),
+                    null,
                     ActionType.DELETED, null, strDeviceId);
 
             deviceStateService.onDeviceDeleted(device);
@@ -177,14 +170,17 @@ public class DeviceController extends BaseController {
             Device savedDevice = checkNotNull(deviceService.assignDeviceToCustomer(getCurrentUser().getTenantId(), deviceId, customerId));
 
             logEntityAction(deviceId, savedDevice,
-                    savedDevice.getCustomerId(),
+                    customerId,
                     ActionType.ASSIGNED_TO_CUSTOMER, null, strDeviceId, strCustomerId, customer.getName());
+
 
             return savedDevice;
         } catch (Exception e) {
+
             logEntityAction(emptyId(EntityType.DEVICE), null,
                     null,
                     ActionType.ASSIGNED_TO_CUSTOMER, e, strDeviceId, strCustomerId);
+
             throw handleException(e);
         }
     }
@@ -229,7 +225,7 @@ public class DeviceController extends BaseController {
             Device savedDevice = checkNotNull(deviceService.assignDeviceToCustomer(getCurrentUser().getTenantId(), deviceId, publicCustomer.getId()));
 
             logEntityAction(deviceId, savedDevice,
-                    savedDevice.getCustomerId(),
+                    null,
                     ActionType.ASSIGNED_TO_CUSTOMER, null, strDeviceId, publicCustomer.getId().toString(), publicCustomer.getName());
 
             return savedDevice;
@@ -251,7 +247,7 @@ public class DeviceController extends BaseController {
             Device device = checkDeviceId(deviceId, Operation.READ_CREDENTIALS);
             DeviceCredentials deviceCredentials = checkNotNull(deviceCredentialsService.findDeviceCredentialsByDeviceId(getCurrentUser().getTenantId(), deviceId));
             logEntityAction(deviceId, device,
-                    device.getCustomerId(),
+                    null,
                     ActionType.CREDENTIALS_READ, null, strDeviceId);
             return deviceCredentials;
         } catch (Exception e) {
@@ -274,7 +270,7 @@ public class DeviceController extends BaseController {
             tbClusterService.pushMsgToCore(new DeviceCredentialsUpdateNotificationMsg(getCurrentUser().getTenantId(), deviceCredentials.getDeviceId()), null);
 
             logEntityAction(device.getId(), device,
-                    device.getCustomerId(),
+                    null,
                     ActionType.CREDENTIALS_UPDATED, null, deviceCredentials);
             return result;
         } catch (Exception e) {
@@ -574,7 +570,7 @@ public class DeviceController extends BaseController {
             Device assignedDevice = deviceService.assignDeviceToTenant(newTenantId, device);
 
             logEntityAction(getCurrentUser(), deviceId, assignedDevice,
-                    assignedDevice.getCustomerId(),
+                    null,
                     ActionType.ASSIGNED_TO_TENANT, null, strTenantId, newTenant.getName());
 
             Tenant currentTenant = tenantService.findTenantById(getTenantId());

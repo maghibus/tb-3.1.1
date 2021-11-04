@@ -40,7 +40,7 @@ public abstract class BaseDeviceServiceTest extends AbstractServiceTest {
     
     private IdComparator<Device> idComparator = new IdComparator<>();
     
-    private TenantId tenantId;
+    protected TenantId tenantId;
 
     @Before
     public void before() {
