@@ -6033,6 +6033,13 @@ lazystream@^1.0.0:
   dependencies:
     readable-stream "^2.0.5"
 
+leaflet-control-geocoder@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/leaflet-control-geocoder/-/leaflet-control-geocoder-2.3.0.tgz#4212d6d67f73eeda3b900773cd2f229b2fe66aa8"
+  integrity sha512-Zi5cebDsfAq6B0ZilDGn/W5oNM8pQu6cltEHBxfR56XnN3f/Lmez1+qrdyRY6oTlP740caBHHCmd35Z/eif7/w==
+  optionalDependencies:
+    open-location-code "^1.0.0"
+
 leaflet-editable@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/leaflet-editable/-/leaflet-editable-1.2.0.tgz#a3a01001764ba58ea923381ee6a1c814708a0b84"
@@ -7134,6 +7141,11 @@ onetime@^5.1.0:
   integrity sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==
   dependencies:
     mimic-fn "^2.1.0"
+
+open-location-code@^1.0.0:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/open-location-code/-/open-location-code-1.0.3.tgz#5ea1a34ee5221c6cafa04392e1bd906fd7488f7e"
+  integrity sha1-XqGjTuUiHGyvoEOS4b2Qb9dIj34=
 
 open@7.0.4:
   version "7.0.4"

@@ -194,6 +194,11 @@ export const openstreetMapSettingsSchema =
                 type: 'string',
                 default: "var data = \n{'Default':L.tileLayer.wms('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{}),\n'Cave': L.tileLayer.wms('http://www502.regione.toscana.it/wmsraster/com.rt.wms.RTmap/wms?map=wmscave&language=ita',\n{\n'format': 'image/png',\n'transparent': true,\n'layers': 'rt_piano_cave'\n}\n),\n'Idro': L.tileLayer.wms('http://www502.regione.toscana.it/wmsraster/com.rt.wms.RTmap/wms?map=wmsidrogr&map_resolution=91&language=ita&',\n{'format': 'image/png',\n'transparent': true,\n'layers': 'rt_idrog'\n}\n)\n}"
             },  
+            addSearchToMap: {
+                title: 'Add search to map (openstreetmap only)',
+                type: 'boolean',
+                default: false
+            },
             enableHeatMap: {
                 title: 'Use heatmap',
                 type: 'boolean',
@@ -280,6 +285,7 @@ export const openstreetMapSettingsSchema =
             type: 'javascript',
             condition: 'model.useCustomWmsProvider === true'
         },
+        'addSearchToMap',
         'enableHeatMap',
         {
             key: 'heatMapFieldValue',

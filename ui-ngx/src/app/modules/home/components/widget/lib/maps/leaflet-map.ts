@@ -54,6 +54,10 @@ import { deepClone, isDefinedAndNotNull, isEmptyStr, isString } from '@core/util
 import h337 from 'heatmap.js';
 import CustomLeafletHeatmap from './custom-leaflet-heatmap';
 import { Layers } from '@material-ui/icons';
+import "leaflet/dist/leaflet.css";
+import "leaflet-control-geocoder/dist/Control.Geocoder.css";
+import "leaflet-control-geocoder/dist/Control.Geocoder.js";
+
 
 export default abstract class LeafletMap {
 
@@ -402,6 +406,11 @@ export default abstract class LeafletMap {
           filterBox.addTo(this.map);
         }
         /****/
+        /**SEARCH BOX **/
+        if (!!this.options.addSearchToMap) {
+          (L.Control as any).geocoder().addTo(map);
+        }
+        /**/
     }
 
     private loadHeatMap(): void {

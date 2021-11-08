@@ -18,6 +18,7 @@ import { Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { Hotkey } from 'angular2-hotkeys';
 import 'mousetrap';
 import { TbCheatSheetComponent } from '@shared/components/cheatsheet.component';
+import Mousetrap, { MousetrapInstance } from 'mousetrap';
 
 @Directive({
   selector : '[tb-hotkeys]'
