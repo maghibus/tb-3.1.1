@@ -10,7 +10,7 @@ pipeline {
                 dir('netty-mqtt/') {
                     withMaven(
                         maven: 'maven_3.5.4',
-                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        mavenSettingsConfig: 'jfrog.cloud') {
                         sh 'mvn clean install -DskipTests'
                     }
                 }
@@ -21,7 +21,7 @@ pipeline {
                 dir('common/') {
                     withMaven(
                         maven: 'maven_3.5.4',
-                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        mavenSettingsConfig: 'jfrog.cloud') {
                         sh 'mvn clean install -DskipTests'
                     }
                 }
@@ -32,7 +32,7 @@ pipeline {
                 dir('dao/') {
                     withMaven(
                         maven: 'maven_3.5.4',
-                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        mavenSettingsConfig: 'jfrog.cloud') {
                         sh 'mvn clean install -DskipTests'
                     }
                 }
@@ -43,7 +43,7 @@ pipeline {
                 dir('rule-engine/') {
                     withMaven(
                         maven: 'maven_3.5.4',
-                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        mavenSettingsConfig: 'jfrog.cloud') {
                         sh 'mvn clean install -DskipTests'
                     }
                 }
@@ -54,7 +54,7 @@ pipeline {
                 dir('integration/') {
                     withMaven(
                         maven: 'maven_3.5.4',
-                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        mavenSettingsConfig: 'jfrog.cloud') {
                         sh 'mvn clean install -DskipTests'
                     }
                 }
@@ -65,7 +65,7 @@ pipeline {
                 dir('tools/') {
                     withMaven(
                         maven: 'maven_3.5.4',
-                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        mavenSettingsConfig: 'jfrog.cloud') {
                         sh 'mvn clean install -DskipTests'
                     }
                 }
@@ -76,7 +76,7 @@ pipeline {
                 dir('rest-client/') {
                     withMaven(
                         maven: 'maven_3.5.4',
-                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        mavenSettingsConfig: 'jfrog.cloud') {
                         sh 'mvn clean install -DskipTests'
                     }
                 }

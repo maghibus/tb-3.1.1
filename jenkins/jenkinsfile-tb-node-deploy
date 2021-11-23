@@ -8,8 +8,8 @@ pipeline {
     }
     environment {
         DOCKER_IMAGE_NAME = 'tb-node'
-        DOCKER_REGISTRY_URL = 'jfrog.almaviva.it:8081'
-        DOCKER_REGISTRY_NAME = 'docker-local'
+        DOCKER_REGISTRY_URL = 'almaviva.jfrog.io'
+        DOCKER_REGISTRY_NAME = 'giotto-docker'
     }
 
     stages {

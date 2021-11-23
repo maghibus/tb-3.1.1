@@ -11,8 +11,8 @@ pipeline {
     }
     environment {
         DOCKER_IMAGE_NAME = 'tb-mqtt-transport'
-        DOCKER_REGISTRY_URL = 'jfrog.almaviva.it:8081'
-        DOCKER_REGISTRY_NAME = 'docker-local'
+        DOCKER_REGISTRY_URL = 'almaviva.jfrog.io'
+        DOCKER_REGISTRY_NAME = 'giotto-docker'
 		GIT_COMMIT_SHORT = sh(
 						script: "printf \$(git rev-parse --short ${GIT_COMMIT})",
 						returnStdout: true
@@ -31,7 +31,7 @@ pipeline {
                 dir('transport/mqtt') {
                     withMaven(
                         maven: 'maven_3.5.4',
-                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        mavenSettingsConfig: 'jfrog.cloud') {
                         sh 'mvn clean install -DskipTests'
                     }
                 }
@@ -42,7 +42,7 @@ pipeline {
                 dir('msa/transport/mqtt') {
                     withMaven(
                         maven: 'maven_3.5.4',
-                        mavenSettingsConfig: 'jfrog.almaviva.it_generic') {
+                        mavenSettingsConfig: 'jfrog.cloud') {
                         sh 'mvn clean install -Ddockerfile.skip=false -DskipTests'
                     }
                 }
@@ -66,10 +66,10 @@ pipeline {
         stage('Push Docker image') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'docker-jfrog-credentials',
+                    withCredentials([usernamePassword(credentialsId: 'docker-jfrog-giotto-credential',
                                         usernameVariable: 'DOCKER_USERNAME',
                                         passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} http://${DOCKER_REGISTRY_URL}"
+                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} https://${DOCKER_REGISTRY_URL}"
                         sh "docker push ${env.DOCKER_REGISTRY_URL}/${env.DOCKER_REGISTRY_NAME}/${env.DOCKER_IMAGE_NAME}:${dockerImageTag}"
                     }
                 }
