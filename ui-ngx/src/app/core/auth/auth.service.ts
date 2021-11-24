@@ -37,6 +37,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AuthUser } from '@shared/models/user.model';
 import { TimeService } from '@core/services/time.service';
 import { UtilsService } from '@core/services/utils.service';
+import { CustomizationService } from '../services/customization.service';
 import { DashboardService } from '@core/http/dashboard.service';
 import { PageLink } from '@shared/models/page/page-link';
 import { DashboardInfo } from '@shared/models/dashboard.models';
@@ -57,6 +58,7 @@ export class AuthService {
     private http: HttpClient,
     private userService: UserService,
     private timeService: TimeService,
+    private customizationService: CustomizationService,
     private router: Router,
     private route: ActivatedRoute,
     private zone: NgZone,
@@ -256,7 +258,9 @@ export class AuthService {
         }
       }
     } else {
-      result = this.router.parseUrl('login');
+      // save target url and redirect to external login page
+      localStorage.setItem('requested_url', window.location.href);
+      window.location.href = this.customizationService.configuration.header.logOutRedirectUrl;
     }
     return result;
   }
