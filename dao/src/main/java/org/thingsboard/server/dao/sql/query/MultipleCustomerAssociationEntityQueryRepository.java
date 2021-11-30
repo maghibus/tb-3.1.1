@@ -60,7 +60,7 @@ public class MultipleCustomerAssociationEntityQueryRepository extends DefaultEnt
         switch (entityType) {
             case DEVICE:
             case ASSET:
-                return "(SELECT tenant_id, " + getCustomerIdAlias(entityType) + ", id, created_time, type, name, additional_info, label "
+                return "(SELECT tenant_id, " + getCustomerIdAlias(entityType) + ", id, created_time, type, name, additional_info, label, search_text "
                         + "FROM " + getFrom(entityType) + ")";
             default:
                 return entityTableMap.get(entityType);

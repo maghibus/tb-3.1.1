@@ -430,4 +430,41 @@ public abstract class BaseEntityQueryControllerTest extends AbstractControllerTe
 
     }
 
+    @Test
+    public void testDeviceTypeAsTenantAdmin() throws Exception {
+        // given
+        Device device = new Device();
+        device.setName("My device");
+        device.setType("type-1");
+        Device savedDevice = doPost("/api/device", device, Device.class);
+
+        Device device2 = new Device();
+        device2.setName("My device 2");
+        device2.setType("type-2");
+        Device savedDevice2 = doPost("/api/device", device2, Device.class);
+
+        DeviceTypeFilter filter = new DeviceTypeFilter();
+        filter.setDeviceType("type-2");
+        filter.setDeviceNameFilter("");
+
+        EntityDataSortOrder sortOrder = new EntityDataSortOrder(new EntityKey(EntityKeyType.ENTITY_FIELD, "createdTime"), EntityDataSortOrder.Direction.ASC);
+        EntityDataPageLink pageLink = new EntityDataPageLink(10, 0, null, sortOrder);
+        List<EntityKey> entityFields = Collections.singletonList(new EntityKey(EntityKeyType.ENTITY_FIELD, "name"));
+        EntityDataQuery query = new EntityDataQuery(filter, pageLink, entityFields, null, null);
+
+        // when
+        PageData<EntityData> data = doPostWithTypedResponse("/api/entitiesQuery/find", query, new TypeReference<PageData<EntityData>>() {});
+        List loadedEntities = new ArrayList<>(data.getData());
+        while (data.hasNext()) {
+            query = query.next();
+            data = doPostWithTypedResponse("/api/entitiesQuery/find", query, new TypeReference<PageData<EntityData>>() {
+            });
+            loadedEntities.addAll(data.getData());
+        }
+
+        //then
+        Assert.assertEquals(1, loadedEntities.size());
+
+    }
+
 }
