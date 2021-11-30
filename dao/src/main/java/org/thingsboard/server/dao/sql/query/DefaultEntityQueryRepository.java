@@ -26,35 +26,11 @@ import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.EntityId;
 import org.thingsboard.server.common.data.id.TenantId;
 import org.thingsboard.server.common.data.page.PageData;
-import org.thingsboard.server.common.data.query.AssetSearchQueryFilter;
-import org.thingsboard.server.common.data.query.AssetTypeFilter;
-import org.thingsboard.server.common.data.query.DeviceSearchQueryFilter;
-import org.thingsboard.server.common.data.query.DeviceTypeFilter;
-import org.thingsboard.server.common.data.query.EntityCountQuery;
-import org.thingsboard.server.common.data.query.EntityData;
-import org.thingsboard.server.common.data.query.EntityDataPageLink;
-import org.thingsboard.server.common.data.query.EntityDataQuery;
-import org.thingsboard.server.common.data.query.EntityDataSortOrder;
-import org.thingsboard.server.common.data.query.EntityFilter;
-import org.thingsboard.server.common.data.query.EntityFilterType;
-import org.thingsboard.server.common.data.query.EntityKeyType;
-import org.thingsboard.server.common.data.query.EntityListFilter;
-import org.thingsboard.server.common.data.query.EntityNameFilter;
-import org.thingsboard.server.common.data.query.EntitySearchQueryFilter;
-import org.thingsboard.server.common.data.query.EntityViewSearchQueryFilter;
-import org.thingsboard.server.common.data.query.EntityViewTypeFilter;
-import org.thingsboard.server.common.data.query.RelationsQueryFilter;
-import org.thingsboard.server.common.data.query.SingleEntityFilter;
+import org.thingsboard.server.common.data.query.*;
 import org.thingsboard.server.common.data.relation.EntitySearchDirection;
 import org.thingsboard.server.common.data.relation.EntityTypeFilter;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -62,35 +38,35 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(prefix = "features", value = "multiple_customer_enabled", havingValue = "false", matchIfMissing = true)
 public class DefaultEntityQueryRepository implements EntityQueryRepository {
     protected static final Map<EntityType, String> entityTableMap = new HashMap<>();
-    private static final String SELECT_PHONE = " CASE WHEN entity.entity_type = 'TENANT' THEN (select phone from tenant where id = entity_id)" +
+    protected static final String SELECT_PHONE = " CASE WHEN entity.entity_type = 'TENANT' THEN (select phone from tenant where id = entity_id)" +
             " WHEN entity.entity_type = 'CUSTOMER' THEN (select phone from customer where id = entity_id) END as phone";
-    private static final String SELECT_ZIP = " CASE WHEN entity.entity_type = 'TENANT' THEN (select zip from tenant where id = entity_id)" +
+    protected static final String SELECT_ZIP = " CASE WHEN entity.entity_type = 'TENANT' THEN (select zip from tenant where id = entity_id)" +
             " WHEN entity.entity_type = 'CUSTOMER' THEN (select zip from customer where id = entity_id) END as zip";
-    private static final String SELECT_ADDRESS_2 = " CASE WHEN entity.entity_type = 'TENANT'" +
+    protected static final String SELECT_ADDRESS_2 = " CASE WHEN entity.entity_type = 'TENANT'" +
             " THEN (select address2 from tenant where id = entity_id) WHEN entity.entity_type = 'CUSTOMER' " +
             " THEN (select address2 from customer where id = entity_id) END as address2";
-    private static final String SELECT_ADDRESS = " CASE WHEN entity.entity_type = 'TENANT'" +
+    protected static final String SELECT_ADDRESS = " CASE WHEN entity.entity_type = 'TENANT'" +
             " THEN (select address from tenant where id = entity_id) WHEN entity.entity_type = 'CUSTOMER' " +
             " THEN (select address from customer where id = entity_id) END as address";
-    private static final String SELECT_CITY = " CASE WHEN entity.entity_type = 'TENANT'" +
+    protected static final String SELECT_CITY = " CASE WHEN entity.entity_type = 'TENANT'" +
             " THEN (select city from tenant where id = entity_id) WHEN entity.entity_type = 'CUSTOMER' " +
             " THEN (select city from customer where id = entity_id) END as city";
-    private static final String SELECT_STATE = " CASE WHEN entity.entity_type = 'TENANT'" +
+    protected static final String SELECT_STATE = " CASE WHEN entity.entity_type = 'TENANT'" +
             " THEN (select state from tenant where id = entity_id) WHEN entity.entity_type = 'CUSTOMER' " +
             " THEN (select state from customer where id = entity_id) END as state";
-    private static final String SELECT_COUNTRY = " CASE WHEN entity.entity_type = 'TENANT'" +
+    protected static final String SELECT_COUNTRY = " CASE WHEN entity.entity_type = 'TENANT'" +
             " THEN (select country from tenant where id = entity_id) WHEN entity.entity_type = 'CUSTOMER' " +
             " THEN (select country from customer where id = entity_id) END as country";
-    private static final String SELECT_TITLE = " CASE WHEN entity.entity_type = 'TENANT'" +
+    protected static final String SELECT_TITLE = " CASE WHEN entity.entity_type = 'TENANT'" +
             " THEN (select title from tenant where id = entity_id) WHEN entity.entity_type = 'CUSTOMER' " +
             " THEN (select title from customer where id = entity_id) END as title";
-    private static final String SELECT_LAST_NAME = " CASE WHEN entity.entity_type = 'USER'" +
+    protected static final String SELECT_LAST_NAME = " CASE WHEN entity.entity_type = 'USER'" +
             " THEN (select last_name from tb_user where id = entity_id) END as last_name";
-    private static final String SELECT_FIRST_NAME = " CASE WHEN entity.entity_type = 'USER'" +
+    protected static final String SELECT_FIRST_NAME = " CASE WHEN entity.entity_type = 'USER'" +
             " THEN (select first_name from tb_user where id = entity_id) END as first_name";
-    private static final String SELECT_REGION = " CASE WHEN entity.entity_type = 'TENANT'" +
+    protected static final String SELECT_REGION = " CASE WHEN entity.entity_type = 'TENANT'" +
             " THEN (select region from tenant where id = entity_id) END as region";
-    private static final String SELECT_EMAIL = " CASE" +
+    protected static final String SELECT_EMAIL = " CASE" +
             " WHEN entity.entity_type = 'TENANT'" +
             " THEN (select email from tenant where id = entity_id)" +
             " WHEN entity.entity_type = 'CUSTOMER' " +
@@ -98,7 +74,7 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
             " WHEN entity.entity_type = 'USER'" +
             " THEN (select email from tb_user where id = entity_id)" +
             " END as email";
-    private static final String SELECT_CUSTOMER_ID = "CASE" +
+    protected static final String SELECT_CUSTOMER_ID = "CASE" +
             " WHEN entity.entity_type = 'TENANT'" +
             " THEN UUID('" + TenantId.NULL_UUID + "')" +
             " WHEN entity.entity_type = 'CUSTOMER' THEN entity_id" +
@@ -114,7 +90,7 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
             " WHEN entity.entity_type = 'ENTITY_VIEW'" +
             " THEN (select customer_id from entity_view where id = entity_id)" +
             " END as customer_id";
-    private static final String SELECT_TENANT_ID = "SELECT CASE" +
+    protected static final String SELECT_TENANT_ID = "SELECT CASE" +
             " WHEN entity.entity_type = 'TENANT' THEN entity_id" +
             " WHEN entity.entity_type = 'CUSTOMER'" +
             " THEN (select tenant_id from customer where id = entity_id)" +
@@ -129,7 +105,7 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
             " WHEN entity.entity_type = 'ENTITY_VIEW'" +
             " THEN (select tenant_id from entity_view where id = entity_id)" +
             " END as tenant_id";
-    private static final String SELECT_CREATED_TIME = " CASE" +
+    protected static final String SELECT_CREATED_TIME = " CASE" +
             " WHEN entity.entity_type = 'TENANT'" +
             " THEN (select created_time from tenant where id = entity_id)" +
             " WHEN entity.entity_type = 'CUSTOMER' " +
@@ -145,7 +121,7 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
             " WHEN entity.entity_type = 'ENTITY_VIEW'" +
             " THEN (select created_time from entity_view where id = entity_id)" +
             " END as created_time";
-    private static final String SELECT_NAME = " CASE" +
+    protected static final String SELECT_NAME = " CASE" +
             " WHEN entity.entity_type = 'TENANT'" +
             " THEN (select title from tenant where id = entity_id)" +
             " WHEN entity.entity_type = 'CUSTOMER' " +
@@ -161,7 +137,7 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
             " WHEN entity.entity_type = 'ENTITY_VIEW'" +
             " THEN (select name from entity_view where id = entity_id)" +
             " END as name";
-    private static final String SELECT_TYPE = " CASE" +
+    protected static final String SELECT_TYPE = " CASE" +
             " WHEN entity.entity_type = 'USER'" +
             " THEN (select authority from tb_user where id = entity_id)" +
             " WHEN entity.entity_type = 'ASSET'" +
@@ -171,7 +147,7 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
             " WHEN entity.entity_type = 'ENTITY_VIEW'" +
             " THEN (select type from entity_view where id = entity_id)" +
             " ELSE entity.entity_type END as type";
-    private static final String SELECT_LABEL = " CASE" +
+    protected static final String SELECT_LABEL = " CASE" +
             " WHEN entity.entity_type = 'TENANT'" +
             " THEN (select title from tenant where id = entity_id)" +
             " WHEN entity.entity_type = 'CUSTOMER' " +
@@ -187,7 +163,7 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
             " WHEN entity.entity_type = 'ENTITY_VIEW'" +
             " THEN (select name from entity_view where id = entity_id)" +
             " END as label";
-    private static final String SELECT_ADDITIONAL_INFO = " CASE" +
+    protected static final String SELECT_ADDITIONAL_INFO = " CASE" +
             " WHEN entity.entity_type = 'TENANT'" +
             " THEN (select additional_info from tenant where id = entity_id)" +
             " WHEN entity.entity_type = 'CUSTOMER' " +
@@ -470,21 +446,22 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
                 EntityViewSearchQueryFilter entityViewQuery = (EntityViewSearchQueryFilter) entityFilter;
                 return entitySearchQuery(ctx, entityViewQuery, EntityType.ENTITY_VIEW, entityViewQuery.getEntityViewTypes());
             default:
-                return entityTableMap.get(ctx.getEntityType());
+                return entityTableSimpleQuery(ctx.getEntityType());
         }
     }
 
+    protected String entityTableSimpleQuery(EntityType entityType) {
+        return entityTableMap.get(entityType);
+    }
 
-
-
-    private String entitySearchQuery(QueryContext ctx, EntitySearchQueryFilter entityFilter, EntityType entityType, List<String> types) {
+    protected String entitySearchQuery(QueryContext ctx, EntitySearchQueryFilter entityFilter, EntityType entityType, List<String> types) {
         EntityId rootId = entityFilter.getRootEntity();
         //TODO: fetch last level only.
         //TODO: fetch distinct records.
         String lvlFilter = getLvlFilter(entityFilter.getMaxLevel());
-        String selectFields = "SELECT tenant_id, customer_id, id, created_time, type, name, additional_info "
+        String selectFields = "SELECT tenant_id, " + getCustomerIdAlias(entityType) + ", id, created_time, type, name, additional_info "
                 + (entityType.equals(EntityType.ENTITY_VIEW) ? "" : ", label ")
-                + "FROM " + entityType.name() + " WHERE id in ( SELECT entity_id";
+                + "FROM " + getFrom(entityType) + " WHERE id in ( SELECT entity_id";
         String from = getQueryTemplate(entityFilter.getDirection());
         String whereFilter = " WHERE";
         if (!StringUtils.isEmpty(entityFilter.getRelationType())) {
@@ -506,10 +483,18 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
         return query;
     }
 
-    private String relationQuery(QueryContext ctx, RelationsQueryFilter entityFilter) {
+    protected String getCustomerIdAlias(EntityType entityType) {
+        return " customer_id ";
+    }
+
+    protected String getFrom(EntityType entityType) {
+        return entityType.name();
+    }
+
+    protected String relationQuery(QueryContext ctx, RelationsQueryFilter entityFilter) {
         EntityId rootId = entityFilter.getRootEntity();
         String lvlFilter = getLvlFilter(entityFilter.getMaxLevel());
-        String selectFields = SELECT_TENANT_ID + ", " + SELECT_CUSTOMER_ID
+        String selectFields = SELECT_TENANT_ID + ", " + relationQuerySelectCustomerId()
                 + ", " + SELECT_CREATED_TIME + ", " +
                 " entity.entity_id as id,"
                 + SELECT_TYPE + ", " + SELECT_NAME + ", " + SELECT_LABEL + ", " +
@@ -556,7 +541,11 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
         return "( " + selectFields + from + ")";
     }
 
-    private String buildEtfCondition(QueryContext ctx, EntityTypeFilter etf, EntitySearchDirection direction, int entityTypeFilterIdx) {
+    protected String relationQuerySelectCustomerId() {
+        return SELECT_CUSTOMER_ID;
+    }
+
+    protected String buildEtfCondition(QueryContext ctx, EntityTypeFilter etf, EntitySearchDirection direction, int entityTypeFilterIdx) {
         StringBuilder whereFilter = new StringBuilder();
         String relationType = etf.getRelationType();
         List<EntityType> entityTypes = etf.getEntityTypes();
@@ -584,11 +573,11 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
         return whereFilter.toString();
     }
 
-    private String getLvlFilter(int maxLevel) {
+    protected String getLvlFilter(int maxLevel) {
         return maxLevel > 0 ? ("and lvl <= " + (maxLevel - 1)) : "";
     }
 
-    private String getQueryTemplate(EntitySearchDirection direction) {
+    protected String getQueryTemplate(EntitySearchDirection direction) {
         String from;
         if (direction.equals(EntitySearchDirection.FROM)) {
             from = HIERARCHICAL_FROM_QUERY_TEMPLATE;

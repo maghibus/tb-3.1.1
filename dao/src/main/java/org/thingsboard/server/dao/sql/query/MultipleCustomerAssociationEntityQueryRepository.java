@@ -20,12 +20,32 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.thingsboard.server.common.data.EntityType;
-import org.thingsboard.server.common.data.query.EntityDataQuery;
-import org.thingsboard.server.common.data.query.EntityFilter;
+import org.thingsboard.server.common.data.id.TenantId;
 
 @Repository
 @ConditionalOnProperty(prefix = "features", value = "multiple_customer_enabled", havingValue = "true")
 public class MultipleCustomerAssociationEntityQueryRepository extends DefaultEntityQueryRepository {
+
+    private static final String SELECT_CUSTOMER_ID = "CASE" +
+            " WHEN entity.entity_type = 'TENANT'" +
+            " THEN UUID('" + TenantId.NULL_UUID + "')" +
+            " WHEN entity.entity_type = 'CUSTOMER' THEN entity_id" +
+            " WHEN entity.entity_type = 'USER'" +
+            " THEN (select customer_id from tb_user where id = entity_id)" +
+            " WHEN entity.entity_type = 'DASHBOARD'" +
+            //TODO: parse assigned customers or use contains?
+            " THEN NULL" +
+            " WHEN entity.entity_type = 'ASSET'" +
+            " THEN (select aca.customer_id from asset a" +
+            " left join (select asset_id, customer_id from asset_customer_association) aca on a.id = aca.asset_id" +
+            " where id = entity_id)" +
+            " WHEN entity.entity_type = 'DEVICE'" +
+            " THEN (select dca.customer_id from device d" +
+            " left join (select device_id, customer_id from device_customer_association) dca on d.id = dca.device_id" +
+            " where id = entity_id)" +
+            " WHEN entity.entity_type = 'ENTITY_VIEW'" +
+            " THEN (select customer_id from entity_view where id = entity_id)" +
+            " END as customer_id";
 
     public MultipleCustomerAssociationEntityQueryRepository(NamedParameterJdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate, DefaultQueryLogComponent queryLog) {
         super(jdbcTemplate, transactionTemplate, queryLog);
@@ -36,83 +56,39 @@ public class MultipleCustomerAssociationEntityQueryRepository extends DefaultEnt
         return String.format("select distinct * %s", fromClauseData);
     }
 
-    @Override
-    protected String getFromClauseData(EntityDataQuery query, QueryContext ctx, String entityWhereClause, String latestJoinsData, String textSearchQuery, String entityFieldsSelection, String topSelection) {
-        return String.format("from (select %s from (select %s from %s where %s) entities %s ) result %s",
-                topSelection,
-                entityFieldsSelection,
-                addEntityTableQuery(ctx, query.getEntityFilter()),
-                entityWhereClause,
-                latestJoinsData,
-                textSearchQuery);
-    }
-
-    @Override
-    protected String getFromClauseCount(EntityDataQuery query, QueryContext ctx, String entityWhereClause, String latestJoinsCnt, String textSearchQuery, String entityFieldsSelection) {
-        return String.format("from (select distinct %s from (select %s from %s where %s) entities %s ) result %s",
-                "entities.*",
-                entityFieldsSelection,
-                addEntityTableQuery(ctx, query.getEntityFilter()),
-                entityWhereClause,
-                latestJoinsCnt,
-                textSearchQuery);
-    }
-
-    @Override
-    protected String buildPermissionQuery(QueryContext ctx, EntityFilter entityFilter) {
-        switch (ctx.getEntityType()) {
+    protected String entityTableSimpleQuery(EntityType entityType) {
+        switch (entityType) {
             case DEVICE:
             case ASSET:
-                return this.defaultPermissionQuery(ctx);
+                return "(SELECT tenant_id, " + getCustomerIdAlias(entityType) + ", id, created_time, type, name, additional_info, label "
+                        + "FROM " + getFrom(entityType) + ")";
             default:
-                if (ctx.getEntityType() == EntityType.TENANT) {
-                    ctx.addUuidParameter("permissions_tenant_id", ctx.getTenantId().getId());
-                    return "e.id=:permissions_tenant_id";
-                } else {
-                    return this.defaultPermissionQuery(ctx);
-                }
+                return entityTableMap.get(entityType);
         }
     }
 
     @Override
-    protected String defaultPermissionQuery(QueryContext ctx) {
-        ctx.addUuidParameter("permissions_tenant_id", ctx.getTenantId().getId());
-        if (ctx.getCustomerId() != null && !ctx.getCustomerId().isNullUid()) {
-            ctx.addUuidParameter("permissions_customer_id", ctx.getCustomerId().getId());
-            if (ctx.getEntityType() == EntityType.CUSTOMER) {
-                return "e.tenant_id=:permissions_tenant_id and e.id=:permissions_customer_id";
-            } else {
-                switch (ctx.getEntityType()) {
-                    case DEVICE:
-                        return "e.tenant_id=:permissions_tenant_id and dca.customer_id=:permissions_customer_id and e.id=dca.device_id ";
-                    case ASSET:
-                        return "e.tenant_id=:permissions_tenant_id and aca.customer_id=:permissions_customer_id and e.id=aca.asset_id ";
-                    default:
-                        return "";
-                }
-            }
-        } else {
-            switch (ctx.getEntityType()) {
-                case DEVICE:
-                    return "e.tenant_id=:permissions_tenant_id and e.id=dca.device_id ";
-                case ASSET:
-                    return "e.tenant_id=:permissions_tenant_id and e.id=aca.asset_id ";
-                default:
-                    return "";
-            }
+    protected String getCustomerIdAlias(EntityType entityType) {
+        if (entityType.equals(EntityType.DEVICE)){
+            return "dca.customer_id";
+        } else if(entityType.equals(EntityType.ASSET)) {
+            return "aca.customer_id";
         }
+        return "customer_id";
     }
 
     @Override
-    protected String addEntityTableQuery(QueryContext ctx, EntityFilter entityFilter) {
-        switch (ctx.getEntityType()) {
-            case DEVICE:
-                return "device e, device_customer_association dca";
-            case ASSET:
-                return "asset e, asset_customer_association aca";
-            default:
-                return entityTableMap.get(ctx.getEntityType());
+    protected String getFrom(EntityType entityType) {
+        if (entityType.equals(EntityType.DEVICE)){
+            return "device e left join (select device_id, customer_id from device_customer_association) dca on e.id = dca.device_id";
+        } else if (entityType.equals(EntityType.ASSET)) {
+            return "asset e left join (select asset_id, customer_id from asset_customer_association) aca on e.id = aca.asset_id";
         }
+        return entityType.name();
     }
-    
+
+    @Override
+    protected String relationQuerySelectCustomerId() {
+        return SELECT_CUSTOMER_ID;
+    }
 }

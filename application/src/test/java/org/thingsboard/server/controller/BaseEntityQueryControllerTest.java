@@ -22,14 +22,17 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.thingsboard.server.common.data.*;
+import org.thingsboard.server.common.data.asset.Asset;
 import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.EntityId;
+import org.thingsboard.server.common.data.multiplecustomer.AssetWithMultipleCustomers;
 import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.query.*;
 import org.thingsboard.server.common.data.security.Authority;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -270,21 +273,161 @@ public abstract class BaseEntityQueryControllerTest extends AbstractControllerTe
         device.setType("default");
         Device savedDevice = doPost("/api/device", device, Device.class);
 
+        Asset asset = new Asset();
+        asset.setName("My Asset");
+        asset.setType("default");
+        Asset savedAsset = doPost("/api/asset", asset, Asset.class);
+
         Customer customer = new Customer();
         customer.setTitle("Customer To ADD 1");
         Customer customerToAdd1 = doPost("/api/customer", customer, Customer.class);
 
         String[] strCustomerIds = {customerToAdd1.getId().toString()};
         doPatch("/api/device/" + savedDevice.getId().getId().toString() + "/customer/association", strCustomerIds, DeviceWithMultipleCustomers.class);
+        doPatch("/api/asset/" + savedAsset.getId().getId().toString() + "/customer/association", strCustomerIds, AssetWithMultipleCustomers.class);
 
 
-        String json = "{\"entityFilter\":{\"type\":\"singleEntity\",\"singleEntity\":{\"entityType\":\"DEVICE\",\"id\":\""+
+        String json = "{\"entityFilter\": {\n" +
+                "                  \"rootEntity\": {\n" +
+                "                    \"id\": \"" +
+                savedDevice.getId().getId().toString() +
+                "\"" +
+                ",\n" +
+                "                    \"entityType\": \"DEVICE\"\n" +
+                "                  },\n" +
+                "                  \"direction\": \"FROM\",\n" +
+                "                  \"filters\": [\n" +
+                "                    {\n" +
+                "                      \"relationType\": \"Contains\",\n" +
+                "                      \"entityTypes\": []\n" +
+                "                    }\n" +
+                "                  ],\n" +
+                "                  \"maxLevel\": 1,\n" +
+                "                  \"type\": \"relationsQuery\"\n" +
+                "                },\n" +
+                "                \"pageLink\": {\n" +
+                "                  \"pageSize\": 1024,\n" +
+                "                  \"page\": 0,\n" +
+                "                  \"sortOrder\": {\n" +
+                "                    \"key\": {\n" +
+                "                      \"type\": \"ENTITY_FIELD\",\n" +
+                "                      \"key\": \"createdTime\"\n" +
+                "                    },\n" +
+                "                    \"direction\": \"DESC\"\n" +
+                "                  }\n" +
+                "                },\n" +
+                "                \"entityFields\": [\n" +
+                "                  {\n" +
+                "                    \"type\": \"ENTITY_FIELD\",\n" +
+                "                    \"key\": \"name\"\n" +
+                "                  },\n" +
+                "                  {\n" +
+                "                    \"type\": \"ENTITY_FIELD\",\n" +
+                "                    \"key\": \"label\"\n" +
+                "                  },\n" +
+                "                  {\n" +
+                "                    \"type\": \"ENTITY_FIELD\",\n" +
+                "                    \"key\": \"additionalInfo\"\n" +
+                "                  }\n" +
+                "                ],\n" +
+                "                \"latestValues\": []\n" +
+                "              }";
+
+        String json2 = "{\"entityFilter\":{\"type\":\"singleEntity\",\"singleEntity\":{\"entityType\":\"DEVICE\",\"id\":\""+
                 savedDevice.getId().getId().toString()+"\"}},\"pageLink\":{\"pageSize\":1,\"page\":0,\"sortOrder\":{\"key\":{\"type\":\"ENTITY_FIELD\",\"key\":\"createdTime\"},\"direction\":\"DESC\"}},\"entityFields\":[{\"type\":\"ENTITY_FIELD\",\"key\":\"name\"},{\"type\":\"ENTITY_FIELD\",\"key\":\"label\"},{\"type\":\"ENTITY_FIELD\",\"key\":\"additionalInfo\"}]}";
 
-        EntityDataQuery query = objectMapper.readValue(json, EntityDataQuery.class);
+
+        String json3 = "{\n" +
+                "\"entityFilter\": {\n" +
+                "\"type\": \"deviceSearchQuery\",\n" +
+                "\"resolveMultiple\": true,\n" +
+                "\"rootStateEntity\": false,\n" +
+                "\"stateEntityParamName\": null,\n" +
+                "\"defaultStateEntity\": null,\n" +
+                "\"rootEntity\": {\n" +
+                "\"entityType\": \"ASSET\",\n" +
+                "\"id\": \"" +
+                savedAsset.getId().getId().toString() +
+                "\"\n" +
+                "},\n" +
+                "\"direction\": \"FROM\",\n" +
+                "\"maxLevel\": 1,\n" +
+                "\"fetchLastLevelOnly\": false,\n" +
+                "\"relationType\": null,\n" +
+                "\"deviceTypes\": [\n" +
+                "\"Termostato\"\n" +
+                "]\n" +
+                "},\n" +
+                "\"pageLink\": {\n" +
+                "\"page\": 0,\n" +
+                "\"pageSize\": 10,\n" +
+                "\"textSearch\": null,\n" +
+                "\"dynamic\": true,\n" +
+                "\"sortOrder\": {\n" +
+                "\"key\": {\n" +
+                "\"key\": \"name\",\n" +
+                "\"type\": \"ENTITY_FIELD\"\n" +
+                "},\n" +
+                "\"direction\": \"ASC\"\n" +
+                "}\n" +
+                "},\n" +
+                "\"entityFields\": [\n" +
+                "{\n" +
+                "\"type\": \"ENTITY_FIELD\",\n" +
+                "\"key\": \"name\"\n" +
+                "},\n" +
+                "{\n" +
+                "\"type\": \"ENTITY_FIELD\",\n" +
+                "\"key\": \"label\"\n" +
+                "},\n" +
+                "{\n" +
+                "\"type\": \"ENTITY_FIELD\",\n" +
+                "\"key\": \"additionalInfo\"\n" +
+                "}\n" +
+                "],\n" +
+                "\"latestValues\": []\n" +
+                "}";
+        EntityDataQuery query = objectMapper.readValue(json3, EntityDataQuery.class);
 
         PageData<EntityData> data = doPostWithTypedResponse("/api/entitiesQuery/find", query, new TypeReference<PageData<EntityData>>() {});
         assertTrue(data.getData().size()>0);
+    }
+
+    @Test
+    public void testEntitiesListAsTenantAdmin() throws Exception {
+        // given
+        Device device = new Device();
+        device.setName("My device");
+        device.setType("default");
+        Device savedDevice = doPost("/api/device", device, Device.class);
+
+        Device device2 = new Device();
+        device2.setName("My device 2");
+        device2.setType("default");
+        Device savedDevice2 = doPost("/api/device", device2, Device.class);
+
+        EntityListFilter filter = new EntityListFilter();
+        filter.setEntityType(EntityType.DEVICE);
+        filter.setEntityList(Arrays.asList(savedDevice.getId().toString(), savedDevice2.getId().toString()));
+
+        EntityDataSortOrder sortOrder = new EntityDataSortOrder(new EntityKey(EntityKeyType.ENTITY_FIELD, "createdTime"), EntityDataSortOrder.Direction.ASC);
+        EntityDataPageLink pageLink = new EntityDataPageLink(10, 0, null, sortOrder);
+        List<EntityKey> entityFields = Collections.singletonList(new EntityKey(EntityKeyType.ENTITY_FIELD, "name"));
+        EntityDataQuery query = new EntityDataQuery(filter, pageLink, entityFields, null, null);
+
+        // when
+        PageData<EntityData> data = doPostWithTypedResponse("/api/entitiesQuery/find", query, new TypeReference<PageData<EntityData>>() {});
+        List loadedEntities = new ArrayList<>(data.getData());
+        while (data.hasNext()) {
+            query = query.next();
+            data = doPostWithTypedResponse("/api/entitiesQuery/find", query, new TypeReference<PageData<EntityData>>() {
+            });
+            loadedEntities.addAll(data.getData());
+        }
+
+        //then
+        Assert.assertEquals(2, loadedEntities.size());
+
     }
 
 }
