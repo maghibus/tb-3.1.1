@@ -19,6 +19,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { CustomizationService } from '@app/core/services/customization.service';
 
 import { environment as env } from '@env/environment';
 
@@ -28,7 +29,8 @@ import { environment as env } from '@env/environment';
 export class TitleService {
   constructor(
     private translate: TranslateService,
-    private title: Title
+    private title: Title,
+    private customizationService: CustomizationService
   ) {}
 
   setTitle(
@@ -45,8 +47,10 @@ export class TitleService {
       translate
         .get(title)
         .pipe(filter(translatedTitle => translatedTitle !== title))
-        .subscribe(translatedTitle =>
-          this.title.setTitle(`${env.appTitle} | ${translatedTitle}`)
+        .subscribe(translatedTitle => {
+          const appTitle = this.customizationService.getHeaderConfiguration().windowTitle;
+          return this.title.setTitle(`${appTitle} | ${translatedTitle}`)
+        }
         );
     } else {
       this.title.setTitle(env.appTitle);

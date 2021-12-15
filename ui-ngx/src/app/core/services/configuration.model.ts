@@ -43,6 +43,8 @@ export class HeaderConfig {
     disableIotLogout: boolean = false;
     logoDir: string = 'assets/platform-header-logo.png';
     appTitle: string = 'SMART CITY PLATFORM';
+    favicon: string = "assets/platform-header-logo.png";
+    windowTitle: string = "IotPlatform";
     appUrlsConfig: {
         bigdata: '/giotto-web';
         iot: '/home';

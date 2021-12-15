@@ -23,6 +23,8 @@
         "federatedLogoutUrl": null,
         "logoDir": "assets/platform-header-logo.png",
         "appTitle": "SMART CITY PLATFORM",
+        "favicon": "assets/favicon.ico",
+        "windowTitle": "IotPlatform",
         "appUrlsConfig": {
             "bigdata": "/giotto-web",
             "iot": "/home",
