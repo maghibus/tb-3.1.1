@@ -1126,10 +1126,10 @@
     "@types/flowjs" "2.13.3"
     tslib "^1.9.0"
 
-"@giotto-jfrog/giotto-platform-header@~2.0.0":
-  version "2.0.0"
-  resolved "http://jfrog.almaviva.it:8081/artifactory/api/npm/giotto-npm/@giotto-jfrog/giotto-platform-header/-/@giotto-jfrog/giotto-platform-header-2.0.0.tgz#2ea2e735cb0366e6092f820aa4417c6271df3114"
-  integrity sha1-LqLnNcsDZuYJL4IKpEF8YnHfMRQ=
+"@giotto-jfrog/giotto-platform-header@~2.0.1":
+  version "2.0.1"
+  resolved "https://almaviva.jfrog.io/artifactory/api/npm/giotto-npm/@giotto-jfrog/giotto-platform-header/-/@giotto-jfrog/giotto-platform-header-2.0.1.tgz#c64c469659b281204ed5131443951321eae488a0"
+  integrity sha1-xkxGllmygSBO1RMUQ5UTIerkiKA=
   dependencies:
     "@babel/runtime" "^7.15.4"
     jwt-decode "^3.1.2"
