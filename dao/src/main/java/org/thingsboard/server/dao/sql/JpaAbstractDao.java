@@ -79,6 +79,8 @@ public abstract class JpaAbstractDao<E extends BaseEntity<D>, D>
         return service.submit(() -> DaoUtil.getData(getCrudRepository().findById(key)));
     }
 
+
+
     @Override
     @Transactional
     public boolean removeById(TenantId tenantId, UUID id) {

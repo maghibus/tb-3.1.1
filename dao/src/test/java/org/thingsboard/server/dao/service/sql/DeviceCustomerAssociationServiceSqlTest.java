@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.thingsboard.server.common.data.DeviceCustomerAssociation;
 import org.thingsboard.server.common.data.exception.ThingsboardErrorCode;
 import org.thingsboard.server.common.data.exception.ThingsboardException;
-import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerDevice;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.page.SortOrder;
@@ -53,7 +53,7 @@ public class DeviceCustomerAssociationServiceSqlTest extends BaseDeviceServiceTe
         int pageSize = 20;
         int page = 0;
         PageLink pageLink = createPageLink(pageSize, page, null, null, null);
-        PageData<DeviceWithMultipleCustomers> deviceWithMultipleCustomers = deviceService.findDeviceInfoWithMultipleCustomerByTenantId(tenantId,pageLink);
+        PageData<MultiCustomerDevice> deviceWithMultipleCustomers = deviceService.findDeviceInfoWithMultipleCustomerByTenantId(tenantId,pageLink);
         System.out.println(deviceWithMultipleCustomers.toString());
     }
 

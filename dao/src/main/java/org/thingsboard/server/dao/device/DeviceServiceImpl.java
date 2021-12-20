@@ -37,7 +37,7 @@ import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.EntityId;
 import org.thingsboard.server.common.data.id.TenantId;
-import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerDevice;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.relation.EntityRelation;
@@ -129,6 +129,16 @@ public class DeviceServiceImpl extends AbstractEntityService implements DeviceSe
             return deviceDao.findByIdAsync(tenantId, deviceId.getId());
         } else {
             return deviceDao.findDeviceByTenantIdAndIdAsync(tenantId, deviceId.getId());
+        }
+    }
+
+    public ListenableFuture<MultiCustomerDevice> findMultiCustomerDeviceByIdAsync(TenantId tenantId, DeviceId deviceId) {
+        log.trace("Executing findMultiCustomerDeviceByIdAsync [{}]", deviceId);
+        validateId(deviceId, INCORRECT_DEVICE_ID + deviceId);
+        if (TenantId.SYS_TENANT_ID.equals(tenantId)) {
+            return deviceDao.findMultiCustomerDeviceByIdAsync(tenantId, deviceId.getId());
+        } else {
+            return deviceDao.findMultiCustomerDeviceByTenantIdAndIdAsync(tenantId, deviceId.getId());
         }
     }
 
@@ -415,19 +425,19 @@ public class DeviceServiceImpl extends AbstractEntityService implements DeviceSe
     }
 
     @Override
-    public DeviceWithMultipleCustomers findDeviceInfoWithMultipleCustomerByDeviceId(DeviceId deviceId) {
-        DeviceWithMultipleCustomers deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByDeviceId(deviceId.getId());
-        deviceWithMultipleCustomers.setCustomerInfo(customerDao.findAssociatedCustomerInfoByDeviceId(deviceId.getId()));
-        return deviceWithMultipleCustomers;
+    public MultiCustomerDevice findDeviceInfoWithMultipleCustomerByDeviceId(DeviceId deviceId) {
+        MultiCustomerDevice multiCustomerDevice = deviceDao.findDeviceInfoWithMultipleCustomerByDeviceId(deviceId.getId());
+        multiCustomerDevice.setCustomerInfo(customerDao.findAssociatedCustomerInfoByDeviceId(deviceId.getId()));
+        return multiCustomerDevice;
     }
 
     @Override
-    public PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndType(TenantId tenantId, String type, PageLink pageLink) {
+    public PageData<MultiCustomerDevice> findDeviceInfoWithMultipleCustomerByTenantIdAndType(TenantId tenantId, String type, PageLink pageLink) {
         log.trace("Executing findDeviceInfoWithMultipleCustomerByTenantIdAndType, tenantId [{}], type [{}], pageLink [{}]", tenantId, type, pageLink);
         validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
         validateString(type, "Incorrect type " + type);
         validatePageLink(pageLink);
-        PageData<DeviceWithMultipleCustomers> deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByTenantIdAndType(tenantId.getId(), type, pageLink);
+        PageData<MultiCustomerDevice> deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByTenantIdAndType(tenantId.getId(), type, pageLink);
 
         deviceWithMultipleCustomers.getData().forEach(
                 x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByDeviceId(x.getId().getId()))
@@ -437,11 +447,11 @@ public class DeviceServiceImpl extends AbstractEntityService implements DeviceSe
     }
 
     @Override
-    public PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantId(TenantId tenantId, PageLink pageLink) {
+    public PageData<MultiCustomerDevice> findDeviceInfoWithMultipleCustomerByTenantId(TenantId tenantId, PageLink pageLink) {
         log.trace("Executing findDeviceInfoWithMultipleCustomerByTenantId, tenantId [{}], pageLink [{}]", tenantId, pageLink);
         validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
         validatePageLink(pageLink);
-        PageData<DeviceWithMultipleCustomers> deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByTenantId(tenantId.getId(), pageLink);
+        PageData<MultiCustomerDevice> deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByTenantId(tenantId.getId(), pageLink);
 
         deviceWithMultipleCustomers.getData().forEach(
                 x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByDeviceId(x.getId().getId()))
@@ -451,13 +461,13 @@ public class DeviceServiceImpl extends AbstractEntityService implements DeviceSe
     }
 
     @Override
-    public PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(TenantId tenantId, CustomerId customerId, String type, PageLink pageLink) {
+    public PageData<MultiCustomerDevice> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(TenantId tenantId, CustomerId customerId, String type, PageLink pageLink) {
         log.trace("Executing findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType, tenantId [{}], customerId [{}], type [{}], pageLink [{}]", tenantId, customerId, type, pageLink);
         validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
         validateId(customerId, INCORRECT_CUSTOMER_ID + customerId);
         validateString(type, "Incorrect type " + type);
         validatePageLink(pageLink);
-        PageData<DeviceWithMultipleCustomers> deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(tenantId.getId(), customerId.getId(), type, pageLink);
+        PageData<MultiCustomerDevice> deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(tenantId.getId(), customerId.getId(), type, pageLink);
 
         deviceWithMultipleCustomers.getData().forEach(
                 x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByDeviceId(x.getId().getId()))
@@ -467,12 +477,12 @@ public class DeviceServiceImpl extends AbstractEntityService implements DeviceSe
     }
 
     @Override
-    public PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(TenantId tenantId, CustomerId customerId, PageLink pageLink) {
+    public PageData<MultiCustomerDevice> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(TenantId tenantId, CustomerId customerId, PageLink pageLink) {
         log.trace("Executing findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId, tenantId [{}], customerId [{}], pageLink [{}]", tenantId, customerId, pageLink);
         validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
         validateId(customerId, INCORRECT_CUSTOMER_ID + customerId);
         validatePageLink(pageLink);
-        PageData<DeviceWithMultipleCustomers> deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(tenantId.getId(), customerId.getId(), pageLink);
+        PageData<MultiCustomerDevice> deviceWithMultipleCustomers = deviceDao.findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(tenantId.getId(), customerId.getId(), pageLink);
 
         deviceWithMultipleCustomers.getData().forEach(
                 x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByDeviceId(x.getId().getId()))

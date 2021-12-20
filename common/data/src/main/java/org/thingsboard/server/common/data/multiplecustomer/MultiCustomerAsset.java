@@ -27,7 +27,7 @@ import org.thingsboard.server.common.data.id.TenantId;
 import java.util.List;
 
 @Data
-public class AssetWithMultipleCustomers implements HasTenantId, HasName, HasAdditionalInfo, HasCustomerMultipleInfo {
+public class MultiCustomerAsset implements HasTenantId, HasName, HasAdditionalInfo, HasCustomerMultipleInfo {
     private AssetId id;
     private TenantId tenantId;
     private long createdTime;

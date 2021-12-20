@@ -26,7 +26,7 @@ import org.thingsboard.server.common.data.Device;
 import org.thingsboard.server.common.data.Tenant;
 import org.thingsboard.server.common.data.User;
 import org.thingsboard.server.common.data.asset.Asset;
-import org.thingsboard.server.common.data.multiplecustomer.AssetWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerAsset;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.security.Authority;
@@ -82,12 +82,12 @@ public abstract class BaseAssetCustomerAssociationControllerTest  extends Abstra
         Customer customerToAdd1 = doPost("/api/customer", customer, Customer.class);
 
         String[] strCustomerIds = {customerToAdd1.getId().toString()};
-        doPatch("/api/asset/"+savedAsset.getId().getId().toString()+"/customer/association", strCustomerIds, AssetWithMultipleCustomers.class);
+        doPatch("/api/asset/"+savedAsset.getId().getId().toString()+"/customer/association", strCustomerIds, MultiCustomerAsset.class);
 
-        doPatch("/api/customer/public/asset/"+savedAsset.getId().getId().toString()+"/association/multiple", AssetWithMultipleCustomers.class);
+        doPatch("/api/customer/public/asset/"+savedAsset.getId().getId().toString()+"/association/multiple", MultiCustomerAsset.class);
 
-        PageData<AssetWithMultipleCustomers> assetWithMultipleCustomers = doGetTypedWithPageLink("/api/tenant/asset/info/customer/multiple?",
-                new TypeReference<PageData<AssetWithMultipleCustomers>>(){}, new PageLink(5,0));
+        PageData<MultiCustomerAsset> assetWithMultipleCustomers = doGetTypedWithPageLink("/api/tenant/asset/info/customer/multiple?",
+                new TypeReference<PageData<MultiCustomerAsset>>(){}, new PageLink(5,0));
 
         assertEquals(1, assetWithMultipleCustomers.getData().size());
         assertTrue(assetWithMultipleCustomers.getData().get(0).getCustomerInfo().get(0).isCustomerIsPublic()
@@ -113,10 +113,10 @@ public abstract class BaseAssetCustomerAssociationControllerTest  extends Abstra
         Customer customerToAdd2 = doPost("/api/customer", customer, Customer.class);
 
         String[] strCustomerIds = {customerToAdd1.getId().toString(), customerToAdd2.getId().toString()};
-        doPatch("/api/asset/"+savedAsset.getId().getId().toString()+"/customer/association", strCustomerIds, AssetWithMultipleCustomers.class);
+        doPatch("/api/asset/"+savedAsset.getId().getId().toString()+"/customer/association", strCustomerIds, MultiCustomerAsset.class);
 
-        PageData<AssetWithMultipleCustomers> assetWithMultipleCustomers = doGetTypedWithPageLink("/api/tenant/asset/info/customer/multiple?",
-                new TypeReference<PageData<AssetWithMultipleCustomers>>(){}, new PageLink(5,0));
+        PageData<MultiCustomerAsset> assetWithMultipleCustomers = doGetTypedWithPageLink("/api/tenant/asset/info/customer/multiple?",
+                new TypeReference<PageData<MultiCustomerAsset>>(){}, new PageLink(5,0));
 
         assertEquals(1, assetWithMultipleCustomers.getData().size());
         assertTrue(assetWithMultipleCustomers.getData().get(0).getCustomerInfo().get(0).getCustomerId().equals(customerToAdd1.getId())
@@ -149,25 +149,25 @@ public abstract class BaseAssetCustomerAssociationControllerTest  extends Abstra
 
         String[] strCustomerIds = {customerToAdd.getId().toString(), customerToRemove.getId().toString()};
 
-        AssetWithMultipleCustomers assetWithMultipleCustomers =  doPatch("/api/asset/"+savedAsset.getId().getId().toString()+"/customer/association", strCustomerIds, AssetWithMultipleCustomers.class);
+        MultiCustomerAsset multiCustomerAsset =  doPatch("/api/asset/"+savedAsset.getId().getId().toString()+"/customer/association", strCustomerIds, MultiCustomerAsset.class);
 
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String deviceWithMultipleCustomersJsonString = objectMapper.writeValueAsString(assetWithMultipleCustomers);
+        String deviceWithMultipleCustomersJsonString = objectMapper.writeValueAsString(multiCustomerAsset);
         System.out.println(deviceWithMultipleCustomersJsonString);
 
 
-        assertEquals(2, assetWithMultipleCustomers.getCustomerInfo().size());
-        assertTrue(assetWithMultipleCustomers.getCustomerInfo().get(0).getCustomerId().equals(customerToAdd.getId())
-                || assetWithMultipleCustomers.getCustomerInfo().get(1).getCustomerId().equals(customerToAdd.getId()));
+        assertEquals(2, multiCustomerAsset.getCustomerInfo().size());
+        assertTrue(multiCustomerAsset.getCustomerInfo().get(0).getCustomerId().equals(customerToAdd.getId())
+                || multiCustomerAsset.getCustomerInfo().get(1).getCustomerId().equals(customerToAdd.getId()));
 
-        assertTrue(assetWithMultipleCustomers.getCustomerInfo().get(0).getCustomerId().equals(customerToRemove.getId())
-                || assetWithMultipleCustomers.getCustomerInfo().get(1).getCustomerId().equals(customerToRemove.getId()));
+        assertTrue(multiCustomerAsset.getCustomerInfo().get(0).getCustomerId().equals(customerToRemove.getId())
+                || multiCustomerAsset.getCustomerInfo().get(1).getCustomerId().equals(customerToRemove.getId()));
 
         strCustomerIds = new String[]{customerToRemove.getId().toString()};
-        assetWithMultipleCustomers = doPatch("/api/asset/"+savedAsset.getId().getId().toString()+"/customer/association", strCustomerIds, AssetWithMultipleCustomers.class);
-        assertEquals(1, assetWithMultipleCustomers.getCustomerInfo().size());
-        assertEquals(assetWithMultipleCustomers.getCustomerInfo().get(0).getCustomerId(), customerToAdd.getId());
+        multiCustomerAsset = doPatch("/api/asset/"+savedAsset.getId().getId().toString()+"/customer/association", strCustomerIds, MultiCustomerAsset.class);
+        assertEquals(1, multiCustomerAsset.getCustomerInfo().size());
+        assertEquals(multiCustomerAsset.getCustomerInfo().get(0).getCustomerId(), customerToAdd.getId());
     }
 
     @Test
@@ -187,21 +187,21 @@ public abstract class BaseAssetCustomerAssociationControllerTest  extends Abstra
         Customer customerToAdd2 = doPost("/api/customer", customer, Customer.class);
 
         String[] strCustomerIds = {customerToAdd1.getId().toString(), customerToAdd2.getId().toString()};
-        doPatch("/api/asset/"+savedAsset.getId().getId().toString()+"/customer/association", strCustomerIds, AssetWithMultipleCustomers.class);
+        doPatch("/api/asset/"+savedAsset.getId().getId().toString()+"/customer/association", strCustomerIds, MultiCustomerAsset.class);
 
 
 
-        PageData<AssetWithMultipleCustomers> assetWithMultipleCustomers = doGetTypedWithPageLink("/api/customer/" +
+        PageData<MultiCustomerAsset> assetWithMultipleCustomers = doGetTypedWithPageLink("/api/customer/" +
                         customerToAdd1.getId().toString()+
                         "/asset/info/customer/multiple?",
-                new TypeReference<PageData<AssetWithMultipleCustomers>>(){}, new PageLink(5,0));
+                new TypeReference<PageData<MultiCustomerAsset>>(){}, new PageLink(5,0));
 
         assertEquals(1, assetWithMultipleCustomers.getData().size());
         assertTrue(assetWithMultipleCustomers.getData().get(0).getCustomerInfo().get(0).getCustomerId().equals(customerToAdd1.getId())
                 || assetWithMultipleCustomers.getData().get(0).getCustomerInfo().get(1).getCustomerId().equals(customerToAdd1.getId()));
 
 
-        doPatch("/api/asset/"+savedAsset.getId().getId().toString()+"/customer/association", strCustomerIds, AssetWithMultipleCustomers.class);
+        doPatch("/api/asset/"+savedAsset.getId().getId().toString()+"/customer/association", strCustomerIds, MultiCustomerAsset.class);
         ObjectMapper objectMapper = new ObjectMapper();
         String deviceWithMultipleCustomersJsonString = objectMapper.writeValueAsString(assetWithMultipleCustomers);
         System.out.println(deviceWithMultipleCustomersJsonString);

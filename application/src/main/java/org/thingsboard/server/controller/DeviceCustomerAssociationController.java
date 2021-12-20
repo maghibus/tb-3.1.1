@@ -26,7 +26,7 @@ import org.thingsboard.server.common.data.exception.ThingsboardException;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.TenantId;
-import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerDevice;
 import org.thingsboard.server.common.data.multiplecustomer.MultipleCustomerInfo;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
@@ -52,11 +52,11 @@ public class DeviceCustomerAssociationController extends BaseController{
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/device/info/{deviceId}/association/multiple", method = RequestMethod.GET)
     @ResponseBody
-    public DeviceWithMultipleCustomers getDeviceInfoById(@PathVariable(DEVICE_ID) String strDeviceId) throws ThingsboardException {
+    public MultiCustomerDevice getDeviceInfoById(@PathVariable(DEVICE_ID) String strDeviceId) throws ThingsboardException {
         checkParameter(DEVICE_ID, strDeviceId);
         try {
             DeviceId deviceId = new DeviceId(toUUID(strDeviceId));
-            return checkDeviceWithMultipleCustomersDeviceId(deviceId, Operation.READ);
+            return checkMultiCustomerDeviceId(deviceId, Operation.READ);
         } catch (Exception e) {
             throw handleException(e);
         }
@@ -65,7 +65,7 @@ public class DeviceCustomerAssociationController extends BaseController{
     @PreAuthorize("hasAuthority('TENANT_ADMIN')")
     @PatchMapping(value = "/customer/public/device/{deviceId}/association/multiple")
     @ResponseBody
-    public DeviceWithMultipleCustomers assignDeviceToPublicCustomer(@PathVariable(DEVICE_ID) String strDeviceId) throws ThingsboardException {
+    public MultiCustomerDevice assignDeviceToPublicCustomer(@PathVariable(DEVICE_ID) String strDeviceId) throws ThingsboardException {
         checkParameter(DEVICE_ID, strDeviceId);
         try {
             DeviceId deviceId = new DeviceId(toUUID(strDeviceId));
@@ -75,12 +75,12 @@ public class DeviceCustomerAssociationController extends BaseController{
             deviceService.unassignAllDeviceCustomerAssociation(getCurrentUser().getTenantId(), deviceId);
 
             checkNotNull(deviceService.assignDeviceToCustomers(getCurrentUser().getTenantId(), deviceId, publicCustomer.getId()));
-            DeviceWithMultipleCustomers deviceWithMultipleCustomers = deviceService.findDeviceInfoWithMultipleCustomerByDeviceId(deviceId);
-            logEntityAction(deviceId, deviceWithMultipleCustomers,
+            MultiCustomerDevice multiCustomerDevice = deviceService.findDeviceInfoWithMultipleCustomerByDeviceId(deviceId);
+            logEntityAction(deviceId, multiCustomerDevice,
                     null,
                     ActionType.ASSIGNED_TO_CUSTOMER, null, strDeviceId, publicCustomer.getId().toString(), publicCustomer.getName());
 
-            return deviceWithMultipleCustomers;
+            return multiCustomerDevice;
         } catch (Exception e) {
             e.printStackTrace();
             logEntityAction(emptyId(EntityType.DEVICE), null,
@@ -94,7 +94,7 @@ public class DeviceCustomerAssociationController extends BaseController{
     @PreAuthorize("hasAuthority('TENANT_ADMIN')")
     @GetMapping(value = "/tenant/device/info/customer/multiple", params = {"pageSize", "page"})
     @ResponseBody
-    public PageData<DeviceWithMultipleCustomers> getTenantDeviceInfoMultipleCustomer(
+    public PageData<MultiCustomerDevice> getTenantDeviceInfoMultipleCustomer(
             @RequestParam int pageSize,
             @RequestParam int page,
             @RequestParam(required = false) String type,
@@ -118,7 +118,7 @@ public class DeviceCustomerAssociationController extends BaseController{
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/customer/{customerId}/device/info/customer/multiple", params = {"pageSize", "page"}, method = RequestMethod.GET)
     @ResponseBody
-    public PageData<DeviceWithMultipleCustomers> getCustomerDeviceInfos(
+    public PageData<MultiCustomerDevice> getCustomerDeviceInfos(
             @PathVariable(CUSTOMER_ID) String strCustomerId,
             @RequestParam int pageSize,
             @RequestParam int page,
@@ -148,20 +148,20 @@ public class DeviceCustomerAssociationController extends BaseController{
     @PreAuthorize("hasAuthority('TENANT_ADMIN')")
     @PatchMapping(value = "/device/{deviceId}/customer/association")
     @ResponseBody
-    public DeviceWithMultipleCustomers updateCustomerDeviceAssociation(@PathVariable(DEVICE_ID) String strDeviceId,
-                                                                       @RequestBody String[] strCustomerIds) throws ThingsboardException {
+    public MultiCustomerDevice updateCustomerDeviceAssociation(@PathVariable(DEVICE_ID) String strDeviceId,
+                                                               @RequestBody String[] strCustomerIds) throws ThingsboardException {
         checkParameter(DEVICE_ID, strDeviceId);
 
         try {
             DeviceId deviceId = new DeviceId(toUUID(strDeviceId));
-            DeviceWithMultipleCustomers deviceWithMultipleCustomers = checkDeviceWithMultipleCustomersDeviceId(deviceId, Operation.ASSIGN_TO_CUSTOMER);
+            MultiCustomerDevice multiCustomerDevice = checkMultiCustomerDeviceId(deviceId, Operation.ASSIGN_TO_CUSTOMER);
 
             Set<CustomerId> customerIds = new HashSet<>();
             if(strCustomerIds != null){
                 Arrays.stream(strCustomerIds).forEach(x -> customerIds.add(new CustomerId(toUUID(x))));
             }
 
-            Map<CustomerId, MultipleCustomerInfo> customerInfoMap =  deviceWithMultipleCustomers
+            Map<CustomerId, MultipleCustomerInfo> customerInfoMap =  multiCustomerDevice
                     .getCustomerInfo().stream().collect(Collectors.toMap(MultipleCustomerInfo::getCustomerId, Function.identity()));
 
             Set<CustomerId> addedCustomerIds = new HashSet<>();
@@ -182,22 +182,22 @@ public class DeviceCustomerAssociationController extends BaseController{
 
                     MultipleCustomerInfo customerInfo = new MultipleCustomerInfo(addedCustomer.getTitle(), addedCustomer.getAdditionalInfo(), addedCustomer.getId().getId());
 
-                    deviceWithMultipleCustomers.getCustomerInfo().add(customerInfo);
-                    logEntityAction(deviceId, deviceWithMultipleCustomers,
+                    multiCustomerDevice.getCustomerInfo().add(customerInfo);
+                    logEntityAction(deviceId, multiCustomerDevice,
                             addedCustomerId,
                             ActionType.ASSIGNED_TO_CUSTOMER, null, strDeviceId, addedCustomerId.toString(), customerInfo.getCustomerTitle());
                 }
                 for (CustomerId customerId : removedCustomerIds) {
                     MultipleCustomerInfo customerInfo = customerInfoMap.get(customerId);
                     checkNotNull(deviceService.unassignDeviceFromCustomer(getCurrentUser().getTenantId(), deviceId, customerId));
-                    deviceWithMultipleCustomers.getCustomerInfo().removeIf(x -> x.getCustomerId().equals(customerId));
-                    logEntityAction(deviceId, deviceWithMultipleCustomers,
+                    multiCustomerDevice.getCustomerInfo().removeIf(x -> x.getCustomerId().equals(customerId));
+                    logEntityAction(deviceId, multiCustomerDevice,
                             customerId,
                             ActionType.UNASSIGNED_FROM_CUSTOMER, null, strDeviceId, customerId.toString(), customerInfo.getCustomerTitle());
 
                 }
             }
-            return deviceWithMultipleCustomers;
+            return multiCustomerDevice;
         }  catch (Exception e) {
 
             logEntityAction(emptyId(EntityType.DEVICE), null,

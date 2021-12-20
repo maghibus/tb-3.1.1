@@ -26,7 +26,7 @@ import org.thingsboard.server.common.data.exception.ThingsboardException;
 import org.thingsboard.server.common.data.id.AssetId;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.TenantId;
-import org.thingsboard.server.common.data.multiplecustomer.AssetWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerAsset;
 import org.thingsboard.server.common.data.multiplecustomer.MultipleCustomerInfo;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
@@ -52,11 +52,11 @@ public class AssetCustomerAssociationController  extends BaseController {
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/asset/info/{assetId}/association/multiple", method = RequestMethod.GET)
     @ResponseBody
-    public AssetWithMultipleCustomers getAssetInfoById(@PathVariable(ASSET_ID) String strAssetId) throws ThingsboardException {
+    public MultiCustomerAsset getAssetInfoById(@PathVariable(ASSET_ID) String strAssetId) throws ThingsboardException {
         checkParameter(ASSET_ID, strAssetId);
         try {
             AssetId assetId = new AssetId(toUUID(strAssetId));
-            return checkAssetWithMultipleCustomersAssetId(assetId, Operation.READ);
+            return checkMultiCustomerAssetId(assetId, Operation.READ);
         } catch (Exception e) {
             throw handleException(e);
         }
@@ -65,7 +65,7 @@ public class AssetCustomerAssociationController  extends BaseController {
     @PreAuthorize("hasAuthority('TENANT_ADMIN')")
     @PatchMapping(value = "/customer/public/asset/{assetId}/association/multiple")
     @ResponseBody
-    public AssetWithMultipleCustomers assignAssetToPublicCustomer(@PathVariable(ASSET_ID) String strAssetId) throws ThingsboardException {
+    public MultiCustomerAsset assignAssetToPublicCustomer(@PathVariable(ASSET_ID) String strAssetId) throws ThingsboardException {
         checkParameter(ASSET_ID, strAssetId);
         try {
             AssetId assetId = new AssetId(toUUID(strAssetId));
@@ -75,12 +75,12 @@ public class AssetCustomerAssociationController  extends BaseController {
             assetService.unassignAllAssetCustomerAssociation(getCurrentUser().getTenantId(), assetId);
 
             checkNotNull(assetService.assignAssetToCustomers(getTenantId(), assetId, publicCustomer.getId()));
-            AssetWithMultipleCustomers assetWithMultipleCustomers = assetService.findAssetInfoWithMultipleCustomerByDeviceId(assetId);
-            logEntityAction(assetId, assetWithMultipleCustomers,
+            MultiCustomerAsset multiCustomerAsset = assetService.findAssetInfoWithMultipleCustomerByDeviceId(assetId);
+            logEntityAction(assetId, multiCustomerAsset,
                     publicCustomer.getId(),
                     ActionType.ASSIGNED_TO_CUSTOMER, null, strAssetId, publicCustomer.getId().toString(), publicCustomer.getTitle());
 
-            return assetWithMultipleCustomers;
+            return multiCustomerAsset;
         } catch (Exception e) {
 
             logEntityAction(emptyId(EntityType.ASSET), null,
@@ -95,7 +95,7 @@ public class AssetCustomerAssociationController  extends BaseController {
     @PreAuthorize("hasAuthority('TENANT_ADMIN')")
     @RequestMapping(value = "/tenant/asset/info/customer/multiple", params = {"pageSize", "page"}, method = RequestMethod.GET)
     @ResponseBody
-    public PageData<AssetWithMultipleCustomers> getCustomerAssetInfos(
+    public PageData<MultiCustomerAsset> getCustomerAssetInfos(
             @RequestParam int pageSize,
             @RequestParam int page,
             @RequestParam(required = false) String type,
@@ -119,7 +119,7 @@ public class AssetCustomerAssociationController  extends BaseController {
     @PreAuthorize("hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/customer/{customerId}/asset/info/customer/multiple", params = {"pageSize", "page"}, method = RequestMethod.GET)
     @ResponseBody
-    public PageData<AssetWithMultipleCustomers> getCustomerAssetInfos(
+    public PageData<MultiCustomerAsset> getCustomerAssetInfos(
             @PathVariable(CUSTOMER_ID) String strCustomerId,
             @RequestParam int pageSize,
             @RequestParam int page,
@@ -149,20 +149,20 @@ public class AssetCustomerAssociationController  extends BaseController {
     @PatchMapping(value = "/asset/{assetId}/customer/association")
     @ResponseBody
     @ConditionalOnProperty(prefix = "features", value = "multiple_customer_per_device", havingValue = "true")
-    public AssetWithMultipleCustomers updateCustomerDeviceAssociation(@PathVariable(ASSET_ID) String strAssetId,
-                                                                       @RequestBody String[] strCustomerIds) throws ThingsboardException{
+    public MultiCustomerAsset updateCustomerDeviceAssociation(@PathVariable(ASSET_ID) String strAssetId,
+                                                              @RequestBody String[] strCustomerIds) throws ThingsboardException{
         checkParameter(ASSET_ID, strAssetId);
 
         try {
             AssetId assetId = new AssetId(toUUID(strAssetId));
-            AssetWithMultipleCustomers assetWithMultipleCustomers = checkAssetWithMultipleCustomersAssetId(assetId, Operation.ASSIGN_TO_CUSTOMER);
+            MultiCustomerAsset multiCustomerAsset = checkMultiCustomerAssetId(assetId, Operation.ASSIGN_TO_CUSTOMER);
 
             Set<CustomerId> customerIds = new HashSet<>();
             if(strCustomerIds != null){
                 Arrays.stream(strCustomerIds).forEach(x -> customerIds.add(new CustomerId(toUUID(x))));
             }
 
-            Map<CustomerId, MultipleCustomerInfo> customerInfoMap =  assetWithMultipleCustomers
+            Map<CustomerId, MultipleCustomerInfo> customerInfoMap =  multiCustomerAsset
                     .getCustomerInfo().stream().collect(Collectors.toMap(MultipleCustomerInfo::getCustomerId, Function.identity()));
 
             Set<CustomerId> addedCustomerIds = new HashSet<>();
@@ -183,22 +183,22 @@ public class AssetCustomerAssociationController  extends BaseController {
 
                     MultipleCustomerInfo customerInfo = new MultipleCustomerInfo(addedCustomer.getTitle(), addedCustomer.getAdditionalInfo(), addedCustomer.getId().getId());
 
-                    assetWithMultipleCustomers.getCustomerInfo().add(customerInfo);
-                    logEntityAction(assetId, assetWithMultipleCustomers,
+                    multiCustomerAsset.getCustomerInfo().add(customerInfo);
+                    logEntityAction(assetId, multiCustomerAsset,
                             addedCustomerId,
                             ActionType.ASSIGNED_TO_CUSTOMER, null, strAssetId, addedCustomerId.toString(), customerInfo.getCustomerTitle());
                 }
                 for (CustomerId customerId : removedCustomerIds) {
                     MultipleCustomerInfo customerInfo = customerInfoMap.get(customerId);
                     checkNotNull(assetService.unassignAssetFromCustomers(getCurrentUser().getTenantId(), assetId, customerId));
-                    assetWithMultipleCustomers.getCustomerInfo().removeIf(x -> x.getCustomerId().equals(customerId));
-                    logEntityAction(assetId, assetWithMultipleCustomers,
+                    multiCustomerAsset.getCustomerInfo().removeIf(x -> x.getCustomerId().equals(customerId));
+                    logEntityAction(assetId, multiCustomerAsset,
                             customerId,
                             ActionType.UNASSIGNED_FROM_CUSTOMER, null, strAssetId, customerId.toString(), customerInfo.getCustomerTitle());
 
                 }
             }
-            return assetWithMultipleCustomers;
+            return multiCustomerAsset;
         }  catch (Exception e) {
 
             logEntityAction(emptyId(EntityType.ASSET), null,

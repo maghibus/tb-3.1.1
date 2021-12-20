@@ -36,7 +36,7 @@ import org.thingsboard.server.common.data.id.AssetId;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.EntityId;
 import org.thingsboard.server.common.data.id.TenantId;
-import org.thingsboard.server.common.data.multiplecustomer.AssetWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerAsset;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.relation.EntityRelation;
@@ -107,6 +107,13 @@ public class BaseAssetService extends AbstractEntityService implements AssetServ
         log.trace("Executing findAssetById [{}]", assetId);
         validateId(assetId, INCORRECT_ASSET_ID + assetId);
         return assetDao.findByIdAsync(tenantId, assetId.getId());
+    }
+
+    @Override
+    public ListenableFuture<MultiCustomerAsset> findMultiCustomerAssetByIdAsync(TenantId tenantId, AssetId assetId) {
+        log.trace("Executing findMultiCustomerAssetByIdAsync [{}]", assetId);
+        validateId(assetId, INCORRECT_ASSET_ID + assetId);
+        return assetDao.findMultiCustomerAssetByIdAsync(tenantId, assetId.getId());
     }
 
     @Cacheable(cacheNames = ASSET_CACHE, key = "{#tenantId, #name}")
@@ -337,19 +344,19 @@ public class BaseAssetService extends AbstractEntityService implements AssetServ
     }
 
     @Override
-    public AssetWithMultipleCustomers findAssetInfoWithMultipleCustomerByDeviceId(AssetId assetId) {
-        AssetWithMultipleCustomers assetWithMultipleCustomers = assetDao.findDeviceInfoWithMultipleCustomerByDeviceId(assetId.getId());
-        assetWithMultipleCustomers.setCustomerInfo(customerDao.findAssociatedCustomerInfoByAssetId(assetId.getId()));
-        return assetWithMultipleCustomers;
+    public MultiCustomerAsset findAssetInfoWithMultipleCustomerByDeviceId(AssetId assetId) {
+        MultiCustomerAsset multiCustomerAsset = assetDao.findDeviceInfoWithMultipleCustomerByDeviceId(assetId.getId());
+        multiCustomerAsset.setCustomerInfo(customerDao.findAssociatedCustomerInfoByAssetId(assetId.getId()));
+        return multiCustomerAsset;
     }
 
     @Override
-    public PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomerByTenantIdAndType(TenantId tenantId, String type, PageLink pageLink) {
+    public PageData<MultiCustomerAsset> findAssetInfoWithMultipleCustomerByTenantIdAndType(TenantId tenantId, String type, PageLink pageLink) {
         log.trace("Executing findAssetInfoWithMultipleCustomerByTenantIdAndType, tenantId [{}], type [{}], pageLink [{}]", tenantId, type, pageLink);
         validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
         validateString(type, "Incorrect type " + type);
         validatePageLink(pageLink);
-        PageData<AssetWithMultipleCustomers> assetWithMultipleCustomers = assetDao.findAssetInfoWithMultipleCustomerByTenantIdAndType(tenantId.getId(), type, pageLink);
+        PageData<MultiCustomerAsset> assetWithMultipleCustomers = assetDao.findAssetInfoWithMultipleCustomerByTenantIdAndType(tenantId.getId(), type, pageLink);
 
         assetWithMultipleCustomers.getData().forEach(
                 x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByAssetId(x.getId().getId()))
@@ -359,11 +366,11 @@ public class BaseAssetService extends AbstractEntityService implements AssetServ
     }
 
     @Override
-    public PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomerByTenantId(TenantId tenantId, PageLink pageLink) {
+    public PageData<MultiCustomerAsset> findAssetInfoWithMultipleCustomerByTenantId(TenantId tenantId, PageLink pageLink) {
         log.trace("Executing findAssetInfoWithMultipleCustomerByTenantId, tenantId [{}], pageLink [{}]", tenantId, pageLink);
         validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
         validatePageLink(pageLink);
-        PageData<AssetWithMultipleCustomers> deviceWithMultipleCustomers = assetDao.findAssetInfoWithMultipleCustomerByTenantId(tenantId.getId(), pageLink);
+        PageData<MultiCustomerAsset> deviceWithMultipleCustomers = assetDao.findAssetInfoWithMultipleCustomerByTenantId(tenantId.getId(), pageLink);
 
         deviceWithMultipleCustomers.getData().forEach(
                 x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByAssetId(x.getId().getId()))
@@ -373,13 +380,13 @@ public class BaseAssetService extends AbstractEntityService implements AssetServ
     }
 
     @Override
-    public PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(TenantId tenantId, CustomerId customerId, String type, PageLink pageLink) {
+    public PageData<MultiCustomerAsset> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(TenantId tenantId, CustomerId customerId, String type, PageLink pageLink) {
         log.trace("Executing findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType, tenantId [{}], customerId [{}], type [{}], pageLink [{}]", tenantId, customerId, type, pageLink);
         validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
         validateId(customerId, INCORRECT_CUSTOMER_ID + customerId);
         validateString(type, "Incorrect type " + type);
         validatePageLink(pageLink);
-        PageData<AssetWithMultipleCustomers> deviceWithMultipleCustomers = assetDao.findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(tenantId.getId(), customerId.getId(), type, pageLink);
+        PageData<MultiCustomerAsset> deviceWithMultipleCustomers = assetDao.findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(tenantId.getId(), customerId.getId(), type, pageLink);
 
         deviceWithMultipleCustomers.getData().forEach(
                 x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByAssetId(x.getId().getId()))
@@ -389,12 +396,12 @@ public class BaseAssetService extends AbstractEntityService implements AssetServ
     }
 
     @Override
-    public PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(TenantId tenantId, CustomerId customerId, PageLink pageLink) {
+    public PageData<MultiCustomerAsset> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(TenantId tenantId, CustomerId customerId, PageLink pageLink) {
         log.trace("Executing findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId, tenantId [{}], customerId [{}], pageLink [{}]", tenantId, customerId, pageLink);
         validateId(tenantId, INCORRECT_TENANT_ID + tenantId);
         validateId(customerId, INCORRECT_CUSTOMER_ID + customerId);
         validatePageLink(pageLink);
-        PageData<AssetWithMultipleCustomers> deviceWithMultipleCustomers = assetDao.findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(tenantId.getId(), customerId.getId(), pageLink);
+        PageData<MultiCustomerAsset> deviceWithMultipleCustomers = assetDao.findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(tenantId.getId(), customerId.getId(), pageLink);
 
         deviceWithMultipleCustomers.getData().forEach(
                 x-> x.setCustomerInfo(customerDao.findAssociatedCustomerInfoByAssetId(x.getId().getId()))

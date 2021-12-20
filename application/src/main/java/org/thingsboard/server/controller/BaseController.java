@@ -27,19 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.thingsboard.server.common.data.Customer;
-import org.thingsboard.server.common.data.Dashboard;
-import org.thingsboard.server.common.data.DashboardInfo;
-import org.thingsboard.server.common.data.DataConstants;
-import org.thingsboard.server.common.data.Device;
-import org.thingsboard.server.common.data.DeviceInfo;
-import org.thingsboard.server.common.data.EntityType;
-import org.thingsboard.server.common.data.EntityView;
-import org.thingsboard.server.common.data.EntityViewInfo;
-import org.thingsboard.server.common.data.HasName;
-import org.thingsboard.server.common.data.HasTenantId;
-import org.thingsboard.server.common.data.Tenant;
-import org.thingsboard.server.common.data.User;
+import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.alarm.Alarm;
 import org.thingsboard.server.common.data.alarm.AlarmInfo;
 import org.thingsboard.server.common.data.asset.Asset;
@@ -47,24 +35,11 @@ import org.thingsboard.server.common.data.asset.AssetInfo;
 import org.thingsboard.server.common.data.audit.ActionType;
 import org.thingsboard.server.common.data.exception.ThingsboardErrorCode;
 import org.thingsboard.server.common.data.exception.ThingsboardException;
-import org.thingsboard.server.common.data.id.AlarmId;
-import org.thingsboard.server.common.data.id.AssetId;
-import org.thingsboard.server.common.data.id.CustomerId;
-import org.thingsboard.server.common.data.id.DashboardId;
-import org.thingsboard.server.common.data.id.DeviceId;
-import org.thingsboard.server.common.data.id.EntityId;
-import org.thingsboard.server.common.data.id.EntityIdFactory;
-import org.thingsboard.server.common.data.id.EntityViewId;
-import org.thingsboard.server.common.data.id.RuleChainId;
-import org.thingsboard.server.common.data.id.RuleNodeId;
-import org.thingsboard.server.common.data.id.TenantId;
-import org.thingsboard.server.common.data.id.UserId;
-import org.thingsboard.server.common.data.id.WidgetTypeId;
-import org.thingsboard.server.common.data.id.WidgetsBundleId;
+import org.thingsboard.server.common.data.id.*;
 import org.thingsboard.server.common.data.kv.AttributeKvEntry;
 import org.thingsboard.server.common.data.kv.DataType;
-import org.thingsboard.server.common.data.multiplecustomer.AssetWithMultipleCustomers;
-import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerAsset;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerDevice;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.page.SortOrder;
 import org.thingsboard.server.common.data.page.TimePageLink;
@@ -214,6 +189,9 @@ public abstract class BaseController {
     private boolean logControllerErrorStackTrace;
 
 
+    @Value("${features.multiple_customer_enabled}")
+    private boolean multiCustomerEnabled;
+
     @ExceptionHandler(ThingsboardException.class)
     public void handleThingsboardException(ThingsboardException ex, HttpServletResponse response) {
         errorResponseHandler.handle(ex, response);
@@ -223,7 +201,7 @@ public abstract class BaseController {
         return handleException(exception, true);
     }
 
-    private ThingsboardException handleException(Exception exception, boolean logException) {
+    protected ThingsboardException handleException(Exception exception, boolean logException) {
         if (logException && logControllerErrorStackTrace) {
             log.error("Error [{}]", exception.getMessage(), exception);
         }
@@ -370,7 +348,11 @@ public abstract class BaseController {
                     checkAlarmId(new AlarmId(entityId.getId()), operation);
                     return;
                 case DEVICE:
-                    checkDeviceId(new DeviceId(entityId.getId()), operation);
+                    if (!multiCustomerEnabled) {
+                        checkDeviceId(new DeviceId(entityId.getId()), operation);
+                    } else {
+                        checkMultiCustomerDeviceId(new DeviceId(entityId.getId()), operation);
+                    }
                     return;
                 case CUSTOMER:
                     checkCustomerId(new CustomerId(entityId.getId()), operation);
@@ -385,7 +367,11 @@ public abstract class BaseController {
                     checkRuleNode(new RuleNodeId(entityId.getId()), operation);
                     return;
                 case ASSET:
-                    checkAssetId(new AssetId(entityId.getId()), operation);
+                    if (!multiCustomerEnabled) {
+                        checkAssetId(new AssetId(entityId.getId()), operation);
+                    } else {
+                        checkMultiCustomerAssetId(new AssetId(entityId.getId()), operation);
+                    }
                     return;
                 case DASHBOARD:
                     checkDashboardId(new DashboardId(entityId.getId()), operation);
@@ -422,10 +408,10 @@ public abstract class BaseController {
         }
     }
 
-    DeviceWithMultipleCustomers checkDeviceWithMultipleCustomersDeviceId(DeviceId deviceId, Operation operation) throws ThingsboardException {
+    MultiCustomerDevice checkMultiCustomerDeviceId(DeviceId deviceId, Operation operation) throws ThingsboardException {
         try {
             validateId(deviceId, "Incorrect deviceId " + deviceId);
-            DeviceWithMultipleCustomers device = deviceService.findDeviceInfoWithMultipleCustomerByDeviceId( deviceId);
+            MultiCustomerDevice device = deviceService.findDeviceInfoWithMultipleCustomerByDeviceId( deviceId);
             checkNotNull(device);
             accessControlService.checkPermission(getCurrentUser(), Resource.DEVICE, operation, deviceId, device);
             return device;
@@ -434,10 +420,10 @@ public abstract class BaseController {
         }
     }
 
-    AssetWithMultipleCustomers checkAssetWithMultipleCustomersAssetId(AssetId assetId, Operation operation) throws ThingsboardException {
+    MultiCustomerAsset checkMultiCustomerAssetId(AssetId assetId, Operation operation) throws ThingsboardException {
         try {
             validateId(assetId, "Incorrect assetId " + assetId);
-            AssetWithMultipleCustomers asset = assetService.findAssetInfoWithMultipleCustomerByDeviceId(assetId);
+            MultiCustomerAsset asset = assetService.findAssetInfoWithMultipleCustomerByDeviceId(assetId);
             checkNotNull(asset);
             accessControlService.checkPermission(getCurrentUser(), Resource.ASSET, operation, assetId, asset);
             return asset;

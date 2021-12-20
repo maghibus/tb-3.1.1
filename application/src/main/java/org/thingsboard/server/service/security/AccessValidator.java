@@ -20,6 +20,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -70,6 +71,7 @@ import java.util.function.BiConsumer;
  * Created by ashvayka on 27.03.18.
  */
 @Component
+@ConditionalOnProperty(prefix = "features", value = "multiple_customer_enabled", havingValue = "false")
 public class AccessValidator {
 
     public static final String CUSTOMER_USER_IS_NOT_ALLOWED_TO_PERFORM_THIS_OPERATION = "Customer user is not allowed to perform this operation!";
@@ -104,7 +106,7 @@ public class AccessValidator {
     @Autowired
     protected AccessControlService accessControlService;
 
-    private ExecutorService executor;
+    protected ExecutorService executor;
 
     @PostConstruct
     public void initExecutor() {
@@ -186,7 +188,7 @@ public class AccessValidator {
         }
     }
 
-    private void validateDevice(final SecurityUser currentUser, Operation operation, EntityId entityId, FutureCallback<ValidationResult> callback) {
+    protected void validateDevice(final SecurityUser currentUser, Operation operation, EntityId entityId, FutureCallback<ValidationResult> callback) {
         if (currentUser.isSystemAdmin()) {
             callback.onSuccess(ValidationResult.accessDenied(SYSTEM_ADMINISTRATOR_IS_NOT_ALLOWED_TO_PERFORM_THIS_OPERATION));
         } else {
@@ -206,7 +208,7 @@ public class AccessValidator {
         }
     }
 
-    private void validateAsset(final SecurityUser currentUser, Operation operation, EntityId entityId, FutureCallback<ValidationResult> callback) {
+    protected void validateAsset(final SecurityUser currentUser, Operation operation, EntityId entityId, FutureCallback<ValidationResult> callback) {
         if (currentUser.isSystemAdmin()) {
             callback.onSuccess(ValidationResult.accessDenied(SYSTEM_ADMINISTRATOR_IS_NOT_ALLOWED_TO_PERFORM_THIS_OPERATION));
         } else {
@@ -349,7 +351,7 @@ public class AccessValidator {
         }
     }
 
-    private <T, V> FutureCallback<T> getCallback(FutureCallback<ValidationResult> callback, Function<T, ValidationResult<V>> transformer) {
+    protected <T, V> FutureCallback<T> getCallback(FutureCallback<ValidationResult> callback, Function<T, ValidationResult<V>> transformer) {
         return new FutureCallback<T>() {
             @Override
             public void onSuccess(@Nullable T result) {

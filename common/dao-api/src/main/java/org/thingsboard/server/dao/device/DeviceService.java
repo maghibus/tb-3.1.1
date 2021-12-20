@@ -24,7 +24,7 @@ import org.thingsboard.server.common.data.device.DeviceSearchQuery;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.TenantId;
-import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerDevice;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 
@@ -37,6 +37,8 @@ public interface DeviceService {
     Device findDeviceById(TenantId tenantId, DeviceId deviceId);
 
     ListenableFuture<Device> findDeviceByIdAsync(TenantId tenantId, DeviceId deviceId);
+
+    ListenableFuture<MultiCustomerDevice> findMultiCustomerDeviceByIdAsync(TenantId tenantId, DeviceId deviceId);
 
     Device findDeviceByTenantIdAndName(TenantId tenantId, String name);
 
@@ -80,11 +82,11 @@ public interface DeviceService {
 
     Device assignDeviceToTenant(TenantId tenantId, Device device);
 
-    DeviceWithMultipleCustomers findDeviceInfoWithMultipleCustomerByDeviceId(DeviceId deviceId);
+    MultiCustomerDevice findDeviceInfoWithMultipleCustomerByDeviceId(DeviceId deviceId);
 
-    PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndType(TenantId tenantId, String type, PageLink pageLink);
+    PageData<MultiCustomerDevice> findDeviceInfoWithMultipleCustomerByTenantIdAndType(TenantId tenantId, String type, PageLink pageLink);
 
-    PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantId(TenantId tenantId, PageLink pageLink);
+    PageData<MultiCustomerDevice> findDeviceInfoWithMultipleCustomerByTenantId(TenantId tenantId, PageLink pageLink);
 
     DeviceCustomerAssociation assignDeviceToCustomers(TenantId tenantId, DeviceId deviceId, CustomerId addedCustomerId);
 
@@ -92,7 +94,7 @@ public interface DeviceService {
 
     Integer unassignAllDeviceCustomerAssociation(TenantId tenantId, DeviceId deviceId);
 
-    PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(TenantId tenantId, CustomerId customerId, String type, PageLink pageLink);
+    PageData<MultiCustomerDevice> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(TenantId tenantId, CustomerId customerId, String type, PageLink pageLink);
 
-    PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(TenantId tenantId, CustomerId customerId, PageLink pageLink);
+    PageData<MultiCustomerDevice> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(TenantId tenantId, CustomerId customerId, PageLink pageLink);
 }

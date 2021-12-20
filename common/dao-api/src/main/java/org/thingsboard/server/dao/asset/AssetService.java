@@ -23,8 +23,10 @@ import org.thingsboard.server.common.data.asset.AssetInfo;
 import org.thingsboard.server.common.data.asset.AssetSearchQuery;
 import org.thingsboard.server.common.data.id.AssetId;
 import org.thingsboard.server.common.data.id.CustomerId;
+import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.TenantId;
-import org.thingsboard.server.common.data.multiplecustomer.AssetWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerAsset;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerDevice;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 
@@ -37,6 +39,8 @@ public interface AssetService {
     Asset findAssetById(TenantId tenantId, AssetId assetId);
 
     ListenableFuture<Asset> findAssetByIdAsync(TenantId tenantId, AssetId assetId);
+
+    ListenableFuture<MultiCustomerAsset> findMultiCustomerAssetByIdAsync(TenantId tenantId, AssetId deviceId);
 
     Asset findAssetByTenantIdAndName(TenantId tenantId, String name);
 
@@ -82,13 +86,13 @@ public interface AssetService {
 
     Integer unassignAllAssetCustomerAssociation(TenantId tenantId, AssetId assetId);
 
-    AssetWithMultipleCustomers findAssetInfoWithMultipleCustomerByDeviceId(AssetId assetId);
+    MultiCustomerAsset findAssetInfoWithMultipleCustomerByDeviceId(AssetId assetId);
 
-    PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomerByTenantIdAndType(TenantId tenantId, String type, PageLink pageLink);
+    PageData<MultiCustomerAsset> findAssetInfoWithMultipleCustomerByTenantIdAndType(TenantId tenantId, String type, PageLink pageLink);
 
-    PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomerByTenantId(TenantId tenantId, PageLink pageLink);
+    PageData<MultiCustomerAsset> findAssetInfoWithMultipleCustomerByTenantId(TenantId tenantId, PageLink pageLink);
 
-    PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(TenantId tenantId, CustomerId customerId, String type, PageLink pageLink);
+    PageData<MultiCustomerAsset> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(TenantId tenantId, CustomerId customerId, String type, PageLink pageLink);
 
-    PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(TenantId tenantId, CustomerId customerId, PageLink pageLink);
+    PageData<MultiCustomerAsset> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(TenantId tenantId, CustomerId customerId, PageLink pageLink);
 }

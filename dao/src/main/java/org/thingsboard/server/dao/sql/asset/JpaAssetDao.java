@@ -24,14 +24,18 @@ import org.thingsboard.server.common.data.EntityType;
 import org.thingsboard.server.common.data.asset.Asset;
 import org.thingsboard.server.common.data.asset.AssetInfo;
 import org.thingsboard.server.common.data.id.AssetId;
+import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.TenantId;
-import org.thingsboard.server.common.data.multiplecustomer.AssetWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerAsset;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerDevice;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.dao.DaoUtil;
 import org.thingsboard.server.dao.asset.AssetDao;
+import org.thingsboard.server.dao.customer.CustomerDao;
 import org.thingsboard.server.dao.model.sql.AssetEntity;
 import org.thingsboard.server.dao.model.sql.AssetInfoEntity;
+import org.thingsboard.server.dao.model.sql.DeviceEntity;
 import org.thingsboard.server.dao.sql.JpaAbstractSearchTextDao;
 
 import java.util.*;
@@ -44,6 +48,9 @@ public class JpaAssetDao extends JpaAbstractSearchTextDao<AssetEntity, Asset> im
 
     @Autowired
     private AssetRepository assetRepository;
+
+    @Autowired
+    private CustomerDao customerDao;
 
     @Override
     protected Class<AssetEntity> getEntityClass() {
@@ -164,67 +171,67 @@ public class JpaAssetDao extends JpaAbstractSearchTextDao<AssetEntity, Asset> im
     }
 
     @Override
-    public AssetWithMultipleCustomers findDeviceInfoWithMultipleCustomerByDeviceId(UUID id) {
+    public MultiCustomerAsset findDeviceInfoWithMultipleCustomerByDeviceId(UUID id) {
         Optional<AssetEntity> asset = assetRepository.findById(id);
         AssetEntity assetEntity = asset.get();
-        AssetWithMultipleCustomers assetWithMultipleCustomers = new AssetWithMultipleCustomers();
-        assetWithMultipleCustomers.setId(new AssetId(assetEntity.getId()));
-        assetWithMultipleCustomers.setCreatedTime(assetEntity.getCreatedTime());
-        assetWithMultipleCustomers.setName(assetEntity.getName());
-        assetWithMultipleCustomers.setType(assetEntity.getType());
-        assetWithMultipleCustomers.setLabel(assetEntity.getLabel());
-        assetWithMultipleCustomers.setAdditionalInfo(assetEntity.getAdditionalInfo());
-        assetWithMultipleCustomers.setTenantId(new TenantId(assetEntity.getTenantId()));
-        return assetWithMultipleCustomers;
+        MultiCustomerAsset multiCustomerAsset = new MultiCustomerAsset();
+        multiCustomerAsset.setId(new AssetId(assetEntity.getId()));
+        multiCustomerAsset.setCreatedTime(assetEntity.getCreatedTime());
+        multiCustomerAsset.setName(assetEntity.getName());
+        multiCustomerAsset.setType(assetEntity.getType());
+        multiCustomerAsset.setLabel(assetEntity.getLabel());
+        multiCustomerAsset.setAdditionalInfo(assetEntity.getAdditionalInfo());
+        multiCustomerAsset.setTenantId(new TenantId(assetEntity.getTenantId()));
+        return multiCustomerAsset;
     }
 
     @Override
-    public PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomerByTenantIdAndType(UUID tenantId, String type, PageLink pageLink) {
-        List<AssetWithMultipleCustomers> assetWithMultipleCustomersList = new LinkedList<>();
+    public PageData<MultiCustomerAsset> findAssetInfoWithMultipleCustomerByTenantIdAndType(UUID tenantId, String type, PageLink pageLink) {
+        List<MultiCustomerAsset> multiCustomerAssetList = new LinkedList<>();
 
         PageData<AssetInfo> pageData = DaoUtil.toPageData(assetRepository.findAssetInfosByTenantIdAndType(tenantId, type,  Objects.toString(pageLink.getTextSearch(), ""),
                 DaoUtil.toPageable(pageLink, AssetInfoEntity.assetInfoColumnMap)));
 
         pageData.getData().forEach(elem -> {
-            AssetWithMultipleCustomers assetWithMultipleCustomers = new AssetWithMultipleCustomers();
-            assetWithMultipleCustomers.setId(elem.getId());
-            assetWithMultipleCustomers.setCreatedTime(elem.getCreatedTime());
-            assetWithMultipleCustomers.setTenantId(elem.getTenantId());
-            assetWithMultipleCustomers.setName(elem.getName());
-            assetWithMultipleCustomers.setLabel(elem.getLabel());
-            assetWithMultipleCustomers.setType(elem.getType());
-            assetWithMultipleCustomers.setAdditionalInfo(elem.getAdditionalInfo());
-            assetWithMultipleCustomersList.add(assetWithMultipleCustomers);
+            MultiCustomerAsset multiCustomerAsset = new MultiCustomerAsset();
+            multiCustomerAsset.setId(elem.getId());
+            multiCustomerAsset.setCreatedTime(elem.getCreatedTime());
+            multiCustomerAsset.setTenantId(elem.getTenantId());
+            multiCustomerAsset.setName(elem.getName());
+            multiCustomerAsset.setLabel(elem.getLabel());
+            multiCustomerAsset.setType(elem.getType());
+            multiCustomerAsset.setAdditionalInfo(elem.getAdditionalInfo());
+            multiCustomerAssetList.add(multiCustomerAsset);
         });
 
-        return new PageData(assetWithMultipleCustomersList, pageData.getTotalPages(), pageData.getTotalElements(), pageData.hasNext());
+        return new PageData(multiCustomerAssetList, pageData.getTotalPages(), pageData.getTotalElements(), pageData.hasNext());
     }
 
     @Override
-    public PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomerByTenantId(UUID tenantId, PageLink pageLink) {
-        List<AssetWithMultipleCustomers> assetWithMultipleCustomersList = new LinkedList<>();
+    public PageData<MultiCustomerAsset> findAssetInfoWithMultipleCustomerByTenantId(UUID tenantId, PageLink pageLink) {
+        List<MultiCustomerAsset> multiCustomerAssetList = new LinkedList<>();
 
         PageData<AssetInfo> pageData = DaoUtil.toPageData(assetRepository.findAssetInfosByTenantId(tenantId, Objects.toString(pageLink.getTextSearch(), ""),
                 DaoUtil.toPageable(pageLink, AssetInfoEntity.assetInfoColumnMap)));
 
         pageData.getData().forEach(elem -> {
-            AssetWithMultipleCustomers assetWithMultipleCustomers = new AssetWithMultipleCustomers();
-            assetWithMultipleCustomers.setId(elem.getId());
-            assetWithMultipleCustomers.setCreatedTime(elem.getCreatedTime());
-            assetWithMultipleCustomers.setTenantId(elem.getTenantId());
-            assetWithMultipleCustomers.setName(elem.getName());
-            assetWithMultipleCustomers.setLabel(elem.getLabel());
-            assetWithMultipleCustomers.setType(elem.getType());
-            assetWithMultipleCustomers.setAdditionalInfo(elem.getAdditionalInfo());
-            assetWithMultipleCustomersList.add(assetWithMultipleCustomers);
+            MultiCustomerAsset multiCustomerAsset = new MultiCustomerAsset();
+            multiCustomerAsset.setId(elem.getId());
+            multiCustomerAsset.setCreatedTime(elem.getCreatedTime());
+            multiCustomerAsset.setTenantId(elem.getTenantId());
+            multiCustomerAsset.setName(elem.getName());
+            multiCustomerAsset.setLabel(elem.getLabel());
+            multiCustomerAsset.setType(elem.getType());
+            multiCustomerAsset.setAdditionalInfo(elem.getAdditionalInfo());
+            multiCustomerAssetList.add(multiCustomerAsset);
         });
 
-        return new PageData(assetWithMultipleCustomersList, pageData.getTotalPages(), pageData.getTotalElements(), pageData.hasNext());
+        return new PageData(multiCustomerAssetList, pageData.getTotalPages(), pageData.getTotalElements(), pageData.hasNext());
     }
 
     @Override
-    public PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(UUID tenantId, UUID customerId, String type, PageLink pageLink) {
-        List<AssetWithMultipleCustomers> assetWithMultipleCustomersList = new LinkedList<>();
+    public PageData<MultiCustomerAsset> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(UUID tenantId, UUID customerId, String type, PageLink pageLink) {
+        List<MultiCustomerAsset> multiCustomerAssetList = new LinkedList<>();
 
         PageData<AssetInfo> pageData = DaoUtil.toPageData(
                 assetRepository.findAssetInfoWithMultipleCustomersByTenantIdAndCustomerIdAndType(
@@ -235,23 +242,23 @@ public class JpaAssetDao extends JpaAbstractSearchTextDao<AssetEntity, Asset> im
                         DaoUtil.toPageable(pageLink, AssetInfoEntity.assetInfoColumnMap)));
 
         pageData.getData().forEach(elem -> {
-            AssetWithMultipleCustomers assetWithMultipleCustomers = new AssetWithMultipleCustomers();
-            assetWithMultipleCustomers.setId(elem.getId());
-            assetWithMultipleCustomers.setCreatedTime(elem.getCreatedTime());
-            assetWithMultipleCustomers.setTenantId(elem.getTenantId());
-            assetWithMultipleCustomers.setName(elem.getName());
-            assetWithMultipleCustomers.setLabel(elem.getLabel());
-            assetWithMultipleCustomers.setType(elem.getType());
-            assetWithMultipleCustomers.setAdditionalInfo(elem.getAdditionalInfo());
-            assetWithMultipleCustomersList.add(assetWithMultipleCustomers);
+            MultiCustomerAsset multiCustomerAsset = new MultiCustomerAsset();
+            multiCustomerAsset.setId(elem.getId());
+            multiCustomerAsset.setCreatedTime(elem.getCreatedTime());
+            multiCustomerAsset.setTenantId(elem.getTenantId());
+            multiCustomerAsset.setName(elem.getName());
+            multiCustomerAsset.setLabel(elem.getLabel());
+            multiCustomerAsset.setType(elem.getType());
+            multiCustomerAsset.setAdditionalInfo(elem.getAdditionalInfo());
+            multiCustomerAssetList.add(multiCustomerAsset);
         });
 
-        return new PageData(assetWithMultipleCustomersList, pageData.getTotalPages(), pageData.getTotalElements(), pageData.hasNext());
+        return new PageData(multiCustomerAssetList, pageData.getTotalPages(), pageData.getTotalElements(), pageData.hasNext());
     }
 
     @Override
-    public PageData<AssetWithMultipleCustomers> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(UUID tenantId, UUID customerId, PageLink pageLink) {
-        List<AssetWithMultipleCustomers> assetWithMultipleCustomersList = new LinkedList<>();
+    public PageData<MultiCustomerAsset> findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(UUID tenantId, UUID customerId, PageLink pageLink) {
+        List<MultiCustomerAsset> multiCustomerAssetList = new LinkedList<>();
 
         PageData<AssetInfo> pageData = DaoUtil.toPageData(
                 assetRepository.findAssetInfoWithMultipleCustomersByTenantIdAndCustomerId(
@@ -261,18 +268,25 @@ public class JpaAssetDao extends JpaAbstractSearchTextDao<AssetEntity, Asset> im
                         DaoUtil.toPageable(pageLink, AssetInfoEntity.assetInfoColumnMap)));
 
         pageData.getData().forEach(elem -> {
-            AssetWithMultipleCustomers assetWithMultipleCustomers = new AssetWithMultipleCustomers();
-            assetWithMultipleCustomers.setId(elem.getId());
-            assetWithMultipleCustomers.setCreatedTime(elem.getCreatedTime());
-            assetWithMultipleCustomers.setTenantId(elem.getTenantId());
-            assetWithMultipleCustomers.setName(elem.getName());
-            assetWithMultipleCustomers.setLabel(elem.getLabel());
-            assetWithMultipleCustomers.setType(elem.getType());
-            assetWithMultipleCustomers.setAdditionalInfo(elem.getAdditionalInfo());
-            assetWithMultipleCustomersList.add(assetWithMultipleCustomers);
+            MultiCustomerAsset multiCustomerAsset = new MultiCustomerAsset();
+            multiCustomerAsset.setId(elem.getId());
+            multiCustomerAsset.setCreatedTime(elem.getCreatedTime());
+            multiCustomerAsset.setTenantId(elem.getTenantId());
+            multiCustomerAsset.setName(elem.getName());
+            multiCustomerAsset.setLabel(elem.getLabel());
+            multiCustomerAsset.setType(elem.getType());
+            multiCustomerAsset.setAdditionalInfo(elem.getAdditionalInfo());
+            multiCustomerAssetList.add(multiCustomerAsset);
         });
 
-        return new PageData(assetWithMultipleCustomersList, pageData.getTotalPages(), pageData.getTotalElements(), pageData.hasNext());
+        return new PageData(multiCustomerAssetList, pageData.getTotalPages(), pageData.getTotalElements(), pageData.hasNext());
+    }
+
+    @Override
+    public ListenableFuture<MultiCustomerAsset> findMultiCustomerAssetByIdAsync(TenantId tenantId, UUID id) {
+        return service.submit(() -> assetRepository.findById(id)
+                .map(this::getMultiCustomerAsset)
+                .orElse(null));
     }
 
 
@@ -285,6 +299,19 @@ public class JpaAssetDao extends JpaAbstractSearchTextDao<AssetEntity, Asset> im
             }
         }
         return list;
+    }
+
+    private MultiCustomerAsset getMultiCustomerAsset(AssetEntity a) {
+        MultiCustomerAsset multiCustomerAsset = new MultiCustomerAsset();
+        multiCustomerAsset.setId(new AssetId(a.getId()));
+        multiCustomerAsset.setCreatedTime(a.getCreatedTime());
+        multiCustomerAsset.setName(a.getName());
+        multiCustomerAsset.setType(a.getType());
+        multiCustomerAsset.setLabel(a.getLabel());
+        multiCustomerAsset.setAdditionalInfo(a.getAdditionalInfo());
+        multiCustomerAsset.setTenantId(new TenantId(a.getTenantId()));
+        multiCustomerAsset.setCustomerInfo(customerDao.findAssociatedCustomerInfoByAssetId(a.getId()));
+        return multiCustomerAsset;
     }
 
 

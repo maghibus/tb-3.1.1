@@ -25,8 +25,8 @@ import org.thingsboard.server.common.data.*;
 import org.thingsboard.server.common.data.asset.Asset;
 import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.EntityId;
-import org.thingsboard.server.common.data.multiplecustomer.AssetWithMultipleCustomers;
-import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerAsset;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerDevice;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.query.*;
 import org.thingsboard.server.common.data.security.Authority;
@@ -283,8 +283,8 @@ public abstract class BaseEntityQueryControllerTest extends AbstractControllerTe
         Customer customerToAdd1 = doPost("/api/customer", customer, Customer.class);
 
         String[] strCustomerIds = {customerToAdd1.getId().toString()};
-        doPatch("/api/device/" + savedDevice.getId().getId().toString() + "/customer/association", strCustomerIds, DeviceWithMultipleCustomers.class);
-        doPatch("/api/asset/" + savedAsset.getId().getId().toString() + "/customer/association", strCustomerIds, AssetWithMultipleCustomers.class);
+        doPatch("/api/device/" + savedDevice.getId().getId().toString() + "/customer/association", strCustomerIds, MultiCustomerDevice.class);
+        doPatch("/api/asset/" + savedAsset.getId().getId().toString() + "/customer/association", strCustomerIds, MultiCustomerAsset.class);
 
 
         String json = "{\"entityFilter\": {\n" +

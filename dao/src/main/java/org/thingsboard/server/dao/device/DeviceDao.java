@@ -20,7 +20,7 @@ import org.thingsboard.server.common.data.Device;
 import org.thingsboard.server.common.data.DeviceInfo;
 import org.thingsboard.server.common.data.EntitySubtype;
 import org.thingsboard.server.common.data.id.TenantId;
-import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerDevice;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.dao.Dao;
@@ -184,13 +184,17 @@ public interface DeviceDao extends Dao<Device> {
      */
     ListenableFuture<Device> findDeviceByTenantIdAndIdAsync(TenantId tenantId, UUID id);
 
-    PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndType(UUID id, String type, PageLink pageLink);
+    ListenableFuture<MultiCustomerDevice> findMultiCustomerDeviceByIdAsync(TenantId tenantId, UUID id);
 
-    PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantId(UUID id, PageLink pageLink);
+    ListenableFuture<MultiCustomerDevice> findMultiCustomerDeviceByTenantIdAndIdAsync(TenantId tenantId, UUID id);
 
-    DeviceWithMultipleCustomers findDeviceInfoWithMultipleCustomerByDeviceId(UUID deviceId);
+    PageData<MultiCustomerDevice> findDeviceInfoWithMultipleCustomerByTenantIdAndType(UUID id, String type, PageLink pageLink);
 
-    PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(UUID tenantId, UUID customerId, String type, PageLink pageLink);
+    PageData<MultiCustomerDevice> findDeviceInfoWithMultipleCustomerByTenantId(UUID id, PageLink pageLink);
 
-    PageData<DeviceWithMultipleCustomers> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(UUID tenantId, UUID customerId, PageLink pageLink);
+    MultiCustomerDevice findDeviceInfoWithMultipleCustomerByDeviceId(UUID deviceId);
+
+    PageData<MultiCustomerDevice> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerIdAndType(UUID tenantId, UUID customerId, String type, PageLink pageLink);
+
+    PageData<MultiCustomerDevice> findDeviceInfoWithMultipleCustomerByTenantIdAndCustomerId(UUID tenantId, UUID customerId, PageLink pageLink);
 }

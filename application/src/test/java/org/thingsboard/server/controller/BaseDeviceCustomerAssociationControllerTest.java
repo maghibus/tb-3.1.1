@@ -25,7 +25,7 @@ import org.thingsboard.server.common.data.Customer;
 import org.thingsboard.server.common.data.Device;
 import org.thingsboard.server.common.data.Tenant;
 import org.thingsboard.server.common.data.User;
-import org.thingsboard.server.common.data.multiplecustomer.DeviceWithMultipleCustomers;
+import org.thingsboard.server.common.data.multiplecustomer.MultiCustomerDevice;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
 import org.thingsboard.server.common.data.security.Authority;
@@ -81,14 +81,14 @@ public abstract class BaseDeviceCustomerAssociationControllerTest extends Abstra
             Customer customerToAdd1 = doPost("/api/customer", customer, Customer.class);
 
             String[] strCustomerIds = {customerToAdd1.getId().toString()};
-            doPatch("/api/device/" + savedDevice.getId().getId().toString() + "/customer/association", strCustomerIds, DeviceWithMultipleCustomers.class);
+            doPatch("/api/device/" + savedDevice.getId().getId().toString() + "/customer/association", strCustomerIds, MultiCustomerDevice.class);
 
-            doPatch("/api/customer/public/device/" + savedDevice.getId().getId().toString() + "/association/multiple", DeviceWithMultipleCustomers.class);
+            doPatch("/api/customer/public/device/" + savedDevice.getId().getId().toString() + "/association/multiple", MultiCustomerDevice.class);
 
 
 
-            PageData<DeviceWithMultipleCustomers> deviceWithMultipleCustomers = doGetTypedWithPageLink("/api/tenant/device/info/customer/multiple?",
-                    new TypeReference<PageData<DeviceWithMultipleCustomers>>() {
+            PageData<MultiCustomerDevice> deviceWithMultipleCustomers = doGetTypedWithPageLink("/api/tenant/device/info/customer/multiple?",
+                    new TypeReference<PageData<MultiCustomerDevice>>() {
                     }, new PageLink(5, 0));
 
             assertEquals(1, deviceWithMultipleCustomers.getData().size());
@@ -115,10 +115,10 @@ public abstract class BaseDeviceCustomerAssociationControllerTest extends Abstra
         Customer customerToAdd2 = doPost("/api/customer", customer, Customer.class);
 
         String[] strCustomerIds = {customerToAdd1.getId().toString(), customerToAdd2.getId().toString()};
-        doPatch("/api/device/"+savedDevice.getId().getId().toString()+"/customer/association", strCustomerIds, DeviceWithMultipleCustomers.class);
+        doPatch("/api/device/"+savedDevice.getId().getId().toString()+"/customer/association", strCustomerIds, MultiCustomerDevice.class);
 
-        PageData<DeviceWithMultipleCustomers> deviceWithMultipleCustomers = doGetTypedWithPageLink("/api/tenant/device/info/customer/multiple?",
-                new TypeReference<PageData<DeviceWithMultipleCustomers>>(){}, new PageLink(5,0));
+        PageData<MultiCustomerDevice> deviceWithMultipleCustomers = doGetTypedWithPageLink("/api/tenant/device/info/customer/multiple?",
+                new TypeReference<PageData<MultiCustomerDevice>>(){}, new PageLink(5,0));
 
         assertEquals(1, deviceWithMultipleCustomers.getData().size());
         assertTrue(deviceWithMultipleCustomers.getData().get(0).getCustomerInfo().get(0).getCustomerId().equals(customerToAdd1.getId())
@@ -152,24 +152,24 @@ public abstract class BaseDeviceCustomerAssociationControllerTest extends Abstra
 
         String[] strCustomerIds = {customerToAdd.getId().toString(), customerToRemove.getId().toString()};
 
-        DeviceWithMultipleCustomers deviceWithMultipleCustomers = doPatch("/api/device/"+savedDevice.getId().getId().toString()+"/customer/association", strCustomerIds, DeviceWithMultipleCustomers.class);
+        MultiCustomerDevice multiCustomerDevice = doPatch("/api/device/"+savedDevice.getId().getId().toString()+"/customer/association", strCustomerIds, MultiCustomerDevice.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String deviceWithMultipleCustomersJsonString = objectMapper.writeValueAsString(deviceWithMultipleCustomers);
+        String deviceWithMultipleCustomersJsonString = objectMapper.writeValueAsString(multiCustomerDevice);
         System.out.println(deviceWithMultipleCustomersJsonString);
 
 
-        assertEquals(2, deviceWithMultipleCustomers.getCustomerInfo().size());
-        assertTrue(deviceWithMultipleCustomers.getCustomerInfo().get(0).getCustomerId().equals(customerToAdd.getId())
-                || deviceWithMultipleCustomers.getCustomerInfo().get(1).getCustomerId().equals(customerToAdd.getId()));
+        assertEquals(2, multiCustomerDevice.getCustomerInfo().size());
+        assertTrue(multiCustomerDevice.getCustomerInfo().get(0).getCustomerId().equals(customerToAdd.getId())
+                || multiCustomerDevice.getCustomerInfo().get(1).getCustomerId().equals(customerToAdd.getId()));
 
-        assertTrue(deviceWithMultipleCustomers.getCustomerInfo().get(0).getCustomerId().equals(customerToRemove.getId())
-                || deviceWithMultipleCustomers.getCustomerInfo().get(1).getCustomerId().equals(customerToRemove.getId()));
+        assertTrue(multiCustomerDevice.getCustomerInfo().get(0).getCustomerId().equals(customerToRemove.getId())
+                || multiCustomerDevice.getCustomerInfo().get(1).getCustomerId().equals(customerToRemove.getId()));
 
         strCustomerIds = new String[]{customerToRemove.getId().toString()};
-        deviceWithMultipleCustomers = doPatch("/api/device/"+savedDevice.getId().getId().toString()+"/customer/association", strCustomerIds, DeviceWithMultipleCustomers.class);
-        assertEquals(1, deviceWithMultipleCustomers.getCustomerInfo().size());
-        assertEquals(deviceWithMultipleCustomers.getCustomerInfo().get(0).getCustomerId(), customerToAdd.getId());
+        multiCustomerDevice = doPatch("/api/device/"+savedDevice.getId().getId().toString()+"/customer/association", strCustomerIds, MultiCustomerDevice.class);
+        assertEquals(1, multiCustomerDevice.getCustomerInfo().size());
+        assertEquals(multiCustomerDevice.getCustomerInfo().get(0).getCustomerId(), customerToAdd.getId());
     }
 
     @Test
@@ -192,12 +192,12 @@ public abstract class BaseDeviceCustomerAssociationControllerTest extends Abstra
 
 
         String[] strCustomerIds = {customerToAdd.getId().toString(), customerToRemove.getId().toString()};
-        doPatch("/api/device/"+savedDevice.getId().getId().toString()+"/customer/association", strCustomerIds, DeviceWithMultipleCustomers.class);
+        doPatch("/api/device/"+savedDevice.getId().getId().toString()+"/customer/association", strCustomerIds, MultiCustomerDevice.class);
 
-        PageData<DeviceWithMultipleCustomers> deviceWithMultipleCustomers = doGetTypedWithPageLink("/api/customer/" +
+        PageData<MultiCustomerDevice> deviceWithMultipleCustomers = doGetTypedWithPageLink("/api/customer/" +
                         customerToAdd.getId().getId().toString()+
                         "/device/info/customer/multiple?",
-                new TypeReference<PageData<DeviceWithMultipleCustomers>>(){}, new PageLink(5,0));
+                new TypeReference<PageData<MultiCustomerDevice>>(){}, new PageLink(5,0));
 
         assertEquals(1, deviceWithMultipleCustomers.getData().size());
         assertTrue(deviceWithMultipleCustomers.getData().get(0).getCustomerInfo().get(0).getCustomerId().equals(customerToAdd.getId())
@@ -205,7 +205,7 @@ public abstract class BaseDeviceCustomerAssociationControllerTest extends Abstra
 
         deviceWithMultipleCustomers.getData().forEach(System.out::println);
 
-        doPatch("/api/device/"+savedDevice.getId().getId().toString()+"/customer/association", strCustomerIds, DeviceWithMultipleCustomers.class);
+        doPatch("/api/device/"+savedDevice.getId().getId().toString()+"/customer/association", strCustomerIds, MultiCustomerDevice.class);
     }
 
 
