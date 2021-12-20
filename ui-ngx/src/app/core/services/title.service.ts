@@ -48,7 +48,7 @@ export class TitleService {
         .get(title)
         .pipe(filter(translatedTitle => translatedTitle !== title))
         .subscribe(translatedTitle => {
-          const appTitle = this.customizationService.getHeaderConfiguration().windowTitle;
+          const appTitle = this.customizationService.getPlatformConfiguration().windowTitle || 'IotPlatform';
           return this.title.setTitle(`${appTitle} | ${translatedTitle}`)
         }
         );

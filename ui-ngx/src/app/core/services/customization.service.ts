@@ -72,7 +72,7 @@ export class CustomizationService {
     document.documentElement.style.setProperty('--title-color', this.getPlatformConfiguration().titleColor);
     document.documentElement.style.setProperty('--header-logo-height', this.getPlatformConfiguration().headerLogoHeight);
     document.documentElement.style.setProperty('--footer-img-width', this.getPlatformConfiguration().footerImgWidth);
-    if(!!this.getHeaderConfiguration().favicon)
-      document.getElementById("favicon").setAttribute("href", this.getHeaderConfiguration().favicon);
+    if(!!this.getPlatformConfiguration().favicon)
+      document.getElementById("favicon").setAttribute("href", this.getPlatformConfiguration().favicon);
   }
 }

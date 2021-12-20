@@ -12,6 +12,8 @@
         "footerImgWidth": "530px",
         "logo": "/configuration-service/images/default/home_component_logo.png",
         "footerImage": "/configuration-service/images/default/pon_metro_logo.png",
+        "favicon": "assets/favicon.ico",
+        "windowTitle": "IotPlatform",
         "swaggerLink": true
     },
     "header": {
@@ -23,8 +25,6 @@
         "federatedLogoutUrl": null,
         "logoDir": "assets/platform-header-logo.png",
         "appTitle": "SMART CITY PLATFORM",
-        "favicon": "assets/favicon.ico",
-        "windowTitle": "IotPlatform",
         "appUrlsConfig": {
             "bigdata": "/giotto-web",
             "iot": "/home",

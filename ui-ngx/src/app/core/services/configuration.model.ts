@@ -31,6 +31,8 @@ export class Platform {
     footerImgWidth: string = "340px";
     logo: string = 'assets/home_component_logo.png';
     footerImage: string = 'assets/pon_metro_logo.png';
+    favicon: string = "assets/platform-header-logo.png";
+    windowTitle: string = "IotPlatform";
     swaggerLink: boolean = true;
 }
 
@@ -43,8 +45,6 @@ export class HeaderConfig {
     disableIotLogout: boolean = false;
     logoDir: string = 'assets/platform-header-logo.png';
     appTitle: string = 'SMART CITY PLATFORM';
-    favicon: string = "assets/platform-header-logo.png";
-    windowTitle: string = "IotPlatform";
     appUrlsConfig: {
         bigdata: '/giotto-web';
         iot: '/home';
