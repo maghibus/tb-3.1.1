@@ -52,6 +52,11 @@ public class MultipleCustomerAssociationEntityQueryRepository extends DefaultEnt
     }
 
     @Override
+    protected String getCountQuery(String fromClauseCount){
+        return String.format("select count(distinct id) %s", fromClauseCount);
+    }
+
+    @Override
     protected String getDataQuery(String fromClauseData){
         return String.format("select distinct * %s", fromClauseData);
     }

@@ -329,7 +329,7 @@ public class DefaultEntityQueryRepository implements EntityQueryRepository {
             try {
                 rows = jdbcTemplate.queryForList(dataQuery, ctx);
             } finally {
-                queryLog.logQuery(ctx, countQuery, System.currentTimeMillis() - startTs);
+                queryLog.logQuery(ctx, dataQuery, System.currentTimeMillis() - startTs);
             }
             return EntityDataAdapter.createEntityData(pageLink, selectionMapping, rows, totalElements);
         });
