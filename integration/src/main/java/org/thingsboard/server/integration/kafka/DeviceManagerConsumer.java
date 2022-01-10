@@ -16,7 +16,6 @@
 package org.thingsboard.server.integration.kafka;
 
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +23,10 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 
+import org.springframework.util.StringUtils;
 import org.thingsboard.server.common.data.Device;
 import org.thingsboard.server.dao.device.DeviceService;
-import org.thingsboard.server.integration.DeviceRegistrationMsg;
-import org.thingsboard.server.integration.IntegrationMsg;
+import org.thingsboard.server.integration.*;
 
 
 @Service
@@ -47,22 +46,68 @@ public class DeviceManagerConsumer {
 
     @KafkaListener(topics = TOPIC, groupId = GROUP_ID)
     public void listen(String kafkaMessage) {
-        log.info("Device registration event received! \n" + kafkaMessage);
+        log.debug("Device Manager event received \n" + kafkaMessage);
+
+        if (StringUtils.isEmpty(kafkaMessage)){
+            log.warn("Received empty event from Device Manager, will be ignored");
+            return;
+        }
+
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            JavaType type = objectMapper.getTypeFactory().constructParametricType(IntegrationMsg.class, DeviceRegistrationMsg.class);
-            IntegrationMsg<DeviceRegistrationMsg> msg = objectMapper.readValue(kafkaMessage, type);
-            DeviceRegistrationMsg device = msg.getBody();
-            Device newDevice = new Device(device.getTenantId(),
-                    device.getCustomerId(),
-                    device.getName(),
-                    device.getType(),
-                    device.getLabel());
+            IntegrationMsg msg = objectMapper.readValue(kafkaMessage, IntegrationMsg.class);
+            switch (msg.getMessageType()) {
+                case DEVICE_REGISTRATION:
+                    DeviceRegistrationMsg deviceRegistrationMsg = objectMapper.readValue(msg.getBody(), DeviceRegistrationMsg.class);
+                    saveDevice(deviceRegistrationMsg);
+                    break;
+                case DEVICE_DELETE:
+                    DeviceCancellationMsg deviceCancellationMsg = objectMapper.readValue(msg.getBody(), DeviceCancellationMsg.class);
+                    deleteDevice(deviceCancellationMsg);
+                    break;
+                case DEVICE_UPDATE:
+                    DeviceUpdateMsg deviceUpdateMsg = objectMapper.readValue(msg.getBody(), DeviceUpdateMsg.class);
+                    updateDevice(deviceUpdateMsg);
+                    break;
+                default:
+                    log.info("Message type " + msg.getMessageType() + " not supported, will be ignored");
+            }
 
-            Device savedDevice = deviceService.saveDevice(newDevice);
-            log.info("Device with ID = '" + savedDevice.getId() + "' created successfully!");
         } catch (Exception e) {
-            log.error("Error on device registration event processing \n", e);
+            log.error("Error on Device Manager event processing \n", e);
         }
     }
+
+    private void saveDevice(DeviceRegistrationMsg msg) {
+        Device newDevice = new Device(msg.getTenantId(),
+                msg.getCustomerId(),
+                msg.getName(),
+                msg.getType(),
+                msg.getLabel());
+        Device savedDevice = deviceService.saveDevice(newDevice);
+        log.debug("Device {} with ID {} created successfully!", savedDevice.getName(), savedDevice.getId());
+    }
+
+    private void updateDevice(DeviceUpdateMsg msg) {
+        Device device = deviceService.findDeviceByTenantIdAndName(msg.getTenantId(), msg.getName());
+        if (device != null) {
+            device.setLabel(msg.getLabel());
+            device.setType(msg.getType());
+            deviceService.saveDevice(device);
+        } else {
+            log.info("Device {} doesn't exist!", msg.getName());
+        }
+    }
+
+    private void deleteDevice(DeviceCancellationMsg msg) {
+        Device device = deviceService.findDeviceByTenantIdAndName(msg.getTenantId(), msg.getName());
+        if (device != null) {
+            deviceService.deleteDevice(msg.getTenantId(), device.getId());
+            log.debug("Device {} with ID {} deleted successfully!", device.getName(), device.getId());
+        } else {
+            log.info("Device {] doesn't exist!");
+        }
+    }
+
+
 }

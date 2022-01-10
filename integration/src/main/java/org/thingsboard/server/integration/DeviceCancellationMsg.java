@@ -17,26 +17,39 @@ package org.thingsboard.server.integration;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
+import org.thingsboard.server.common.data.id.TenantId;
 
+import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class IntegrationMsg {
+public class DeviceCancellationMsg {
+
+    @JsonProperty(value = "tenant", required = true)
+    String tenantId;
 
     @Getter
-    @JsonProperty(value = "body", required = true)
-    @JsonDeserialize(using = RawJsonDeserializer.class)
-    String body;
+    @JsonProperty(value = "identificationEndpoint", required=true)
+    String name;
 
     @Getter
-    @JsonProperty(value = "sender", required = true)
-    String sender;
+    @JsonProperty(value = "type", required=true)
+    String type;
 
     @Getter
-    @JsonProperty(value = "msgType", required = true)
-    MessageType messageType;
+    @JsonProperty(value = "name")
+    String label;
 
+    @Getter
+    @JsonProperty(value = "ts")
+    String timestamp;
 
+    @Getter
+    @JsonProperty(value = "organizationName")
+    String organizationName;
+
+    public TenantId getTenantId() {
+        return new TenantId(UUID.fromString(this.tenantId));
+    }
 
 }

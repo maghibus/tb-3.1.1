@@ -15,28 +15,15 @@
  */
 package org.thingsboard.server.integration;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.Getter;
+public enum MessageType {
 
+    DEVICE_REGISTRATION("DEVICE_REGISTRATION"),
+    DEVICE_DELETE("DEVICE_DELETE"),
+    DEVICE_UPDATE("DEVICE_UPDATE");
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class IntegrationMsg {
+    private String type;
 
-    @Getter
-    @JsonProperty(value = "body", required = true)
-    @JsonDeserialize(using = RawJsonDeserializer.class)
-    String body;
-
-    @Getter
-    @JsonProperty(value = "sender", required = true)
-    String sender;
-
-    @Getter
-    @JsonProperty(value = "msgType", required = true)
-    MessageType messageType;
-
-
-
+    MessageType(String type) {
+        this.type = type;
+    }
 }
