@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -102,6 +103,9 @@ public class DeviceServiceImpl extends AbstractEntityService implements DeviceSe
 
     @Autowired
     private EventService eventService;
+
+    @Value("${features.multiple_customer_enabled:false}")
+    private Boolean multiCustomerEnabled;
 
     @Override
     public DeviceInfo findDeviceInfoById(TenantId tenantId, DeviceId deviceId) {
@@ -230,7 +234,10 @@ public class DeviceServiceImpl extends AbstractEntityService implements DeviceSe
         cache.evict(list);
 
         deviceDao.removeById(tenantId, deviceId.getId());
-        deviceCustomerAssociationService.deleteByDeviceId(device.getTenantId(), device.getId());
+
+        if (multiCustomerEnabled) {
+            deviceCustomerAssociationService.deleteByDeviceId(device.getTenantId(), device.getId());
+        }
     }
 
     @Override

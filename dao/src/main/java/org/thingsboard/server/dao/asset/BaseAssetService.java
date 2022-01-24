@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -87,6 +88,9 @@ public class BaseAssetService extends AbstractEntityService implements AssetServ
 
     @Autowired
     private AssetCustomerAssociationService assetCustomerAssociationService;
+
+    @Value("${feature.multiple_customer_enabled:false}")
+    private Boolean multiCustomerEnabled;
 
     @Override
     public AssetInfo findAssetInfoById(TenantId tenantId, AssetId assetId) {
@@ -182,7 +186,10 @@ public class BaseAssetService extends AbstractEntityService implements AssetServ
         cache.evict(list);
 
         assetDao.removeById(tenantId, assetId.getId());
-        assetCustomerAssociationService.deleteByAssetId(tenantId, assetId);
+
+        if (multiCustomerEnabled) {
+            assetCustomerAssociationService.deleteByAssetId(tenantId, assetId);
+        }
     }
 
     @Override
