@@ -15,7 +15,7 @@
 ///
 
 import { Injectable, NgZone } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { select, Store } from '@ngrx/store';
 import { AppState } from '../core.state';
@@ -39,6 +39,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
               private dialogService: DialogService,
               private utils: UtilsService,
               private translate: TranslateService,
+              private router: Router,
               private zone: NgZone) {}
 
   getAuthState(): Observable<AuthState> {
@@ -113,7 +114,8 @@ export class AuthGuard implements CanActivate, CanActivateChild {
           } else {
             const authority = Authority[authState.authUser.authority];
             if (data.auth && data.auth.indexOf(authority) === -1) {
-              this.dialogService.forbidden();
+              console.log("403: No authorization to see this page");
+              this.router.navigate(['home']);
               return of(false);
             } else {
               return of(true);

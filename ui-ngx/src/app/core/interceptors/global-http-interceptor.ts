@@ -36,6 +36,7 @@ import { ActionLoadFinish, ActionLoadStart } from './load.actions';
 import { ActionNotificationShow } from '@app/core/notification/notification.actions';
 import { DialogService } from '@core/services/dialog.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 let tmpHeaders = {};
 
@@ -55,7 +56,8 @@ export class GlobalHttpInterceptor implements HttpInterceptor {
   constructor(@Inject(Store) private store: Store<AppState>,
               @Inject(DialogService) private dialogService: DialogService,
               @Inject(TranslateService) private translate: TranslateService,
-              @Inject(AuthService) private authService: AuthService) {
+              @Inject(AuthService) private authService: AuthService,
+              @Inject(Router) private router: Router) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -138,7 +140,8 @@ export class GlobalHttpInterceptor implements HttpInterceptor {
       }
     } else if (errorResponse.status === 403) {
       if (!ignoreErrors) {
-        this.dialogService.forbidden();
+        console.log("403: No authorization to see this page");
+        this.router.navigate(['home']);
       }
     } else if (errorResponse.status === 0 || errorResponse.status === -1) {
         this.showError('Unable to connect');
