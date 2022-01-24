@@ -17,6 +17,7 @@
 import L, {
   FeatureGroup,
   Icon,
+  icon,
   LatLngBounds,
   LatLngTuple,
   markerClusterGroup,
@@ -408,7 +409,29 @@ export default abstract class LeafletMap {
         /****/
         /**SEARCH BOX **/
         if (!!this.options.addSearchToMap) {
-          (L.Control as any).geocoder().addTo(map);
+          (L.Control as any).geocoder({
+            defaultMarkGeocode: false,
+            collapsed: false
+          })
+          .on('markgeocode', function(e) {
+            const latlng = e.geocode.center;
+            const icon = L.icon({
+              iconRetinaUrl: 'assets/marker-icon-2x.png',
+              iconUrl: 'assets/marker-icon.png',
+              shadowUrl: 'assets/marker-shadow.png',
+              iconSize: [25, 41],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              tooltipAnchor: [16, -28],
+              shadowSize: [41, 41]
+            });
+            L.marker(latlng,{ icon })
+              .bindPopup(e.geocode.html || e.geocode.name)
+              .addTo(map)
+              .openPopup();
+            map.fitBounds(e.geocode.bbox);
+          })
+          .addTo(map);
         }
         /**/
     }
