@@ -64,6 +64,7 @@ import {
 } from '@modules/home/pages/dashboard/make-dashboard-public-dialog.component';
 import { DashboardTabsComponent } from '@home/pages/dashboard/dashboard-tabs.component';
 import { ImportExportService } from '@home/components/import-export/import-export.service';
+import { sortOrderFromString } from '@app/shared/public-api';
 
 @Injectable()
 export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<DashboardInfo | Dashboard>> {
@@ -98,6 +99,7 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
     };
     this.config.onEntityAction = action => this.onDashboardAction(action);
     this.config.detailsReadonly = () => this.config.componentsData.dashboardScope === 'customer_user';
+    this.config.defaultSortOrder = sortOrderFromString("+title");
   }
 
   resolve(route: ActivatedRouteSnapshot): Observable<EntityTableConfig<DashboardInfo | Dashboard>> {
