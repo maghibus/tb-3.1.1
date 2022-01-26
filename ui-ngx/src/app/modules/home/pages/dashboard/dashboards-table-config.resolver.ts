@@ -99,7 +99,7 @@ export class DashboardsTableConfigResolver implements Resolve<EntityTableConfig<
     };
     this.config.onEntityAction = action => this.onDashboardAction(action);
     this.config.detailsReadonly = () => this.config.componentsData.dashboardScope === 'customer_user';
-    this.config.defaultSortOrder = sortOrderFromString("+title");
+    this.config.defaultSortOrder = sortOrderFromString("+searchText");
   }
 
   resolve(route: ActivatedRouteSnapshot): Observable<EntityTableConfig<DashboardInfo | Dashboard>> {
