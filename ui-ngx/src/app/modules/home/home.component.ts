@@ -117,6 +117,8 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
         logoDir: this.customizationService.getHeaderConfiguration().logoDir,
         appContext: "iot",
         logout: logoutTb,
+        hideTabs: this.customizationService.getHeaderConfiguration().hideTabs,
+        showAppMenuLabel: this.customizationService.getHeaderConfiguration().showAppMenuLabel,
         oauth2LogOutUrl: this.customizationService.getHeaderConfiguration().oauth2LogOutUrl,
         logoutOnCloseSession: this.customizationService.getHeaderConfiguration().logoutOnCloseSession,
         logOutRedirectUrl: this.customizationService.getHeaderConfiguration().logOutRedirectUrl,

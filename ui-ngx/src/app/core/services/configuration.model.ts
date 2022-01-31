@@ -43,6 +43,8 @@ export class HeaderConfig {
     federatedLogoutUrl: string = null;
     disableBigdataLogout: boolean = false;
     disableIotLogout: boolean = false;
+    hideTabs: boolean;
+    showAppMenuLabel: boolean;
     logoDir: string = 'assets/platform-header-logo.png';
     appTitle: string = 'SMART CITY PLATFORM';
     appUrlsConfig: {
