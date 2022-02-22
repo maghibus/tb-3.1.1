@@ -21,12 +21,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
-import javax.annotation.PostConstruct;
-
 import org.springframework.util.StringUtils;
+import org.thingsboard.server.common.data.DataConstants;
 import org.thingsboard.server.common.data.Device;
+import org.thingsboard.server.common.data.kv.BaseAttributeKvEntry;
+import org.thingsboard.server.common.data.kv.DoubleDataEntry;
+import org.thingsboard.server.common.data.kv.StringDataEntry;
+import org.thingsboard.server.dao.attributes.AttributesService;
 import org.thingsboard.server.dao.device.DeviceService;
-import org.thingsboard.server.integration.*;
+import org.thingsboard.server.integration.DeviceCancellationMsg;
+import org.thingsboard.server.integration.DeviceRegistrationMsg;
+import org.thingsboard.server.integration.DeviceUpdateMsg;
+import org.thingsboard.server.integration.IntegrationMsg;
+
+import javax.annotation.PostConstruct;
+import java.util.Arrays;
 
 
 @Service
@@ -37,6 +46,9 @@ public class DeviceManagerConsumer {
 
     @Autowired
     DeviceService deviceService;
+
+    @Autowired
+    AttributesService attributesService;
 
     @PostConstruct
     public void init() {
@@ -84,8 +96,21 @@ public class DeviceManagerConsumer {
                 msg.getName(),
                 msg.getType(),
                 msg.getLabel());
+
         Device savedDevice = deviceService.saveDevice(newDevice);
+
+        if((msg.getLon() != null && !msg.getLon().isEmpty())
+            && (msg.getLat() != null)) {
+            saveServerAttributes(savedDevice, msg);
+        }
+
         log.debug("Device {} with ID {} created successfully!", savedDevice.getName(), savedDevice.getId());
+    }
+
+    private void saveServerAttributes(Device device, DeviceRegistrationMsg deviceRegistrationMsg){
+        attributesService.save(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,
+                Arrays.asList(new BaseAttributeKvEntry(System.currentTimeMillis(), new DoubleDataEntry("latitude", deviceRegistrationMsg.getLat())),
+                        new BaseAttributeKvEntry(System.currentTimeMillis(), new StringDataEntry("longitude", deviceRegistrationMsg.getLon()))));
     }
 
     private void updateDevice(DeviceUpdateMsg msg) {
