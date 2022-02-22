@@ -119,6 +119,11 @@ public class DeviceManagerConsumer {
             device.setLabel(msg.getLabel());
             device.setType(msg.getType());
             deviceService.saveDevice(device);
+
+            if((msg.getLon() != null && !msg.getLon().isEmpty())
+                    && (msg.getLat() != null)) {
+                saveServerAttributes(device, msg);
+            }
         } else {
             log.info("Device {} doesn't exist!", msg.getName());
         }
