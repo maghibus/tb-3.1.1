@@ -96,15 +96,18 @@ public class DeviceManagerConsumer {
                 msg.getName(),
                 msg.getType(),
                 msg.getLabel());
+        try {
+            Device savedDevice = deviceService.saveDevice(newDevice);
 
-        Device savedDevice = deviceService.saveDevice(newDevice);
+            if ((msg.getLon() != null && !msg.getLon().isEmpty())
+                    && (msg.getLat() != null)) {
+                saveServerAttributes(savedDevice, msg);
+            }
 
-        if((msg.getLon() != null && !msg.getLon().isEmpty())
-            && (msg.getLat() != null)) {
-            saveServerAttributes(savedDevice, msg);
+            log.debug("Device {} with ID {} created successfully!", savedDevice.getName(), savedDevice.getId());
+        } catch (Exception e){
+            log.warn("Error creating device {} due {}", newDevice.getName(), e.getMessage());
         }
-
-        log.debug("Device {} with ID {} created successfully!", savedDevice.getName(), savedDevice.getId());
     }
 
     private void saveServerAttributes(Device device, DeviceRegistrationMsg deviceRegistrationMsg){
