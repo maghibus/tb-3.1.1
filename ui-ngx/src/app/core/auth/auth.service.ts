@@ -354,7 +354,7 @@ export class AuthService {
         const decodedToken = this.jwtHelper.decodeToken(jwtToken);                              
         authPayload.authUser = enforceBooleanClaims(decodedToken);
         if (authPayload.authUser && authPayload.authUser.scopes && authPayload.authUser.scopes.length) {
-          authPayload.authUser.authority = Authority[authPayload.authUser.scopes[0]];
+          authPayload.authUser.authority = this.getAuthorityRole(authPayload.authUser.scopes);
         } else if (authPayload.authUser) {
           authPayload.authUser.authority = Authority.ANONYMOUS;
         }
@@ -412,6 +412,15 @@ export class AuthService {
       }
     );
     return loadUserSubject;
+  }
+
+  private getAuthorityRole(roles: Array<string>) {
+    for(let i = 0; i < roles.length; i++) {
+      const authority = Authority[roles[i]];
+      if(authority)
+        return authority;
+    }
+    return;
   }
 
   private loadIsUserTokenAccessEnabled(authUser: AuthUser): Observable<boolean> {
