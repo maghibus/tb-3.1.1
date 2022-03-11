@@ -96,7 +96,7 @@ public class DeviceManagerConsumer {
                 msg.getName(),
                 msg.getType(),
                 msg.getLabel());
-        try {
+
             Device savedDevice = deviceService.saveDevice(newDevice);
 
             if ((msg.getLon() != null && !msg.getLon().isEmpty())
@@ -105,13 +105,15 @@ public class DeviceManagerConsumer {
             }
 
             log.debug("Device {} with ID {} created successfully!", savedDevice.getName(), savedDevice.getId());
-        } catch (Exception e){
-            log.warn("Error creating device {} due {}", newDevice.getName(), e.getMessage());
-        }
+
     }
 
     private void saveServerAttributes(Device device, DeviceRegistrationMsg deviceRegistrationMsg){
-        attributesService.save(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,
+        attributesService.insertOrUpdate(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,
+                Arrays.asList(new BaseAttributeKvEntry(System.currentTimeMillis(), new DoubleDataEntry("latitude", deviceRegistrationMsg.getLat())),
+                        new BaseAttributeKvEntry(System.currentTimeMillis(), new StringDataEntry("longitude", deviceRegistrationMsg.getLon()))));
+
+        attributesService.insertOrUpdate(device.getTenantId(), device.getId(), DataConstants.SHARED_SCOPE,
                 Arrays.asList(new BaseAttributeKvEntry(System.currentTimeMillis(), new DoubleDataEntry("latitude", deviceRegistrationMsg.getLat())),
                         new BaseAttributeKvEntry(System.currentTimeMillis(), new StringDataEntry("longitude", deviceRegistrationMsg.getLon()))));
     }

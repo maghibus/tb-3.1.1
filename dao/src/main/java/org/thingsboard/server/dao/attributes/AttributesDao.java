@@ -38,4 +38,6 @@ public interface AttributesDao {
     ListenableFuture<Void> save(TenantId tenantId, EntityId entityId, String attributeType, AttributeKvEntry attribute);
 
     ListenableFuture<List<Void>> removeAll(TenantId tenantId, EntityId entityId, String attributeType, List<String> keys);
+
+    void insertOrUpdate(TenantId tenantId, EntityId entityId, String attributeType, AttributeKvEntry attributes);
 }

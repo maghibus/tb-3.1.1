@@ -157,8 +157,8 @@ public class ApkDeviceManagerConsumer {
         if (deviceRegistrationMsg.getDescription() != null)
             baseAttributeKvEntryList.add( new BaseAttributeKvEntry(System.currentTimeMillis() ,new StringDataEntry("description",deviceRegistrationMsg.getDescription())));
 
-        attributesService.save(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,baseAttributeKvEntryList);
-        attributesService.save(device.getTenantId(), device.getId(), DataConstants.SHARED_SCOPE,baseAttributeKvEntryList);
+        attributesService.insertOrUpdate(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,baseAttributeKvEntryList);
+        attributesService.insertOrUpdate(device.getTenantId(), device.getId(), DataConstants.SHARED_SCOPE,baseAttributeKvEntryList);
     }
 
     private void deleteDevice(ApkDeviceDeleteMsg msg) {

@@ -28,7 +28,6 @@ import org.thingsboard.server.dao.model.sql.AttributeKvEntity;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ public abstract class AttributeKvInsertRepository {
     private static final ThreadLocal<Pattern> PATTERN_THREAD_LOCAL = ThreadLocal.withInitial(() -> Pattern.compile(String.valueOf(Character.MIN_VALUE)));
     private static final String EMPTY_STR = "";
 
-    private static final String BATCH_UPDATE = "UPDATE attribute_kv SET str_v = ?, long_v = ?, dbl_v = ?, bool_v = ?, json_v =  cast(? AS json), last_update_ts = ? " +
+    private static final String UPDATE = "UPDATE attribute_kv SET str_v = ?, long_v = ?, dbl_v = ?, bool_v = ?, json_v =  cast(? AS json), last_update_ts = ? " +
             "WHERE entity_type = ? and entity_id = ? and attribute_type =? and attribute_key = ?;";
 
     private static final String INSERT_OR_UPDATE =
@@ -49,6 +48,14 @@ public abstract class AttributeKvInsertRepository {
                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?,  cast(? AS json), ?) " +
                     "ON CONFLICT (entity_type, entity_id, attribute_type, attribute_key) " +
                     "DO UPDATE SET str_v = ?, long_v = ?, dbl_v = ?, bool_v = ?, json_v =  cast(? AS json), last_update_ts = ?;";
+
+    private static final String INSERT = "INSERT INTO attribute_kv (entity_type, entity_id, attribute_type, attribute_key, str_v, long_v, dbl_v, bool_v, json_v, last_update_ts)" +
+            " VALUES(?, ?, ?, ?, ?, ?, ?, ?,  cast(? AS json), ?) ";
+
+    private static final String FIND =
+            "SELECT COUNT(*) " +
+                    "FROM attribute_kv " +
+                    "WHERE entity_type = ? and entity_id = ? and attribute_type = ? and attribute_key = ?;";
 
     @Autowired
     protected JdbcTemplate jdbcTemplate;
@@ -63,7 +70,7 @@ public abstract class AttributeKvInsertRepository {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                int[] result = jdbcTemplate.batchUpdate(BATCH_UPDATE, new BatchPreparedStatementSetter() {
+                int[] result = jdbcTemplate.batchUpdate(UPDATE, new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
                         AttributeKvEntity kvEntity = entities.get(i);
@@ -166,6 +173,37 @@ public abstract class AttributeKvInsertRepository {
                 });
             }
         });
+    }
+
+
+    protected void insertOrUpdate(AttributeKvEntity kvEntity) {
+        Integer count = this.jdbcTemplate.queryForObject(
+              FIND, new Object[]{kvEntity.getId().getEntityType().name(),
+                        kvEntity.getId().getEntityId(),
+                        kvEntity.getId().getAttributeType(),
+                        kvEntity.getId().getAttributeKey()}, Integer.class);
+
+        String str_v = replaceNullChars(kvEntity.getStrValue());
+        Long long_v = kvEntity.getLongValue();
+        Double dbl_v = kvEntity.getDoubleValue();
+        Boolean bool_v = kvEntity.getBooleanValue();
+        String json_v = kvEntity.getJsonValue();
+        Long last_update_ts = kvEntity.getLastUpdateTs();
+
+        if (count != null && count>0){
+            this.jdbcTemplate.update(UPDATE, str_v, long_v, dbl_v, bool_v, json_v, last_update_ts,
+                    // WHERE
+                    kvEntity.getId().getEntityType().name(),
+                    kvEntity.getId().getEntityId(),
+                    kvEntity.getId().getAttributeType(),
+                    kvEntity.getId().getAttributeKey());
+        } else {
+            this.jdbcTemplate.update(INSERT, kvEntity.getId().getEntityType().name(),
+                    kvEntity.getId().getEntityId(),
+                    kvEntity.getId().getAttributeType(),
+                    kvEntity.getId().getAttributeKey(),
+                    str_v, long_v, dbl_v, bool_v, json_v, last_update_ts);
+        }
     }
 
     private String replaceNullChars(String strValue) {

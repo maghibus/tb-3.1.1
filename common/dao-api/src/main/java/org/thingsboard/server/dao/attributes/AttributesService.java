@@ -37,5 +37,7 @@ public interface AttributesService {
 
     ListenableFuture<List<Void>> save(TenantId tenantId, EntityId entityId, String scope, List<AttributeKvEntry> attributes);
 
+    void insertOrUpdate(TenantId tenantId, EntityId entityId, String scope, List<AttributeKvEntry> attributes);
+
     ListenableFuture<List<Void>> removeAll(TenantId tenantId, EntityId entityId, String scope, List<String> attributeKeys);
 }
