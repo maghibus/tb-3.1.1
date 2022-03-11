@@ -58,7 +58,7 @@ public class DeviceManagerConsumer {
 
     @KafkaListener(topics = TOPIC, groupId = GROUP_ID)
     public void listen(String kafkaMessage) {
-        log.debug("Device Manager event received \n" + kafkaMessage);
+        log.info("UDM Device Manager event received \n" + kafkaMessage);
 
         if (StringUtils.isEmpty(kafkaMessage)){
             log.warn("Received empty event from Device Manager, will be ignored");

@@ -63,7 +63,7 @@ public class ApkDeviceManagerConsumer {
     }
 
     public void handleEvent(String kafkaMessage){
-        log.debug("Device Manager event received \n" + kafkaMessage);
+        log.info("APK Device Manager event received \n" + kafkaMessage);
 
         if (StringUtils.isEmpty(kafkaMessage)){
             log.warn("Received empty event from Device Manager, will be ignored");
