@@ -51,7 +51,8 @@ import org.thingsboard.server.service.security.permission.Resource;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController

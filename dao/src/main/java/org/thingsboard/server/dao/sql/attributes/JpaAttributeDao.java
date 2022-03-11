@@ -152,6 +152,19 @@ public class JpaAttributeDao extends JpaAbstractDaoListeningExecutorService impl
         });
     }
 
+    @Override
+    public void insertOrUpdate(TenantId tenantId, EntityId entityId, String attributeType, AttributeKvEntry attribute) {
+        AttributeKvEntity entity = new AttributeKvEntity();
+        entity.setId(new AttributeKvCompositeKey(entityId.getEntityType(), entityId.getId(), attributeType, attribute.getKey()));
+        entity.setLastUpdateTs(attribute.getLastUpdateTs());
+        entity.setStrValue(attribute.getStrValue().orElse(null));
+        entity.setDoubleValue(attribute.getDoubleValue().orElse(null));
+        entity.setLongValue(attribute.getLongValue().orElse(null));
+        entity.setBooleanValue(attribute.getBooleanValue().orElse(null));
+        entity.setJsonValue(attribute.getJsonValue().orElse(null));
+        attributeKvInsertRepository.insertOrUpdate(entity);
+    }
+
     private AttributeKvCompositeKey getAttributeKvCompositeKey(EntityId entityId, String attributeType, String attributeKey) {
         return new AttributeKvCompositeKey(
                 entityId.getEntityType(),

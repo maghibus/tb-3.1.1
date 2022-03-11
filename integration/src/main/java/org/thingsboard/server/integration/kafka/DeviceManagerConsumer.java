@@ -58,7 +58,7 @@ public class DeviceManagerConsumer {
 
     @KafkaListener(topics = TOPIC, groupId = GROUP_ID)
     public void listen(String kafkaMessage) {
-        log.debug("Device Manager event received \n" + kafkaMessage);
+        log.info("UDM Device Manager event received \n" + kafkaMessage);
 
         if (StringUtils.isEmpty(kafkaMessage)){
             log.warn("Received empty event from Device Manager, will be ignored");
@@ -97,18 +97,23 @@ public class DeviceManagerConsumer {
                 msg.getType(),
                 msg.getLabel());
 
-        Device savedDevice = deviceService.saveDevice(newDevice);
+            Device savedDevice = deviceService.saveDevice(newDevice);
 
-        if((msg.getLon() != null && !msg.getLon().isEmpty())
-            && (msg.getLat() != null)) {
-            saveServerAttributes(savedDevice, msg);
-        }
+            if ((msg.getLon() != null && !msg.getLon().isEmpty())
+                    && (msg.getLat() != null)) {
+                saveServerAttributes(savedDevice, msg);
+            }
 
-        log.debug("Device {} with ID {} created successfully!", savedDevice.getName(), savedDevice.getId());
+            log.debug("Device {} with ID {} created successfully!", savedDevice.getName(), savedDevice.getId());
+
     }
 
     private void saveServerAttributes(Device device, DeviceRegistrationMsg deviceRegistrationMsg){
-        attributesService.save(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,
+        attributesService.insertOrUpdate(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,
+                Arrays.asList(new BaseAttributeKvEntry(System.currentTimeMillis(), new DoubleDataEntry("latitude", deviceRegistrationMsg.getLat())),
+                        new BaseAttributeKvEntry(System.currentTimeMillis(), new StringDataEntry("longitude", deviceRegistrationMsg.getLon()))));
+
+        attributesService.insertOrUpdate(device.getTenantId(), device.getId(), DataConstants.SHARED_SCOPE,
                 Arrays.asList(new BaseAttributeKvEntry(System.currentTimeMillis(), new DoubleDataEntry("latitude", deviceRegistrationMsg.getLat())),
                         new BaseAttributeKvEntry(System.currentTimeMillis(), new StringDataEntry("longitude", deviceRegistrationMsg.getLon()))));
     }
