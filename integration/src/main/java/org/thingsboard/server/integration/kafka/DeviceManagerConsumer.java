@@ -91,29 +91,30 @@ public class DeviceManagerConsumer {
     }
 
     private void saveDevice(DeviceRegistrationMsg msg) {
+
         Device newDevice = new Device(msg.getTenantId(),
                 msg.getCustomerId(),
                 msg.getName(),
                 msg.getType(),
                 msg.getLabel());
 
-            Device savedDevice = deviceService.saveDevice(newDevice);
+        Device savedDevice = deviceService.saveDevice(newDevice);
 
-            if ((msg.getLon() != null && !msg.getLon().isEmpty())
-                    && (msg.getLat() != null)) {
-                saveServerAttributes(savedDevice, msg);
-            }
+        if ((msg.getLon() != null && !msg.getLon().isEmpty())
+                && (msg.getLat() != null)) {
+            saveServerAttributes(savedDevice, msg);
+        }
 
-            log.debug("Device {} with ID {} created successfully!", savedDevice.getName(), savedDevice.getId());
+        log.debug("Device {} with ID {} created successfully!", savedDevice.getName(), savedDevice.getId());
 
     }
 
     private void saveServerAttributes(Device device, DeviceRegistrationMsg deviceRegistrationMsg){
-        attributesService.insertOrUpdate(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,
+        attributesService.save(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,
                 Arrays.asList(new BaseAttributeKvEntry(System.currentTimeMillis(), new DoubleDataEntry("latitude", deviceRegistrationMsg.getLat())),
                         new BaseAttributeKvEntry(System.currentTimeMillis(), new StringDataEntry("longitude", deviceRegistrationMsg.getLon()))));
 
-        attributesService.insertOrUpdate(device.getTenantId(), device.getId(), DataConstants.SHARED_SCOPE,
+        attributesService.save(device.getTenantId(), device.getId(), DataConstants.SHARED_SCOPE,
                 Arrays.asList(new BaseAttributeKvEntry(System.currentTimeMillis(), new DoubleDataEntry("latitude", deviceRegistrationMsg.getLat())),
                         new BaseAttributeKvEntry(System.currentTimeMillis(), new StringDataEntry("longitude", deviceRegistrationMsg.getLon()))));
     }

@@ -105,16 +105,20 @@ public class ApkDeviceManagerConsumer {
             device.setType(msg.getType());
             device = deviceService.saveDevice(device);
         } else {
-            log.info("Device {} doesn't exist! Creating a new one", msg.getName());
+            try {
+                log.info("Device {} doesn't exist! Creating a new one", msg.getName());
 
-            device = new Device(msg.getTenantId(),
-                    new CustomerId(EntityId.NULL_UUID),
-                    msg.getName(),
-                    msg.getType(),
-                    msg.getNameOfTheEndpoint());
+                device = new Device(msg.getTenantId(),
+                        new CustomerId(EntityId.NULL_UUID),
+                        msg.getName(),
+                        msg.getType(),
+                        msg.getNameOfTheEndpoint());
 
-            device = deviceService.saveDevice(device);
-            log.debug("Device {} with ID {} created successfully!", device.getName(), device.getId());
+                device = deviceService.saveDevice(device);
+                log.debug("Device {} with ID {} created successfully!", device.getName(), device.getId());
+            } catch (Exception e){
+                log.warn(e.getMessage());
+            }
         }
 
         saveServerAttributes(device, msg);
@@ -157,8 +161,8 @@ public class ApkDeviceManagerConsumer {
         if (deviceRegistrationMsg.getDescription() != null)
             baseAttributeKvEntryList.add( new BaseAttributeKvEntry(System.currentTimeMillis() ,new StringDataEntry("description",deviceRegistrationMsg.getDescription())));
 
-        attributesService.insertOrUpdate(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,baseAttributeKvEntryList);
-        attributesService.insertOrUpdate(device.getTenantId(), device.getId(), DataConstants.SHARED_SCOPE,baseAttributeKvEntryList);
+        attributesService.save(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,baseAttributeKvEntryList);
+        attributesService.save(device.getTenantId(), device.getId(), DataConstants.SHARED_SCOPE,baseAttributeKvEntryList);
     }
 
     private void deleteDevice(ApkDeviceDeleteMsg msg) {
