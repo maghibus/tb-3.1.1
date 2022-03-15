@@ -38,10 +38,10 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 
-@Service
-@Slf4j
+//@Service
+//@Slf4j
 public class DeviceManagerConsumer {
-    private static final String TOPIC = "iot.integration.udm";
+    /*private static final String TOPIC = "iot.integration.udm";
     private static final String GROUP_ID = "KafkaUDMConsumer";
 
     @Autowired
@@ -53,12 +53,12 @@ public class DeviceManagerConsumer {
     @PostConstruct
     public void init() {
         log.info("Kafka device manager consumer started");
-    }
+    }*/
 
 
-    @KafkaListener(topics = TOPIC, groupId = GROUP_ID)
+   // @KafkaListener(topics = TOPIC, groupId = GROUP_ID)
     public void listen(String kafkaMessage) {
-        log.info("UDM Device Manager event received \n" + kafkaMessage);
+        /*log.info("UDM Device Manager event received \n" + kafkaMessage);
 
         if (StringUtils.isEmpty(kafkaMessage)){
             log.warn("Received empty event from Device Manager, will be ignored");
@@ -87,12 +87,12 @@ public class DeviceManagerConsumer {
 
         } catch (Exception e) {
             log.error("Error on Device Manager event processing \n", e);
-        }
+        }*/
     }
 
     private void saveDevice(DeviceRegistrationMsg msg) {
 
-        Device newDevice = new Device(msg.getTenantId(),
+       /* Device newDevice = new Device(msg.getTenantId(),
                 msg.getCustomerId(),
                 msg.getName(),
                 msg.getType(),
@@ -105,22 +105,22 @@ public class DeviceManagerConsumer {
             saveServerAttributes(savedDevice, msg);
         }
 
-        log.debug("Device {} with ID {} created successfully!", savedDevice.getName(), savedDevice.getId());
+        log.debug("Device {} with ID {} created successfully!", savedDevice.getName(), savedDevice.getId());*/
 
     }
 
     private void saveServerAttributes(Device device, DeviceRegistrationMsg deviceRegistrationMsg){
-        attributesService.save(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,
+        /*attributesService.save(device.getTenantId(), device.getId(), DataConstants.SERVER_SCOPE,
                 Arrays.asList(new BaseAttributeKvEntry(System.currentTimeMillis(), new DoubleDataEntry("latitude", deviceRegistrationMsg.getLat())),
                         new BaseAttributeKvEntry(System.currentTimeMillis(), new StringDataEntry("longitude", deviceRegistrationMsg.getLon()))));
 
         attributesService.save(device.getTenantId(), device.getId(), DataConstants.SHARED_SCOPE,
                 Arrays.asList(new BaseAttributeKvEntry(System.currentTimeMillis(), new DoubleDataEntry("latitude", deviceRegistrationMsg.getLat())),
-                        new BaseAttributeKvEntry(System.currentTimeMillis(), new StringDataEntry("longitude", deviceRegistrationMsg.getLon()))));
+                        new BaseAttributeKvEntry(System.currentTimeMillis(), new StringDataEntry("longitude", deviceRegistrationMsg.getLon()))));*/
     }
 
     private void updateDevice(DeviceUpdateMsg msg) {
-        Device device = deviceService.findDeviceByTenantIdAndName(msg.getTenantId(), msg.getName());
+        /*Device device = deviceService.findDeviceByTenantIdAndName(msg.getTenantId(), msg.getName());
         if (device != null) {
             device.setLabel(msg.getLabel());
             device.setType(msg.getType());
@@ -132,17 +132,17 @@ public class DeviceManagerConsumer {
             }
         } else {
             log.info("Device {} doesn't exist!", msg.getName());
-        }
+        }*/
     }
 
     private void deleteDevice(DeviceCancellationMsg msg) {
-        Device device = deviceService.findDeviceByTenantIdAndName(msg.getTenantId(), msg.getName());
+        /*Device device = deviceService.findDeviceByTenantIdAndName(msg.getTenantId(), msg.getName());
         if (device != null) {
             deviceService.deleteDevice(msg.getTenantId(), device.getId());
             log.debug("Device {} with ID {} deleted successfully!", device.getName(), device.getId());
         } else {
             log.info("Device {] doesn't exist!");
-        }
+        }*/
     }
 
 
