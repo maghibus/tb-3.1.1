@@ -409,9 +409,10 @@ export default abstract class LeafletMap {
         /****/
         /**SEARCH BOX **/
         if (!!this.options.addSearchToMap) {
+          var collapsedBoxEnable = !!this.options.collapsedSearchToMap || false;
           (L.Control as any).geocoder({
             defaultMarkGeocode: false,
-            collapsed: false
+            collapsed: collapsedBoxEnable
           })
           .on('markgeocode', function(e) {
             const latlng = e.geocode.center;

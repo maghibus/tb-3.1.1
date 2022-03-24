@@ -199,6 +199,11 @@ export const openstreetMapSettingsSchema =
                 type: 'boolean',
                 default: false
             },
+            collapsedSearchToMap: {
+                title: 'Enabled collapsed search box',
+                type: 'boolean',
+                default: false
+            },
             enableHeatMap: {
                 title: 'Use heatmap',
                 type: 'boolean',
@@ -286,6 +291,7 @@ export const openstreetMapSettingsSchema =
             condition: 'model.useCustomWmsProvider === true'
         },
         'addSearchToMap',
+        'collapsedSearchToMap',
         'enableHeatMap',
         {
             key: 'heatMapFieldValue',
