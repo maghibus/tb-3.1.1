@@ -709,6 +709,7 @@
                             <exclude>**/LICENSE</exclude>
                             <exclude>**/banner.txt</exclude>
                             <exclude>node_modules/**</exclude>
+                            <exclude>external_modules/**</exclude>
                             <exclude>**/*.properties</exclude>
                             <exclude>src/test/resources/**</exclude>
                             <exclude>src/vendor/**</exclude>
