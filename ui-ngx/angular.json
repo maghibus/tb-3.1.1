@@ -75,7 +75,7 @@
               "node_modules/leaflet.markercluster/dist/MarkerCluster.css",
               "node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css",
               "node_modules/jquery-jsonview/dist/jquery.jsonview.css",
-              "node_modules/@araujoigor/json-grid/dist/json-grid.css"
+              "external_modules/@araujoigor/json-grid/dist/json-grid.css"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -123,8 +123,8 @@
               "node_modules/heatmap.js/build/heatmap.min.js",
               "node_modules/leaflet.wms/dist/leaflet.wms.js",
               "node_modules/jquery-jsonview/dist/jquery.jsonview.js",
-              "node_modules/@araujoigor/json-grid/dist/JSONGrid.min.js",
-              "node_modules/jsonpath/jsonpath.min.js"
+              "node_modules/jsonpath/jsonpath.min.js",
+              "external_modules/@araujoigor/json-grid/dist/JSONGrid.min.js"
             ],
             "customWebpackConfig": {
               "path": "./extra-webpack.config.js"

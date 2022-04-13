@@ -271,11 +271,6 @@
   dependencies:
     tslib "^2.0.0"
 
-"@araujoigor/json-grid@0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@araujoigor/json-grid/-/json-grid-0.0.6.tgz#d183f0a033b58a0d6e5e4925debf31991e7b4bf2"
-  integrity sha512-Dn9OFcswTqjY+4EXYtyv/Q8MF4CdJFlN3jZbD0VTp0GJfQSm+ZCYIbzaC34naQd7EJqhcjYU8hNPqQpK7sySjw==
-
 "@auth0/angular-jwt@^5.0.1":
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@auth0/angular-jwt/-/angular-jwt-5.0.1.tgz#37851d3ca2a0e88b3e673afd7dd2891f0c61bdf5"
