@@ -59,6 +59,9 @@ public class TbKafkaNodeSSLConfiguration implements NodeConfiguration<TbKafkaNod
         configuration.setOtherProperties(Collections.emptyMap());
         configuration.setAddMetadataKeyValuesAsKafkaHeaders(false);
         configuration.setKafkaHeadersCharset("UTF-8");
+        configuration.setPassword("");
+        configuration.setKeystore("");
+        configuration.setTruststore("");
         return configuration;
     }
 }
