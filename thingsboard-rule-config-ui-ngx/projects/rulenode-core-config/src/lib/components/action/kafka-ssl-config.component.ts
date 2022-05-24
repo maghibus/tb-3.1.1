@@ -12,7 +12,7 @@ import { ToByteStandartCharsetTypes, ToByteStandartCharsetTypeTranslations } fro
 })
 export class KafkaSslConfigComponent extends RuleNodeConfigurationComponent {
 
-  kafkaConfigForm: FormGroup;
+  kafkaSslConfigForm: FormGroup;
 
   ackValues: string[] = ['all', '-1', '0', '1'];
 
@@ -25,11 +25,11 @@ export class KafkaSslConfigComponent extends RuleNodeConfigurationComponent {
   }
 
   protected configForm(): FormGroup {
-    return this.kafkaConfigForm;
+    return this.kafkaSslConfigForm;
   }
 
   protected onConfigurationSet(configuration: RuleNodeConfiguration) {
-    this.kafkaConfigForm = this.fb.group({
+    this.kafkaSslConfigForm = this.fb.group({
       topicPattern: [configuration ? configuration.topicPattern : null, [Validators.required]],
       bootstrapServers: [configuration ? configuration.bootstrapServers : null, [Validators.required]],
       retries: [configuration ? configuration.retries : null, [Validators.min(0)]],
@@ -53,13 +53,13 @@ export class KafkaSslConfigComponent extends RuleNodeConfigurationComponent {
   }
 
   protected updateValidators(emitEvent: boolean) {
-    const addMetadataKeyValuesAsKafkaHeaders: boolean = this.kafkaConfigForm.get('addMetadataKeyValuesAsKafkaHeaders').value;
+    const addMetadataKeyValuesAsKafkaHeaders: boolean = this.kafkaSslConfigForm.get('addMetadataKeyValuesAsKafkaHeaders').value;
     if (addMetadataKeyValuesAsKafkaHeaders) {
-      this.kafkaConfigForm.get('kafkaHeadersCharset').setValidators([Validators.required]);
+      this.kafkaSslConfigForm.get('kafkaHeadersCharset').setValidators([Validators.required]);
     } else {
-      this.kafkaConfigForm.get('kafkaHeadersCharset').setValidators([]);
+      this.kafkaSslConfigForm.get('kafkaHeadersCharset').setValidators([]);
     }
-    this.kafkaConfigForm.get('kafkaHeadersCharset').updateValueAndValidity({emitEvent});
+    this.kafkaSslConfigForm.get('kafkaHeadersCharset').updateValueAndValidity({emitEvent});
   }
 
 }
