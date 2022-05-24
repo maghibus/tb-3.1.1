@@ -1,0 +1,109 @@
+<section [formGroup]="kafkaConfigForm" fxLayout="column">
+  <mat-form-field class="mat-block" style="padding-bottom: 8px;">
+    <mat-label translate>tb.rulenode.topic-pattern</mat-label>
+    <input required matInput formControlName="topicPattern">
+    <mat-error *ngIf="kafkaConfigForm.get('topicPattern').hasError('required')">
+      {{ 'tb.rulenode.topic-pattern-required' | translate }}
+    </mat-error>
+    <mat-hint [innerHTML]="'tb.rulenode.general-pattern-hint' | translate | safeHtml"></mat-hint>
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>tb.rulenode.bootstrap-servers</mat-label>
+    <input required matInput formControlName="bootstrapServers">
+    <mat-error *ngIf="kafkaConfigForm.get('bootstrapServers').hasError('required')">
+      {{ 'tb.rulenode.bootstrap-servers-required' | translate }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>tb.rulenode.retries</mat-label>
+    <input type="number" step="1" min="0" matInput formControlName="retries">
+    <mat-error *ngIf="kafkaConfigForm.get('retries').hasError('min')">
+      {{ 'tb.rulenode.min-retries-message' | translate }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>tb.rulenode.batch-size-bytes</mat-label>
+    <input type="number" step="1" min="0" matInput formControlName="batchSize">
+    <mat-error *ngIf="kafkaConfigForm.get('batchSize').hasError('min')">
+      {{ 'tb.rulenode.min-batch-size-bytes-message' | translate }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>tb.rulenode.linger-ms</mat-label>
+    <input type="number" step="1" min="0" matInput formControlName="linger">
+    <mat-error *ngIf="kafkaConfigForm.get('linger').hasError('min')">
+      {{ 'tb.rulenode.min-linger-ms-message' | translate }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>tb.rulenode.buffer-memory-bytes</mat-label>
+    <input type="number" step="1" min="0" matInput formControlName="bufferMemory">
+    <mat-error *ngIf="kafkaConfigForm.get('bufferMemory').hasError('min')">
+      {{ 'tb.rulenode.min-buffer-memory-bytes-message' | translate }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>tb.rulenode.acks</mat-label>
+    <mat-select formControlName="acks" required>
+      <mat-option *ngFor="let ackValue of ackValues" [value]="ackValue">
+        {{ ackValue }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>tb.rulenode.key-serializer</mat-label>
+    <input required matInput formControlName="keySerializer">
+    <mat-error *ngIf="kafkaConfigForm.get('keySerializer').hasError('required')">
+      {{ 'tb.rulenode.key-serializer-required' | translate }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>tb.rulenode.value-serializer</mat-label>
+    <input required matInput formControlName="valueSerializer">
+    <mat-error *ngIf="kafkaConfigForm.get('valueSerializer').hasError('required')">
+      {{ 'tb.rulenode.value-serializer-required' | translate }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>tb.rulenode.ks-ts-password</mat-label>
+    <input required matInput formControlName="password">
+    <mat-error *ngIf="kafkaConfigForm.get('password').hasError('required')">
+      {{ 'tb.rulenode.ks-ts-password' | translate }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>tb.rulenode.keystore</mat-label>
+    <input required matInput formControlName="keystore">
+    <mat-error *ngIf="kafkaConfigForm.get('keystore').hasError('required')">
+      {{ 'tb.rulenode.keystore' | translate }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="mat-block">
+    <mat-label translate>tb.rulenode.truststore</mat-label>
+    <input required matInput formControlName="truststore">
+    <mat-error *ngIf="kafkaConfigForm.get('truststore').hasError('required')">
+      {{ 'tb.rulenode.truststore' | translate }}
+    </mat-error>
+  </mat-form-field>
+  <label translate class="tb-title">tb.rulenode.other-properties</label>
+  <tb-kv-map-config
+    required="false"
+    formControlName="otherProperties"
+    keyText="tb.rulenode.key"
+    keyRequiredText="tb.rulenode.key-required"
+    valText="tb.rulenode.value"
+    valRequiredText="tb.rulenode.value-required">
+  </tb-kv-map-config>
+  <mat-checkbox fxFlex formControlName="addMetadataKeyValuesAsKafkaHeaders" style="padding-top: 16px;">
+    {{ 'tb.rulenode.add-metadata-key-values-as-kafka-headers' | translate }}
+  </mat-checkbox>
+  <div class="tb-hint" translate>tb.rulenode.add-metadata-key-values-as-kafka-headers-hint</div>
+  <mat-form-field fxFlex class="mat-block" *ngIf="kafkaConfigForm.get('addMetadataKeyValuesAsKafkaHeaders').value">
+    <mat-label translate>tb.rulenode.charset-encoding</mat-label>
+    <mat-select formControlName="kafkaHeadersCharset" required>
+      <mat-option *ngFor="let charset of ToByteStandartCharsetTypesValues" [value]="charset">
+        {{ ToByteStandartCharsetTypeTranslationMap.get(charset) | translate }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</section>
