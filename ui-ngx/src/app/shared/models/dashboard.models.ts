@@ -106,6 +106,12 @@ export interface Dashboard extends DashboardInfo {
   configuration?: DashboardConfiguration;
 }
 
+export interface DeviceDefaultDashboard {
+  dashboardId: string;
+  dashboardState: string;
+  gisDeviceType: string;
+}
+
 export function isPublicDashboard(dashboard: DashboardInfo): boolean {
   if (dashboard && dashboard.assignedCustomers) {
     return dashboard.assignedCustomers

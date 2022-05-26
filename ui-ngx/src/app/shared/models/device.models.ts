@@ -20,6 +20,7 @@ import { TenantId } from '@shared/models/id/tenant-id';
 import { CustomerId } from '@shared/models/id/customer-id';
 import { DeviceCredentialsId } from '@shared/models/id/device-credentials-id';
 import { EntitySearchQuery } from '@shared/models/relation.models';
+import { ShortCustomerInfo } from './customer.model';
 
 export interface Device extends BaseData<DeviceId> {
   tenantId?: TenantId;
@@ -71,4 +72,13 @@ export enum ClaimResponse {
 export interface ClaimResult {
   device: Device,
   response: ClaimResponse
+}
+
+/* Interface for gis dashboard integration */
+export interface AssignableDashboard {
+  id: DeviceId;
+  tenantId: TenantId;
+  title: string;
+  assignedCustomers: Set<ShortCustomerInfo>;
+  states: Array<string>;
 }

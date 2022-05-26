@@ -252,6 +252,10 @@ $tb-dark-theme: get-tb-dark-theme(
   background-color: $tb-primary-color !important;
 }
 
+.gph__profile-card .logout__button {
+  background-color: $tb-primary-color !important;
+}
+  
 ////
 
 .cdk-overlay-container {

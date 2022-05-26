@@ -20,12 +20,14 @@ import { SharedModule } from '@app/shared/shared.module';
 import { AssignToCustomerDialogComponent } from '@modules/home/dialogs/assign-to-customer-dialog.component';
 import { AddEntitiesToCustomerDialogComponent } from '@modules/home/dialogs/add-entities-to-customer-dialog.component';
 import { HomeDialogsService } from './home-dialogs.service';
+import { AssignDefaultDashboardToDeviceDialogComponent } from './assign-default-dashboard-to-device-dialog.component';
 
 @NgModule({
   declarations:
   [
     AssignToCustomerDialogComponent,
-    AddEntitiesToCustomerDialogComponent
+    AddEntitiesToCustomerDialogComponent,
+    AssignDefaultDashboardToDeviceDialogComponent
   ],
   imports: [
     CommonModule,
@@ -33,7 +35,8 @@ import { HomeDialogsService } from './home-dialogs.service';
   ],
   exports: [
     AssignToCustomerDialogComponent,
-    AddEntitiesToCustomerDialogComponent
+    AddEntitiesToCustomerDialogComponent,
+    AssignDefaultDashboardToDeviceDialogComponent
   ],
   providers: [
     HomeDialogsService

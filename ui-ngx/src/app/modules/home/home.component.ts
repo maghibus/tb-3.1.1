@@ -115,6 +115,8 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
       {
         appTitle: this.customizationService.getHeaderConfiguration().appTitle,
         logoDir: this.customizationService.getHeaderConfiguration().logoDir,
+        secondaryLogoDir: this.customizationService.getHeaderConfiguration().secondaryLogoDir,
+        showBorderBottom: this.customizationService.getHeaderConfiguration().showBorderBottom,
         appContext: "iot",
         logout: logoutTb,
         hideTabs: this.customizationService.getHeaderConfiguration().hideTabs,

@@ -694,6 +694,11 @@
         "is-gateway": "È un gateway",
         "public": "Pubblico",
         "device-public": "Il dispositivo è pubblico",
+        "default-dashboard": "Assegna dashboard di default",
+        "default-dashboard-error": "Seleziona una dashboard",
+        "default-state-error": "Seleziona uno stato",
+        "gis-device-type-form-label": "Tipo device GIS",
+        "gis-device-type-required-error": "Inserisci un tipo",
         "select-device": "Seleziona dispositivo"
     },
     "dialog": {

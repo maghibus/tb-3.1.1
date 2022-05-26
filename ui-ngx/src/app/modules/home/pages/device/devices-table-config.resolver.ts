@@ -59,8 +59,13 @@ import {
   AddEntitiesToCustomerDialogComponent,
   AddEntitiesToCustomerDialogData
 } from '../../dialogs/add-entities-to-customer-dialog.component';
+import {
+  AssignDefaultDashboardToDeviceDialogComponent,
+  AssignDefaultDashboardToDeviceDialogData
+} from '../../dialogs/assign-default-dashboard-to-device-dialog.component';
 import { DeviceTabsComponent } from '@home/pages/device/device-tabs.component';
 import { HomeDialogsService } from '@home/dialogs/home-dialogs.service';
+import { CustomizationService } from '@app/core/services/customization.service';
 
 @Injectable()
 export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<DeviceInfo>> {
@@ -78,6 +83,7 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
               private translate: TranslateService,
               private datePipe: DatePipe,
               private router: Router,
+              private customizationService: CustomizationService,
               private dialog: MatDialog) {
 
     this.config.entityType = EntityType.DEVICE;
@@ -266,6 +272,16 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
           onAction: ($event, entities) => this.assignToCustomer($event, entities.map((entity) => entity.id))
         }
       );
+      if(this.customizationService.getPlatformConfiguration().defaultDeviceDashboardAssignment) {
+        actions.push(
+          {
+            name: this.translate.instant('device.default-dashboard'),
+            icon: 'dashboard',
+            isEnabled: true,
+            onAction: ($event, entities) => this.assignDefaultDashboard($event, entities.map((entity) => entity.id))
+          }
+        );
+      }
     }
     if (deviceScope === 'customer') {
       actions.push(
@@ -368,6 +384,26 @@ export class DevicesTableConfigResolver implements Resolve<EntityTableConfig<Dev
     }
     this.dialog.open<AssignToCustomerDialogComponent, AssignToCustomerDialogData,
       boolean>(AssignToCustomerDialogComponent, {
+      disableClose: true,
+      panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
+      data: {
+        entityIds: deviceIds,
+        entityType: EntityType.DEVICE
+      }
+    }).afterClosed()
+      .subscribe((res) => {
+      if (res) {
+        this.config.table.updateData();
+      }
+    });
+  }
+
+  assignDefaultDashboard($event: Event, deviceIds: Array<DeviceId>) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.dialog.open<AssignDefaultDashboardToDeviceDialogComponent, AssignDefaultDashboardToDeviceDialogData,
+      boolean>(AssignDefaultDashboardToDeviceDialogComponent, {
       disableClose: true,
       panelClass: ['tb-dialog', 'tb-fullscreen-dialog'],
       data: {

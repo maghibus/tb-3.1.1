@@ -34,6 +34,7 @@ export class Platform {
     favicon: string = "assets/platform-header-logo.png";
     windowTitle: string = "IotPlatform";
     swaggerLink: boolean = true;
+    defaultDeviceDashboardAssignment: boolean = false;
 }
 
 export class HeaderConfig {
@@ -46,6 +47,8 @@ export class HeaderConfig {
     hideTabs: boolean;
     showAppMenuLabel: boolean;
     logoDir: string = 'assets/platform-header-logo.png';
+    secondaryLogoDir: string;
+    showBorderBottom: string;
     appTitle: string = 'SMART CITY PLATFORM';
     appUrlsConfig: {
         bigdata: '/giotto-web';

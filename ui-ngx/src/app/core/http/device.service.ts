@@ -30,6 +30,10 @@ import {
 } from '@app/shared/models/device.models';
 import { EntitySubtype } from '@app/shared/models/entity-type.models';
 import { AuthService } from '@core/auth/auth.service';
+import {
+  AssignableDashboard,
+  DeviceDefaultDashboard
+} from '@app/shared/public-api';
 
 @Injectable({
   providedIn: 'root'
@@ -74,6 +78,14 @@ export class DeviceService {
 
   public getDeviceTypes(config?: RequestConfig): Observable<Array<EntitySubtype>> {
     return this.http.get<Array<EntitySubtype>>('/api/device/types', defaultHttpOptionsFromConfig(config));
+  }
+  
+  public getAssignableDashboards(config?: RequestConfig): Observable<Array<AssignableDashboard>> {
+    return this.http.get<Array<AssignableDashboard>>('/api/gis/tenant/dashboards/states', defaultHttpOptionsFromConfig(config));
+  }
+  
+  public assignDefaultDashboardToDevice(deviceId: string, defaultDashboard: DeviceDefaultDashboard, config?: RequestConfig): Observable<DeviceDefaultDashboard> {
+    return this.http.post<DeviceDefaultDashboard>(`/api/gis/dashboard/attributes/server/device/${deviceId}`, defaultDashboard, defaultHttpOptionsFromConfig(config));
   }
 
   public getDeviceCredentials(deviceId: string, sync: boolean = false, config?: RequestConfig): Observable<DeviceCredentials> {
