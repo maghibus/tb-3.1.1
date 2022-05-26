@@ -807,3 +807,7 @@ integration:
 
 features:
   multiple_customer_enabled: "${FEATURES_MULTIPLE_CUSTOMER_ENABLED:false}" # enables the feature that permits multiple customers for a device/asset and the filter that blocks calls to single association endpoints
+  gis_integration: "${FEATURES_GIS_INTEGRATION_ENABLED:false}"
+
+thingsboardUri: "https://mesmart.comune.messina.it" # dipendente da gis_integration TODO interrogare FQDN
+

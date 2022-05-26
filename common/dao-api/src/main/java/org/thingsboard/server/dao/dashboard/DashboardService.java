@@ -23,13 +23,16 @@ import org.thingsboard.server.common.data.id.DashboardId;
 import org.thingsboard.server.common.data.id.TenantId;
 import org.thingsboard.server.common.data.page.PageData;
 import org.thingsboard.server.common.data.page.PageLink;
-import org.thingsboard.server.common.data.page.TimePageLink;
+
+import java.util.List;
 
 public interface DashboardService {
     
     Dashboard findDashboardById(TenantId tenantId, DashboardId dashboardId);
 
     ListenableFuture<Dashboard> findDashboardByIdAsync(TenantId tenantId, DashboardId dashboardId);
+
+    List<Dashboard> findDashboardByTenantId(TenantId tenantId);
 
     DashboardInfo findDashboardInfoById(TenantId tenantId, DashboardId dashboardId);
 

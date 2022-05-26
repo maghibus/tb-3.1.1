@@ -39,6 +39,7 @@ import org.thingsboard.server.dao.service.PaginatedRemover;
 import org.thingsboard.server.dao.service.Validator;
 import org.thingsboard.server.dao.tenant.TenantDao;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static org.thingsboard.server.dao.service.Validator.validateId;
@@ -73,6 +74,11 @@ public class DashboardServiceImpl extends AbstractEntityService implements Dashb
         log.trace("Executing findDashboardByIdAsync [{}]", dashboardId);
         validateId(dashboardId, INCORRECT_DASHBOARD_ID + dashboardId);
         return dashboardDao.findByIdAsync(tenantId, dashboardId.getId());
+    }
+
+    @Override
+    public List<Dashboard> findDashboardByTenantId(TenantId tenantId) {
+        return dashboardDao.find(tenantId);
     }
 
     @Override
