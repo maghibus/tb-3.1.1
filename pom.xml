@@ -731,6 +731,7 @@
                             <exclude>src/browserslist</exclude>
                             <exclude>**/*.raw</exclude>
                             <exclude>**/*.sh</exclude>
+			    <exclude>thingsboard-rule-config-ui-ngx/**</exclude>
                         </excludes>
                         <mapping>
                             <proto>JAVADOC_STYLE</proto>
