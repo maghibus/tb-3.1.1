@@ -6,7 +6,7 @@ projectVersion = ''
 pipeline {
     agent {
         node {
-            label 'slaves'
+            label '10.207.127.5_new'
         }
     }
     environment {
