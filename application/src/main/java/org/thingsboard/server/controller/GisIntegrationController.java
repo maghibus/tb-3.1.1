@@ -55,9 +55,6 @@ import static org.thingsboard.server.common.data.exception.ThingsboardErrorCode.
 @ConditionalOnProperty(prefix = "features", value = "gis_integration", havingValue = "true")
 public class GisIntegrationController extends BaseController {
 
-    @Value("${thingsboardUri}")
-    public String thingsboardUri;
-
     private static final String DEVICE_ID = "deviceId";
     private static final String SERVER_SCOPE = "SERVER_SCOPE";
     private static final String DASHBOARD_ID = "dashboardId";
@@ -192,7 +189,7 @@ public class GisIntegrationController extends BaseController {
             gisDeviceProperties.setDashboardId(dashboardId);
 
 
-            gisDeviceProperties.setDashboardUri(thingsboardUri + "/dashboard/" + dashboardId + "?state=" + Base64.getEncoder().encodeToString(
+            gisDeviceProperties.setDashboardUri("/iot-fe/dashboard/" + dashboardId + "?state=" + Base64.getEncoder().encodeToString(
                     ("[{\"id\":\"" + dashboardState + "\",\"params\":{\"entityId\":{\"entityType\":\"DEVICE\",\"id\":\"" + device.getId() + "\"},\"entityName\":\"" + device.getName() + "\"}}]").getBytes(StandardCharsets.UTF_8)
             ));
         }
