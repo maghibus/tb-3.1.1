@@ -25,7 +25,6 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.header.internals.RecordHeaders;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.thingsboard.common.util.ListeningExecutor;
 import org.thingsboard.rule.engine.api.*;
 import org.thingsboard.rule.engine.api.util.TbNodeUtils;
@@ -53,9 +52,6 @@ import java.util.Properties;
 )
 @RequiredArgsConstructor
 public class TbKafkaCustomNode implements TbNode {
-
-    @Autowired
-	private ProducerConfiguration producerConfiguration;
 
     private static final String OFFSET = "offset";
     private static final String PARTITION = "partition";
