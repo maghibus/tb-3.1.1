@@ -49,7 +49,7 @@ public class KafkaProperties {
         kafkaProperties.put("ssl.truststore.password", configuration.getPassword());
         kafkaProperties.put("ssl.keystore.password", configuration.getPassword());
         kafkaProperties.put("ssl.key.password", configuration.getPassword());
-
+        kafkaProperties.put("security.protocol", "SSL");
         return kafkaProperties;
     }
 
