@@ -1043,9 +1043,9 @@
     regenerator-runtime "^0.13.4"
 
 "@babel/runtime@^7.15.4":
-  version "7.17.9"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.9.tgz#d19fbf802d01a8cb6cf053a64e472d42c434ba72"
-  integrity sha512-lSiBBvodq29uShpWGNbgFdKYNiFDo5/HIYsaCEY9ff4sb10x9jizo2+pRrSyF4jKZCXqgzuqBOQKbUm90gQwJg==
+  version "7.18.3"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.18.3.tgz#c7b654b57f6f63cf7f8b418ac9ca04408c4579f4"
+  integrity sha512-38Y8f7YUhce/K7RMwTp7m0uCumpv9hZkitCbBClqQIow1qSbCvGkcegKOXpEWCQLfWmevgRiWokZ1GkpfhbZug==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -1127,9 +1127,9 @@
     tslib "^1.9.0"
 
 "@giotto-jfrog/giotto-platform-header@~3.0.0":
-  version "3.0.1"
-  resolved "https://almaviva.jfrog.io/artifactory/api/npm/giotto-npm/@giotto-jfrog/giotto-platform-header/-/@giotto-jfrog/giotto-platform-header-3.0.1.tgz#9b46f3d6ae78617523e7aec7d99e1b0ed8aa55b4"
-  integrity sha512-3Z6w1oQe5BzQCMIA4yLvXQj/jVSYgFiuoeRPPd3cbsXs4pOywkhWgsnFS1sGbXHjXjegwDGoDGnOfuvgMxRQGQ==
+  version "3.0.6"
+  resolved "https://almaviva.jfrog.io/artifactory/api/npm/giotto-npm/@giotto-jfrog/giotto-platform-header/-/@giotto-jfrog/giotto-platform-header-3.0.6.tgz#7d1f85a51343ce3d54cd9881fe0720210a8cbc76"
+  integrity sha512-7vOqb4TNtFY9eW/V5KjP//Zin7uorIK1eylbgJ3AFZ1oygOZQiyW2hX0pyUVfVHvfiX8zGpewAavSooX988w3g==
   dependencies:
     "@babel/runtime" "^7.15.4"
     jwt-decode "^3.1.2"
