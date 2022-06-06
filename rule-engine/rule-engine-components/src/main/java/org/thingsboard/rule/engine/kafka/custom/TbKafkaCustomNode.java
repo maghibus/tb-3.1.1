@@ -18,6 +18,7 @@ package org.thingsboard.rule.engine.kafka.custom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -86,7 +87,7 @@ public class TbKafkaCustomNode implements TbNode {
         toBytesCharset = config.getKafkaHeadersCharset() != null ? Charset.forName(config.getKafkaHeadersCharset()) : StandardCharsets.UTF_8;
 
 		try {
-        	this.producer = producerConfiguration.configureProducer(ctx, config);
+        	this.producer =  new KafkaProducer<>(kafkaProperties);
         }
         catch(Exception e) {
         	throw new TbNodeException(e);
