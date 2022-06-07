@@ -36,7 +36,7 @@ public class TbKafkaNodeSSLConfiguration implements NodeConfiguration<TbKafkaNod
     private String acks;
     private String keySerializer;
     private String valueSerializer;
-    private String password;
+    private String keystorePemKey;
     private String keystore;
     private String truststore;
     private Map<String, String> otherProperties;
@@ -59,7 +59,7 @@ public class TbKafkaNodeSSLConfiguration implements NodeConfiguration<TbKafkaNod
         configuration.setOtherProperties(Collections.emptyMap());
         configuration.setAddMetadataKeyValuesAsKafkaHeaders(false);
         configuration.setKafkaHeadersCharset("UTF-8");
-        configuration.setPassword("");
+        configuration.setKeystorePemKey("");
         configuration.setKeystore("");
         configuration.setTruststore("");
         return configuration;

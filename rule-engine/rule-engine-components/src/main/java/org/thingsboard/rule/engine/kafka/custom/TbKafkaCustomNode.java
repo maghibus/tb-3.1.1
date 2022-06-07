@@ -66,11 +66,7 @@ public class TbKafkaCustomNode implements TbNode {
 
     private Producer<?, String> producer;
 
-
     Properties kafkaProperties = new Properties();
-
-    
-    //volatile boolean waitForProducer = false;
 
     
     @Override
@@ -97,17 +93,6 @@ public class TbKafkaCustomNode implements TbNode {
         String topic = TbNodeUtils.processPattern(config.getTopicPattern(), msg.getMetaData());
 
         try {
-                	      	
-        	/* if(certificateUtils.isCertificateExpired(certificateExpiryDate)) {
-            	waitForProducer = true;
-            	log.info("Creazione nuovo producer");
-        		producer.close();
-                producer = producerConfiguration.configureProducer(ctx, config);
-            	waitForProducer = false;
-        	}
-        	
-        	while(waitForProducer);*/
-        	
         	ListeningExecutor service = ctx.getExternalCallExecutor();
 			service.executeAsync(() -> {
         		publish(ctx, msg, topic);
@@ -121,7 +106,6 @@ public class TbKafkaCustomNode implements TbNode {
     }
 
     protected void publish(TbContext ctx, TbMsg msg, String topic) {
-    	//boolean flagReturn = false;
     	try {
             if (!addMetadataKeyValuesAsKafkaHeaders) {
                 producer.send(new ProducerRecord<>(topic, msg.getData()),
@@ -132,7 +116,6 @@ public class TbKafkaCustomNode implements TbNode {
                 producer.send(new ProducerRecord<>(topic, null, null, null, msg.getData(), headers),
                         (metadata, e) -> processRecord(ctx, msg, metadata, e));
             }
-            //flagReturn = true;
         } catch (Exception e) {
             log.info("[{}] Failed to process message: {}", ctx.getSelfId(), msg, e);
         }
