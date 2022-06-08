@@ -39,7 +39,7 @@ public class KafkaProperties {
         kafkaProperties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, "33554432");
         kafkaProperties.put(SslConfigs.SSL_PROTOCOL_CONFIG, "SSL");
         kafkaProperties.put("ssl.endpoint.identification.algorithm","");
-        kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.206.195.38:9092");
+        kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.getBootstrapServers());
         kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         kafkaProperties.put("security.protocol", "SSL");
