@@ -45,9 +45,15 @@ public class KafkaProperties {
         kafkaProperties.put("security.protocol", "SSL");
         kafkaProperties.put("ssl.truststore.type", "PEM");
         kafkaProperties.put("ssl.keystore.type", "PEM");
-        kafkaProperties.put("ssl.truststore.certificates",configuration.getTruststore());
-        kafkaProperties.put("ssl.keystore.certificate.chain",configuration.getKeystore());
-        kafkaProperties.put("ssl.keystore.key",configuration.getKeystorePemKey());
+
+
+        String password = configuration.getKeystorePemKey().replace(" ","\n");
+        String keystore = configuration.getKeystore().replace(" ","\n");
+        String truststore = configuration.getTruststore().replace(" ","\n");
+
+        kafkaProperties.put("ssl.truststore.certificates",truststore);
+        kafkaProperties.put("ssl.keystore.certificate.chain",keystore);
+        kafkaProperties.put("ssl.keystore.key",password);
 
         return kafkaProperties;
     }
