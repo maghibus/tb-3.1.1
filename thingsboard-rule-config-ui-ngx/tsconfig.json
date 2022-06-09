@@ -1,0 +1,50 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "target": "es2017",
+    "module": "es2020",
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "paths": {
+      "@angular/*": [
+        "./node_modules/@angular/*"
+      ],
+      "rulenode-core-config": [
+        "dist/rulenode-core-config"
+      ],
+      "rulenode-core-config/*": [
+        "dist/rulenode-core-config/*"
+      ],
+      "@app/*": ["node_modules/thingsboard/src/app/*"],
+      "@core/*": ["node_modules/thingsboard/src/app/core/*"],
+      "@shared/*": ["node_modules/thingsboard/src/app/shared/*"],
+      "@modules/*": ["node_modules/thingsboard/src/app/modules/*"],
+      "@home/*": ["node_modules/thingsboard/src/app/modules/home/*"]
+    }
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "fullTemplateTypeCheck": false,
+    "strictTemplates": false
+  }
+}

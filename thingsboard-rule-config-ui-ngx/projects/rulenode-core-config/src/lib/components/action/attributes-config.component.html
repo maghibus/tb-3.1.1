@@ -1,0 +1,16 @@
+<section [formGroup]="attributesConfigForm" fxLayout="column">
+  <mat-form-field fxFlex class="mat-block">
+    <mat-label translate>attribute.attributes-scope</mat-label>
+    <mat-select formControlName="scope" required>
+      <mat-option *ngFor="let scope of attributeScopes" [value]="scope">
+        {{ telemetryTypeTranslationsMap.get(scope) | translate }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div *ngIf="attributesConfigForm.get('scope').value === 'SHARED_SCOPE'">
+    <mat-checkbox formControlName="notifyDevice">
+      {{ 'tb.rulenode.notify-device' | translate }}
+    </mat-checkbox>
+    <div class="tb-hint" style="padding-bottom: 16px;" translate>tb.rulenode.notify-device-hint</div>
+  </div>
+</section>
