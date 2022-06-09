@@ -32,11 +32,11 @@ public class KafkaProperties {
     public static Properties getKafkaPropertiesFromNodeConfiguration(TbContext ctx, TbKafkaNodeSSLConfiguration configuration) {
         Properties kafkaProperties = new Properties();
         kafkaProperties.put(ProducerConfig.CLIENT_ID_CONFIG, "producer-tb-kafka-node-" + ctx.getSelfId().getId().toString() + "-" + ctx.getServiceId());
-        kafkaProperties.put(ProducerConfig.ACKS_CONFIG, "-1");
-        kafkaProperties.put(ProducerConfig.RETRIES_CONFIG, "0");
-        kafkaProperties.put(ProducerConfig.BATCH_SIZE_CONFIG, "16384");
-        kafkaProperties.put(ProducerConfig.LINGER_MS_CONFIG, "0");
-        kafkaProperties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, "33554432");
+        kafkaProperties.put(ProducerConfig.ACKS_CONFIG, configuration.getAcks());
+        kafkaProperties.put(ProducerConfig.RETRIES_CONFIG, configuration.getRetries());
+        kafkaProperties.put(ProducerConfig.BATCH_SIZE_CONFIG, configuration.getBatchSize());
+        kafkaProperties.put(ProducerConfig.LINGER_MS_CONFIG, configuration.getLinger());
+        kafkaProperties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, configuration.getBufferMemory());
         kafkaProperties.put(SslConfigs.SSL_PROTOCOL_CONFIG, "SSL");
         kafkaProperties.put("ssl.endpoint.identification.algorithm","");
         kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.getBootstrapServers());
