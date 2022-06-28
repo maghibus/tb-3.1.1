@@ -88,7 +88,9 @@ var server;
             });
         }
 
-        app.use(historyApiFallback());
+        app.use(historyApiFallback({
+            index: '/iot-fe/index.html',
+        }));
         app.use(compression());
 
         const root = path.join(webDir, 'public');
