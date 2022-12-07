@@ -70,15 +70,6 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>yarn upgrade header</id>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>upgrade @giotto-jfrog/giotto-platform-header</arguments>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
         </plugins>

@@ -31,8 +31,6 @@ import { AuthState } from '@core/auth/auth.models';
 import { WINDOW } from '@core/services/window.service';
 import { instanceOfSearchableComponent, ISearchableComponent } from '@home/models/searchable-component.models';
 
-import Header from "@giotto-jfrog/giotto-platform-header/dist/index";
-import customerConfig from './customer.config';
 import { AuthService } from '@app/core/auth/auth.service';
 import { Router } from '@angular/router';
 import { CustomizationService } from '@app/core/services/customization.service';
@@ -76,8 +74,6 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
   constructor(protected store: Store<AppState>,
     @Inject(WINDOW) private window: Window,
     public breakpointObserver: BreakpointObserver,
-    private authService: AuthService,
-    private router: Router,
     private customizationService: CustomizationService) {
     super(store);
   }
@@ -105,34 +101,6 @@ export class HomeComponent extends PageComponent implements AfterViewInit, OnIni
         }
       }
       );
-
-    const logoutTb = () => {
-      this.authService.logout();
-    }
-    let platformHeader = document.getElementById('platform-header');
-    let instance = new Header(
-      platformHeader,
-      {
-        appTitle: this.customizationService.getHeaderConfiguration().appTitle,
-        logoDir: this.customizationService.getHeaderConfiguration().logoDir,
-        secondaryLogoDir: this.customizationService.getHeaderConfiguration().secondaryLogoDir,
-        showBorderBottom: this.customizationService.getHeaderConfiguration().showBorderBottom,
-        appContext: "iot",
-        logout: logoutTb,
-        hideTabs: this.customizationService.getHeaderConfiguration().hideTabs,
-        showAppMenuLabel: this.customizationService.getHeaderConfiguration().showAppMenuLabel,
-        oauth2LogOutUrl: this.customizationService.getHeaderConfiguration().oauth2LogOutUrl,
-        logoutOnCloseSession: this.customizationService.getHeaderConfiguration().logoutOnCloseSession,
-        logOutRedirectUrl: this.customizationService.getHeaderConfiguration().logOutRedirectUrl,
-        disableBigdataLogout: this.customizationService.getHeaderConfiguration().disableBigdataLogout,
-        disableIotLogout: this.customizationService.getHeaderConfiguration().disableIotLogout,
-        federatedLogoutUrl: this.customizationService.getHeaderConfiguration().federatedLogoutUrl,
-        appUrlsConfig: this.customizationService.getHeaderConfiguration().appUrlsConfig
-      });
-    instance.init();
-    //oidc logout enabled
-    if(!!this.customizationService.getHeaderConfiguration().oauth2LogOutUrl)
-      this.authService.setExternalLogoutCallback(instance.logOut());
     }
 
   ngAfterViewInit() {

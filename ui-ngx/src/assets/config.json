@@ -18,11 +18,11 @@
         "swaggerLink": true
     },
     "header": {
-        "oauth2LogOutUrl": "https://smartcityplatform.develop.it/oidc/logout",
+        "oauth2LogOutUrl": "/oidc/logout",
         "logoutOnCloseSession": false,
         "disableBigdataLogout": false,
         "disableIotLogout": false,
-        "logOutRedirectUrl": "https://smartcityplatform.develop.it/oneadmin/login",
+        "logOutRedirectUrl": "/oneadmin/login",
         "federatedLogoutUrl": null,
         "logoDir": "assets/platform-header-logo.png",
         "appTitle": "SMART CITY PLATFORM",
