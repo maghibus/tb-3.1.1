@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 trigger:
-- develop
+- none
 
 pool:
   name: almatoolbox-default-linux
@@ -22,10 +22,19 @@ steps:
     cliProjectKey: 'smart-city-iot-platform'
     cliProjectName: 'smart-city-iot-platform'
     cliSources: '.'
+
 - task: ArtifactoryMaven@2
   inputs:
     mavenPomFile: 'pom.xml'
     goals: 'install'
+    artifactoryResolverService: 'Jfrog-Giotto-IoT'
+    targetResolveReleaseRepo: 'remote-repos'
+    targetResolveSnapshotRepo: 'remote-repos'
+
+#- task: ArtifactoryMaven@2
+#  inputs:
+#    mavenPomFile: 'pom.xml'
+#    goals: 'install'
 
 - task: SonarQubeAnalyze@5
   inputs:
