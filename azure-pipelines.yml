@@ -23,18 +23,23 @@ steps:
     cliProjectName: 'smart-city-iot-platform'
     cliSources: '.'
 
-- task: ArtifactoryMaven@2
+- task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
-    goals: 'install'
-    artifactoryResolverService: 'Jfrog-Giotto-IoT'
-    targetResolveReleaseRepo: 'remote-repos'
-    targetResolveSnapshotRepo: 'remote-repos'
+    publishJUnitResults: false
+    javaHomeOption: 'JDKVersion'
+    mavenVersionOption: 'Default'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
+    sonarQubeRunAnalysis: false
 
 #- task: ArtifactoryMaven@2
 #  inputs:
 #    mavenPomFile: 'pom.xml'
 #    goals: 'install'
+#    artifactoryResolverService: 'Jfrog-Giotto-IoT'
+#    targetResolveReleaseRepo: 'remote-repos'
+#    targetResolveSnapshotRepo: 'remote-repos'
 
 - task: SonarQubeAnalyze@5
   inputs:
