@@ -1,0 +1,32 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- develop
+
+pool:
+  name: almatoolbox-default-linux
+
+steps:
+
+- task: SonarQubePrepare@5
+  inputs:
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'smart-city-iot-platform'
+    cliProjectName: 'smart-city-iot-platform'
+    cliSources: '.'
+- task: ArtifactoryMaven@2
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'install'
+
+- task: SonarQubeAnalyze@5
+  inputs:
+    jdkversion: 'JAVA_HOME'
+
+- task: SonarQubePublish@5
+  inputs:
+    pollingTimeoutSec: '300'
