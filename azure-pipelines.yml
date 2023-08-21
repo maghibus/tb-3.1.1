@@ -10,10 +10,10 @@ pool:
   name: almatoolbox-default-linux
 
 steps:
-- task: Bash@3
-  inputs:
-    targetType: 'inline'
-    script: 'telnet 10.121.17.40 9000'
+#- task: Bash@3
+#  inputs:
+#    targetType: 'inline'
+#    script: 'telnet 10.121.17.40 9000'
 - task: SonarQubePrepare@5
   inputs:
     SonarQube: 'sonarqube-sicurezza'
