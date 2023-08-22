@@ -9,48 +9,53 @@ trigger:
 pool:
   name: almatoolbox-default-linux
 
+variables:
+- group: smart-city-iot-platform-placeholder
+
 steps:
-- task: Bash@3
-  inputs:
-    targetType: 'inline'
-    script: 'echo $PATH'
+#- task: Bash@3
+#  inputs:
+#    targetType: 'inline'
+#    script: 'echo $PATH'
 
 #- task: Bash@3
 #  inputs:
 #    targetType: 'inline'
 #    script: 'rm -rf /azp/_work/100/s'
 
-# - task: SonarQubePrepare@5
-#   inputs:
-#     SonarQube: 'sonarqube-sicurezza'
-#     scannerMode: 'CLI'
-#     configMode: 'manual'
-#     cliProjectKey: 'smart-city-iot-platform'
-#     cliProjectName: 'smart-city-iot-platform'
-#     cliSources: '.'
+#- task: VariableSetTask@3
+#  inputs:
+#    variableName: 'JAVA_HOME_8'
+#    value: '/usr/lib/jvm/java-8-openjdk-amd64/'
+- task: SonarQubePrepare@5
+  inputs:
+    SonarQube: 'sonarqube-sicurezza'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'smart-city-iot-platform'
+    cliProjectName: 'smart-city-iot-platform'
+    cliSources: '.'
 
-# - task: Maven@4
-#   inputs:
-#     mavenPomFile: 'pom.xml'
-#     publishJUnitResults: false
-#     javaHomeOption: 'JDKVersion'
-#     mavenVersionOption: 'Default'
-#     mavenAuthenticateFeed: false
-#     effectivePomSkip: false
-#     sonarQubeRunAnalysis: false
-
-#- task: ArtifactoryMaven@2
+#- task: Maven@4
 #  inputs:
 #    mavenPomFile: 'pom.xml'
-#    goals: 'install'
-#    artifactoryResolverService: 'Jfrog-Giotto-IoT'
-#    targetResolveReleaseRepo: 'remote-repos'
-#    targetResolveSnapshotRepo: 'remote-repos'
+#    publishJUnitResults: false
+#    javaHomeOption: 'JDKVersion'
+#    mavenVersionOption: 'Default'
+#    mavenAuthenticateFeed: false
+#    effectivePomSkip: false
+#    sonarQubeRunAnalysis: false
+- task: ArtifactoryMaven@2
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'clean install -DskipTests -Ddockerfile.skip=false'
+    artifactoryResolverService: 'Jfrog-Giotto-IoT'
+    targetResolveReleaseRepo: 'remote-repos'
+    targetResolveSnapshotRepo: 'remote-repos'
 
-# - task: SonarQubeAnalyze@5
-#   inputs:
-#     jdkversion: 'JAVA_HOME'
-
-# - task: SonarQubePublish@5
-#   inputs:
-#     pollingTimeoutSec: '300'
+- task: SonarQubeAnalyze@5
+  inputs:
+    jdkversion: 'JAVA_HOME'
+- task: SonarQubePublish@5
+  inputs:
+    pollingTimeoutSec: '300'
