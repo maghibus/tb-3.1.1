@@ -30,6 +30,10 @@ steps:
     cliProjectKey: 'smart-city-iot-platform'
     cliProjectName: 'smart-city-iot-platform'
     cliSources: '.'
+    extraProperties: |
+      sonar.language=java
+      sonar.java.binaries=target
+           
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
