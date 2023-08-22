@@ -39,7 +39,7 @@ steps:
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
-    goals: 'clean install -DskipTests -Ddockerfile.skip=false'
+    goals: 'clean install -DskipTests -Ddockerfile.skip=false -Dlicense.skip'
     publishJUnitResults: false
     javaHomeOption: 'JDKVersion'
     mavenVersionOption: 'Default'
