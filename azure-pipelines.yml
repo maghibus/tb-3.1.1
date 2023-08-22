@@ -9,9 +9,6 @@ trigger:
 pool:
   name: almatoolbox-default-linux
 
-#variables:
-#- group: smart-city-iot-platform-placeholder
-
 steps:
 - task: VariableSetTask@3
   displayName: 'Set JAVA_HOME for maven build'
@@ -32,8 +29,8 @@ steps:
     cliSources: '.'
     extraProperties: |
       sonar.language=java
-      sonar.java.binaries=target
-           
+      sonar.java.binaries=**/target/classes
+#      sonar.exclusions=**/*.java
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
