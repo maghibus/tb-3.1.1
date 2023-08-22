@@ -18,15 +18,11 @@ steps:
     targetType: 'inline'
     script: 'echo $JAVA_HOME'
 
-#- task: Bash@3
-#  inputs:
-#    targetType: 'inline'
-#    script: 'rm -rf /azp/_work/100/s'
-
 #- task: VariableSetTask@3
 #  inputs:
 #    variableName: 'JAVA_HOME_8'
 #    value: '/usr/lib/jvm/java-8-openjdk-amd64/'
+
 - task: SonarQubePrepare@5
   inputs:
     SonarQube: 'sonarqube-sicurezza'
@@ -36,24 +32,24 @@ steps:
     cliProjectName: 'smart-city-iot-platform'
     cliSources: '.'
 
-#- task: Maven@4
-#  inputs:
-#    mavenPomFile: 'pom.xml'
-#    goals: 'clean install -DskipTests -Ddockerfile.skip=false -Dlicense.skip'
-#    publishJUnitResults: false
-#    javaHomeOption: 'JDKVersion'
-#    mavenVersionOption: 'Default'
-#    mavenAuthenticateFeed: false
-#    effectivePomSkip: false
-#    sonarQubeRunAnalysis: false
-
-- task: ArtifactoryMaven@2
+- task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
     goals: 'clean install -DskipTests -Ddockerfile.skip=false -Dlicense.skip'
-    artifactoryResolverService: 'Jfrog-Giotto-IoT'
-    targetResolveReleaseRepo: 'remote-repos'
-    targetResolveSnapshotRepo: 'remote-repos'
+    publishJUnitResults: false
+    javaHomeOption: 'JDKVersion'
+    mavenVersionOption: 'Default'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
+    sonarQubeRunAnalysis: false
+
+#- task: ArtifactoryMaven@2
+#  inputs:
+#    mavenPomFile: 'pom.xml'
+#    goals: 'clean install -DskipTests -Ddockerfile.skip=false -Dlicense.skip'
+#    artifactoryResolverService: 'Jfrog-Giotto-IoT'
+#    targetResolveReleaseRepo: 'remote-repos'
+#    targetResolveSnapshotRepo: 'remote-repos'
 
 - task: SonarQubeAnalyze@5
   inputs:
