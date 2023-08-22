@@ -9,8 +9,8 @@ trigger:
 pool:
   name: almatoolbox-default-linux
 
-variables:
-- group: smart-city-iot-platform-placeholder
+#variables:
+#- group: smart-city-iot-platform-placeholder
 
 steps:
 - task: Bash@3
@@ -18,15 +18,11 @@ steps:
     targetType: 'inline'
     script: 'echo $JAVA_HOME'
 
-- task: Bash@3
+- task: VariableSetTask@3
+  displayName: 'Set JAVA_HOME for maven build'
   inputs:
-    targetType: 'inline'
-    script: 'whoami'
-
-#- task: VariableSetTask@3
-#  inputs:
-#    variableName: 'JAVA_HOME_8'
-#    value: '/usr/lib/jvm/java-8-openjdk-amd64/'
+    variableName: 'JAVA_HOME'
+    value: '/usr/lib/jvm/java-8-openjdk-amd64/'
 
 - task: SonarQubePrepare@5
   inputs:
@@ -49,6 +45,7 @@ steps:
     sonarQubeRunAnalysis: false
 
 - task: VariableSetTask@3
+  displayName: 'Set JAVA_HOME to Run Code Analysis'
   inputs:
     variableName: 'JAVA_HOME'
     value: '/usr/lib/jvm/java-11-openjdk-amd64/'
@@ -57,14 +54,6 @@ steps:
   inputs:
     targetType: 'inline'
     script: 'echo $JAVA_HOME'
-
-#- task: ArtifactoryMaven@2
-#  inputs:
-#    mavenPomFile: 'pom.xml'
-#    goals: 'clean install -DskipTests -Ddockerfile.skip=false -Dlicense.skip'
-#    artifactoryResolverService: 'Jfrog-Giotto-IoT'
-#    targetResolveReleaseRepo: 'remote-repos'
-#    targetResolveSnapshotRepo: 'remote-repos'
 
 - task: SonarQubeAnalyze@5
   inputs:
