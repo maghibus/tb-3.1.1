@@ -18,6 +18,11 @@ steps:
     targetType: 'inline'
     script: 'echo $JAVA_HOME'
 
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'whoami'
+
 #- task: VariableSetTask@3
 #  inputs:
 #    variableName: 'JAVA_HOME_8'
