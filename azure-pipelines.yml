@@ -10,33 +10,34 @@ pool:
   name: almatoolbox-default-linux
 
 steps:
-#- task: Bash@3
-#  inputs:
-#    targetType: 'inline'
-#    script: 'telnet 10.121.17.40 9000'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'echo $PATH'
 
 #- task: Bash@3
 #  inputs:
 #    targetType: 'inline'
 #    script: 'rm -rf /azp/_work/100/s'
-- task: SonarQubePrepare@5
-  inputs:
-    SonarQube: 'sonarqube-sicurezza'
-    scannerMode: 'CLI'
-    configMode: 'manual'
-    cliProjectKey: 'smart-city-iot-platform'
-    cliProjectName: 'smart-city-iot-platform'
-    cliSources: '.'
 
-- task: Maven@4
-  inputs:
-    mavenPomFile: 'pom.xml'
-    publishJUnitResults: false
-    javaHomeOption: 'JDKVersion'
-    mavenVersionOption: 'Default'
-    mavenAuthenticateFeed: false
-    effectivePomSkip: false
-    sonarQubeRunAnalysis: false
+# - task: SonarQubePrepare@5
+#   inputs:
+#     SonarQube: 'sonarqube-sicurezza'
+#     scannerMode: 'CLI'
+#     configMode: 'manual'
+#     cliProjectKey: 'smart-city-iot-platform'
+#     cliProjectName: 'smart-city-iot-platform'
+#     cliSources: '.'
+
+# - task: Maven@4
+#   inputs:
+#     mavenPomFile: 'pom.xml'
+#     publishJUnitResults: false
+#     javaHomeOption: 'JDKVersion'
+#     mavenVersionOption: 'Default'
+#     mavenAuthenticateFeed: false
+#     effectivePomSkip: false
+#     sonarQubeRunAnalysis: false
 
 #- task: ArtifactoryMaven@2
 #  inputs:
@@ -46,10 +47,10 @@ steps:
 #    targetResolveReleaseRepo: 'remote-repos'
 #    targetResolveSnapshotRepo: 'remote-repos'
 
-- task: SonarQubeAnalyze@5
-  inputs:
-    jdkversion: 'JAVA_HOME'
+# - task: SonarQubeAnalyze@5
+#   inputs:
+#     jdkversion: 'JAVA_HOME'
 
-- task: SonarQubePublish@5
-  inputs:
-    pollingTimeoutSec: '300'
+# - task: SonarQubePublish@5
+#   inputs:
+#     pollingTimeoutSec: '300'
