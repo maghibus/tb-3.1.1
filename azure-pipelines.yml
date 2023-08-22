@@ -13,17 +13,15 @@ pool:
 #- group: smart-city-iot-platform-placeholder
 
 steps:
-- task: Bash@3
-  inputs:
-    targetType: 'inline'
-    script: 'echo $JAVA_HOME'
-
 - task: VariableSetTask@3
   displayName: 'Set JAVA_HOME for maven build'
   inputs:
     variableName: 'JAVA_HOME'
     value: '/usr/lib/jvm/java-8-openjdk-amd64/'
-
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'echo $JAVA_HOME'
 - task: SonarQubePrepare@5
   inputs:
     SonarQube: 'sonarqube-sicurezza'
@@ -32,7 +30,6 @@ steps:
     cliProjectKey: 'smart-city-iot-platform'
     cliProjectName: 'smart-city-iot-platform'
     cliSources: '.'
-
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
