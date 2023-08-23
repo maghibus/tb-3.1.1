@@ -30,7 +30,10 @@ steps:
     extraProperties: |
       sonar.language=java
       sonar.java.binaries=**/target/classes
-#      sonar.exclusions=**/*.java
+      jacoco.version=0.8.10
+      sonar.java.coveragePlugin=jacoco
+      sonar.dynamicAnalysis=reuseReports
+
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
