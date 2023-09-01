@@ -87,7 +87,8 @@ export class DashboardService {
                                    config?: RequestConfig): Observable<Dashboard> {
     return this.http.post<Dashboard>(`/api/customer/${customerId}/dashboard/${dashboardId}`,
       null, defaultHttpOptionsFromConfig(config));
-  }
+  }git config --global core.autocrlf false
+
 
   public unassignDashboardFromCustomer(customerId: string, dashboardId: string,
                                        config?: RequestConfig) {
@@ -133,7 +134,7 @@ export class DashboardService {
         if (port !== '80' && port !== '443') {
           url += ':' + port;
         }
-        url += `/dashboard/${dashboard.id.id}?publicId=${publicCustomerId}`;
+        url += `/iot-fe/dashboard/${dashboard.id.id}?publicId=${publicCustomerId}`;
         return url;
       }
     }
