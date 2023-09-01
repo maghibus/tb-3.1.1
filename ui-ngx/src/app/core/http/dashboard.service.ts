@@ -87,7 +87,7 @@ export class DashboardService {
                                    config?: RequestConfig): Observable<Dashboard> {
     return this.http.post<Dashboard>(`/api/customer/${customerId}/dashboard/${dashboardId}`,
       null, defaultHttpOptionsFromConfig(config));
-  }git config --global core.autocrlf false
+  }
 
 
   public unassignDashboardFromCustomer(customerId: string, dashboardId: string,
