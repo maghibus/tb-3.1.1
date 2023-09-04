@@ -29,6 +29,9 @@ export class Platform {
     titleColor: string = '#337ab7';
     headerLogoHeight: string = "36px";
     footerImgWidth: string = "340px";
+    sidemenuBg: string = '#007ab7';
+    sidemenuHover: string = '#0095bb';
+    sidemenuBorderColor: string = 'black';
     logo: string = 'assets/home_component_logo.png';
     footerImage: string = 'assets/pon_metro_logo.png';
     favicon: string = "assets/platform-header-logo.png";

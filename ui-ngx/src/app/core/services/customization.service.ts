@@ -67,6 +67,9 @@ export class CustomizationService {
     document.documentElement.style.setProperty('--hue-color', this.getPlatformConfiguration().hueColor);
     document.documentElement.style.setProperty('--platform-header-background', this.getPlatformConfiguration().platformHeaderBackground);
     document.documentElement.style.setProperty('--header-gradient', this.getPlatformConfiguration().headerGradient);
+    document.documentElement.style.setProperty('--sidemenu-bg', this.getPlatformConfiguration().sidemenuBg);
+    document.documentElement.style.setProperty('--sidemenu-hover', this.getPlatformConfiguration().sidemenuHover);
+    document.documentElement.style.setProperty('--sidemenu-border-color', this.getPlatformConfiguration().sidemenuBorderColor);
     document.documentElement.style.setProperty('--toolbar-icon-color', this.getPlatformConfiguration().menuIconColor);
     document.documentElement.style.setProperty('--container-icon-color', this.getPlatformConfiguration().containerIconColor);
     document.documentElement.style.setProperty('--title-color', this.getPlatformConfiguration().titleColor);
