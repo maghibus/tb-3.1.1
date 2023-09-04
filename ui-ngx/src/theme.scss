@@ -19,6 +19,11 @@
 
 @include mat-core();
 
+$custom-typography: mat-typography-config(
+  $font-family: '"Titillium Web", sans-serif'
+);
+@include angular-material-typography($custom-typography);
+
 $tb-primary: mat-palette($tb-mat-indigo);
 $tb-accent: mat-palette($mat-deep-orange);
 $tb-primary-date-picker: mat-palette($tb-mat-indigo-date-picker);
@@ -121,6 +126,24 @@ mat-card-content mat-grid-list div mat-grid-tile figure{
 
 .mat-table-toolbar {
   background: white !important;
+}
+
+.tb-side-menu {
+  background-color: var(--sidemenu-bg) !important;
+}
+
+.tb-side-menu > li {
+  border-bottom: 1px solid var(--sidemenu-border-color) !important;
+}
+
+.sidebar-item:hover {
+  border-bottom: none;
+  background-color: var(--sidemenu-hover) !important;
+}
+
+.sidebar-item.tb-active {
+  border-bottom: none;
+  background-color: var(--sidemenu-hover) !important;
 }
 
 .footer-img {
