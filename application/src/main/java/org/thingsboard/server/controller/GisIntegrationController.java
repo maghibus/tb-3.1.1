@@ -147,24 +147,27 @@ public class GisIntegrationController extends BaseController {
         for (Device x : devicePageData.getData()) {
             try {
                 List<AttributeKvEntry> attributeKvEntries = attributesService.findAll(tenantId, x.getId(), SERVER_SCOPE).get();
-                String type = getAttributeValueByKey(GIS_DEVICE_TYPE, attributeKvEntries);
+                HashMap<String, String> attributes = getAttributeHashmap(attributeKvEntries);
+                String type = attributes.get(GIS_DEVICE_TYPE);
                 if (type != null) {
                     type = type.toLowerCase();
                     type = type.trim();
                     if (type.equals(gisDeviceType)) {
-                        String dashboardId = getAttributeValueByKey(DASHBOARD_ID, attributeKvEntries);
-                        String dashboardState = getAttributeValueByKey(DASHBOARD_STATE, attributeKvEntries);
-                        String latitude = getAttributeValueByKey("latitude", attributeKvEntries);
-                        String longitude = getAttributeValueByKey("longitude", attributeKvEntries);
-                        String lat = getAttributeValueByKey("lat", attributeKvEntries);
-                        String lon = getAttributeValueByKey("lon", attributeKvEntries);
+                        String dashboardId = attributes.get(DASHBOARD_ID);
+                        String dashboardState = attributes.get(DASHBOARD_STATE);
+                        String latitude = attributes.get("latitude");
+                        String longitude = attributes.get("longitude");
+                        String lat = attributes.get("lat");
+                        String lon = attributes.get("lon");
+                        String alertType = attributes.get("alertType");
+                        String alertDescription = attributes.get("alertDescription");
 
                         GisDeviceGeometry gisDeviceGeometry = setGisDeviceGeometry(latitude, lat, longitude, lon);
 
                         if (gisDeviceGeometry != null) {
                             GisDevicePropertiesList gisDevicePropertiesList = new GisDevicePropertiesList();
                             gisDevicePropertiesList.setGeometry(gisDeviceGeometry);
-                            gisDevicePropertiesList.setProperties(setGisDeviceProperties(x, dashboardId, dashboardState, tenantId));
+                            gisDevicePropertiesList.setProperties(setGisDeviceProperties(x, dashboardId, dashboardState, tenantId, alertType, alertDescription));
                             list.add(gisDevicePropertiesList);
                         }
 
@@ -179,7 +182,7 @@ public class GisIntegrationController extends BaseController {
     }
 
     @SneakyThrows
-    private GisDeviceProperties setGisDeviceProperties(Device device, String dashboardId, String dashboardState, TenantId tenantId) {
+    private GisDeviceProperties setGisDeviceProperties(Device device, String dashboardId, String dashboardState, TenantId tenantId, String alertType, String alertDescription) {
         GisDeviceProperties gisDeviceProperties = new GisDeviceProperties();
         gisDeviceProperties.setDevice(device);
 
@@ -192,6 +195,11 @@ public class GisIntegrationController extends BaseController {
             gisDeviceProperties.setDashboardUri("/iot-fe/dashboard/" + dashboardId + "?state=" + Base64.getEncoder().encodeToString(
                     ("[{\"id\":\"" + dashboardState + "\",\"params\":{\"entityId\":{\"entityType\":\"DEVICE\",\"id\":\"" + device.getId() + "\"},\"entityName\":\"" + device.getName() + "\"}}]").getBytes(StandardCharsets.UTF_8)
             ));
+        }
+
+        if(alertType != null && !alertType.equals("NO_ALERT")) {
+            gisDeviceProperties.setAlertType(alertType);
+            gisDeviceProperties.setAlertDescription(alertDescription);
         }
 
         return gisDeviceProperties;
@@ -217,15 +225,12 @@ public class GisIntegrationController extends BaseController {
         return null;
     }
 
-    private String getAttributeValueByKey(String key, List<AttributeKvEntry> attributeKvEntries) {
-
+    private HashMap<String, String> getAttributeHashmap(List<AttributeKvEntry> attributeKvEntries) {
+        HashMap<String, String> attributes = new HashMap<>();
         for (AttributeKvEntry attributeKvEntry : attributeKvEntries) {
-            if (attributeKvEntry.getKey().equals(key)) {
-                return attributeKvEntry.getValueAsString();
-            }
+            attributes.put(attributeKvEntry.getKey(), attributeKvEntry.getValueAsString());
         }
-
-        return null;
+        return attributes;
     }
 
     private List<String> extractDashboardStates(JsonNode configuration) {
