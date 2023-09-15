@@ -30,4 +30,6 @@ public class GisDeviceProperties {
     private String dashboardId;
     private String dashboardName;
     private String dashboardUri;
+    private String alertType;
+    private String alertDescription;
 }
