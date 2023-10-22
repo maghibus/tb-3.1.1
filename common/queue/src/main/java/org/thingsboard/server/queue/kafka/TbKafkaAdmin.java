@@ -59,7 +59,7 @@ public class TbKafkaAdmin implements TbQueueAdmin {
             return;
         }
         try {
-            NewTopic newTopic = new NewTopic(topic, 1, replicationFactor).configs(topicConfigs);
+            NewTopic newTopic = new NewTopic(topic, 10, replicationFactor).configs(topicConfigs);
             createTopic(newTopic).values().get(topic).get();
             topics.add(topic);
         } catch (ExecutionException ee) {
