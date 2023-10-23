@@ -22,9 +22,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Copy of Executors.DefaultThreadFactory but with ability to set name of the pool
  */
 public class ThingsBoardThreadFactory implements ThreadFactory {
-    private static final AtomicInteger poolNumber = new AtomicInteger(1);
+    private static final AtomicInteger poolNumber = new AtomicInteger(10);
     private final ThreadGroup group;
-    private final AtomicInteger threadNumber = new AtomicInteger(1);
+    private final AtomicInteger threadNumber = new AtomicInteger(10);
     private final String namePrefix;
 
     public static ThingsBoardThreadFactory forName(String name) {
