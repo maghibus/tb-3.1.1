@@ -732,7 +732,8 @@
                             <exclude>**/*.raw</exclude>
                             <exclude>**/*.sh</exclude>
                             <exclude>azure-pipelines.yml</exclude>
-			    <exclude>thingsboard-rule-config-ui-ngx/**</exclude>
+			                <exclude>thingsboard-rule-config-ui-ngx/**</exclude>
+                            <exclude>helm/**</exclude>
                         </excludes>
                         <mapping>
                             <proto>JAVADOC_STYLE</proto>
