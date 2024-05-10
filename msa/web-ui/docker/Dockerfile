@@ -19,6 +19,7 @@ FROM thingsboard/base
 COPY start-web-ui.sh ${pkg.name}.deb /tmp/
 
 RUN chmod a+x /tmp/*.sh \
+    && chown -R ${pkg.user}:${pkg.user} /tmp/*.sh \
     && mv /tmp/start-web-ui.sh /usr/bin
 
 RUN yes | dpkg -i /tmp/${pkg.name}.deb
