@@ -69,7 +69,7 @@
     "leaflet.wms": "^0.2.0",
     "material-design-icons": "^3.0.1",
     "messageformat": "^2.3.0",
-    "moment": "^2.29.2",
+    "moment": "^2.29.4",
     "ngx-clipboard": "^13.0.1",
     "ngx-color-picker": "^10.0.1",
     "ngx-daterangepicker-material": "^3.0.4",
