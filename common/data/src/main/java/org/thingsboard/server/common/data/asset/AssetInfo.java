@@ -17,10 +17,11 @@ package org.thingsboard.server.common.data.asset;
 
 import lombok.Data;
 import org.thingsboard.server.common.data.id.AssetId;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 @Data
 public class AssetInfo extends Asset {
-
+    @NoXss
     private String customerTitle;
     private boolean customerIsPublic;
 

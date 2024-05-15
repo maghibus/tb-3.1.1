@@ -16,6 +16,7 @@
 package org.thingsboard.server.common.data.query;
 
 import lombok.Data;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 @Data
 public class EntityViewTypeFilter implements EntityFilter {
@@ -24,9 +25,9 @@ public class EntityViewTypeFilter implements EntityFilter {
     public EntityFilterType getType() {
         return EntityFilterType.ENTITY_VIEW_TYPE;
     }
-
+    @NoXss
     private String entityViewType;
-
+    @NoXss
     private String entityViewNameFilter;
 
 }

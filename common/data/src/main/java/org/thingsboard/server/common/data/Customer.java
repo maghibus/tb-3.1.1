@@ -22,11 +22,13 @@ import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.TenantId;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 public class Customer extends ContactBased<CustomerId> implements HasTenantId {
     
     private static final long serialVersionUID = -1599722990298929275L;
-    
+
+    @NoXss
     private String title;
     private TenantId tenantId;
 

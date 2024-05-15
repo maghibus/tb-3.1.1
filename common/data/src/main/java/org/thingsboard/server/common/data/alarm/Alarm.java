@@ -26,6 +26,7 @@ import org.thingsboard.server.common.data.HasTenantId;
 import org.thingsboard.server.common.data.id.AlarmId;
 import org.thingsboard.server.common.data.id.EntityId;
 import org.thingsboard.server.common.data.id.TenantId;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 import java.util.List;
 
@@ -38,6 +39,7 @@ import java.util.List;
 public class Alarm extends BaseData<AlarmId> implements HasName, HasTenantId {
 
     private TenantId tenantId;
+    @NoXss
     private String type;
     private EntityId originator;
     private AlarmSeverity severity;

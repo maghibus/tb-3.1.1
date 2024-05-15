@@ -17,10 +17,12 @@ package org.thingsboard.server.common.data;
 
 import lombok.Data;
 import org.thingsboard.server.common.data.id.DeviceId;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 @Data
 public class DeviceInfo extends Device {
 
+    @NoXss
     private String customerTitle;
     private boolean customerIsPublic;
 

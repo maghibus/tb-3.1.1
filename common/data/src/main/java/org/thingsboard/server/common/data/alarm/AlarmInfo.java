@@ -15,10 +15,12 @@
  */
 package org.thingsboard.server.common.data.alarm;
 
+import org.thingsboard.server.common.data.validation.NoXss;
+
 public class AlarmInfo extends Alarm {
 
     private static final long serialVersionUID = 2807343093519543363L;
-
+    @NoXss
     private String originatorName;
 
     public AlarmInfo() {

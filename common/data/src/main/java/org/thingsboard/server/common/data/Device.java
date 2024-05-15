@@ -19,6 +19,7 @@ import lombok.EqualsAndHashCode;
 import org.thingsboard.server.common.data.id.CustomerId;
 import org.thingsboard.server.common.data.id.DeviceId;
 import org.thingsboard.server.common.data.id.TenantId;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 @EqualsAndHashCode(callSuper = true)
 public class Device extends SearchTextBasedWithAdditionalInfo<DeviceId> implements HasName, HasTenantId, HasCustomerId {
@@ -27,8 +28,12 @@ public class Device extends SearchTextBasedWithAdditionalInfo<DeviceId> implemen
 
     private TenantId tenantId;
     private CustomerId customerId;
+
+    @NoXss
     private String name;
+    @NoXss
     private String type;
+    @NoXss
     private String label;
 
     public Device() {

@@ -16,10 +16,11 @@
 package org.thingsboard.rule.engine.action;
 
 import lombok.Data;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 @Data
 public abstract class TbAbstractAlarmNodeConfiguration {
-
+    @NoXss
     private String alarmType;
     private String alarmDetailsBuildJs;
 

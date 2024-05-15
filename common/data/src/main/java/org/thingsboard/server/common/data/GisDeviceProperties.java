@@ -18,6 +18,7 @@ package org.thingsboard.server.common.data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 /**
  * @author Federico Serini
@@ -27,9 +28,15 @@ import lombok.ToString;
 @ToString
 public class GisDeviceProperties {
     private Device device;
+
+    @NoXss
     private String dashboardId;
+    @NoXss
     private String dashboardName;
+    @NoXss
     private String dashboardUri;
+    @NoXss
     private String alertType;
+    @NoXss
     private String alertDescription;
 }

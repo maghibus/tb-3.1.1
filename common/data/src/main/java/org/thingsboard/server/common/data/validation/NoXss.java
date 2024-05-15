@@ -13,16 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.thingsboard.server.common.data;
+package org.thingsboard.server.common.data.validation;
 
-import lombok.Data;
-import org.thingsboard.server.common.data.validation.NoXss;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Data
-public class UpdateMessage {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+@Constraint(validatedBy = {})
+public @interface NoXss {
+    String message() default "field value is malformed";
 
-    @NoXss
-    private final String message;
-    private final boolean isUpdateAvailable;
+    Class<?>[] groups() default {};
 
+    Class<? extends Payload>[] payload() default {};
 }

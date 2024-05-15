@@ -16,6 +16,7 @@
 package org.thingsboard.server.common.data.query;
 
 import lombok.Data;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 @Data
 public class AssetTypeFilter implements EntityFilter {
@@ -24,9 +25,9 @@ public class AssetTypeFilter implements EntityFilter {
     public EntityFilterType getType() {
         return EntityFilterType.ASSET_TYPE;
     }
-
+    @NoXss
     private String assetType;
-
+    @NoXss
     private String assetNameFilter;
 
 }

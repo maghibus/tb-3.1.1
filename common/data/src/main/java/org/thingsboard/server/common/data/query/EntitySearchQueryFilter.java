@@ -18,11 +18,13 @@ package org.thingsboard.server.common.data.query;
 import lombok.Data;
 import org.thingsboard.server.common.data.id.EntityId;
 import org.thingsboard.server.common.data.relation.EntitySearchDirection;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 @Data
 public abstract class EntitySearchQueryFilter implements EntityFilter {
 
     private EntityId rootEntity;
+    @NoXss
     private String relationType;
     private EntitySearchDirection direction;
     private int maxLevel;

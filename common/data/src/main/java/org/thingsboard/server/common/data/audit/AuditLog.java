@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.thingsboard.server.common.data.BaseData;
 import org.thingsboard.server.common.data.id.*;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -28,6 +29,7 @@ public class AuditLog extends BaseData<AuditLogId> {
     private TenantId tenantId;
     private CustomerId customerId;
     private EntityId entityId;
+    @NoXss
     private String entityName;
     private UserId userId;
     private String userName;

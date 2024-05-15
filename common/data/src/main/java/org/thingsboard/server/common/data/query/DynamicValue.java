@@ -18,6 +18,7 @@ package org.thingsboard.server.common.data.query;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Getter;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 @Data
 public class DynamicValue<T> {
@@ -28,6 +29,7 @@ public class DynamicValue<T> {
     @Getter
     private final DynamicValueSourceType sourceType;
     @Getter
+    @NoXss
     private final String sourceAttribute;
 
 }

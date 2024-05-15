@@ -16,6 +16,7 @@
 package org.thingsboard.server.common.data.query;
 
 import lombok.Data;
+import org.thingsboard.server.common.data.validation.NoXss;
 
 @Data
 public class DeviceTypeFilter implements EntityFilter {
@@ -24,9 +25,9 @@ public class DeviceTypeFilter implements EntityFilter {
     public EntityFilterType getType() {
         return EntityFilterType.DEVICE_TYPE;
     }
-
+    @NoXss
     private String deviceType;
-
+    @NoXss
     private String deviceNameFilter;
 
 }
