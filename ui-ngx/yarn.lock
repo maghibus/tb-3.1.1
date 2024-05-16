@@ -1111,10 +1111,10 @@
   resolved "https://registry.yarnpkg.com/@flowjs/flow.js/-/flow.js-2.14.1.tgz#267d9f9d0958f32267ea5815c2a7cc09b9219304"
   integrity sha512-99DWlPnksOOS8uHfo+bhSjvs8d2MfLTB/22JBDC2ONwz/OCdP+gL/iiM4puMSTE2wH4A2/+J0eMc7pKwusXunw==
 
-"@flowjs/ngx-flow@^0.4.4":
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/@flowjs/ngx-flow/-/ngx-flow-0.4.4.tgz#e2338f17a212fe4b6d89e46b4eed93dddab683fe"
-  integrity sha512-eZWFexubeIpNAsCB4jXFFiiM+aiu+lFzisO2cqq+eJTIQwpDqtUHgvTNfkB/9pdLKyCVNe3otyWRLId1zochvw==
+"@flowjs/ngx-flow@^0.4.6":
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/@flowjs/ngx-flow/-/ngx-flow-0.4.6.tgz#ed11b6a7d2079cb2a7f8dca75fc0e8d082477a86"
+  integrity sha512-HJ7RKxINAdnTdVAVbkjseMi2Z9soQcVbPk8Ki4tjUHZkOKJE1TCvFCXSqmXt34noqaS4vNv5t/xmsPbqZoHCew==
   dependencies:
     "@types/flowjs" "2.13.3"
     tslib "^1.9.0"
