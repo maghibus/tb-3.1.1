@@ -195,7 +195,7 @@
                             <goal>build</goal>
                         </goals>
                         <configuration>
-                            <skip>${dockerfile.skip}</skip>
+                            <skip>true</skip>
                             <repository>${docker.repo}/${tb.docker.name}</repository>
                             <verbose>true</verbose>
                             <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
@@ -209,7 +209,7 @@
                             <goal>tag</goal>
                         </goals>
                         <configuration>
-                            <skip>${dockerfile.skip}</skip>
+                            <skip>true</skip>
                             <repository>${docker.repo}/${tb.docker.name}</repository>
                             <tag>${project.version}</tag>
                         </configuration>
@@ -221,7 +221,7 @@
                             <goal>build</goal>
                         </goals>
                         <configuration>
-                            <skip>${dockerfile.skip}</skip>
+                            <skip>true</skip>
                             <repository>${docker.repo}/${tb-postgres.docker.name}</repository>
                             <verbose>true</verbose>
                             <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
@@ -235,7 +235,7 @@
                             <goal>tag</goal>
                         </goals>
                         <configuration>
-                            <skip>${dockerfile.skip}</skip>
+                            <skip>true</skip>
                             <repository>${docker.repo}/${tb-postgres.docker.name}</repository>
                             <tag>${project.version}</tag>
                         </configuration>
@@ -247,7 +247,7 @@
                             <goal>build</goal>
                         </goals>
                         <configuration>
-                            <skip>${dockerfile.skip}</skip>
+                            <skip>true</skip>
                             <repository>${docker.repo}/${tb-cassandra.docker.name}</repository>
                             <verbose>true</verbose>
                             <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
@@ -261,7 +261,7 @@
                             <goal>tag</goal>
                         </goals>
                         <configuration>
-                            <skip>${dockerfile.skip}</skip>
+                            <skip>true</skip>
                             <repository>${docker.repo}/${tb-cassandra.docker.name}</repository>
                             <tag>${project.version}</tag>
                         </configuration>
